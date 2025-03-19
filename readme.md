@@ -2,6 +2,41 @@
 推し（Vtuber、アイドル等）の誕生日を祝うためのクラウドファンディングプラットフォーム。
 ファンが連携して駅広告やデジタルサイネージなどにお誕生日広告を出すことのできるサービス。
 
+## プロジェクト構成
+```
+oshiome_go/
+├── backend/
+│   ├── cmd/                    # アプリケーションのエントリーポイント
+│   │   └── main.go
+│   ├── internal/              # プロジェクト内部パッケージ
+│   │   ├── db/               # データベース関連
+│   │   │   ├── migrations/   # マイグレーションファイル
+│   │   │   │   └── migrate.go
+│   │   │   └── db.go
+│   │   ├── handlers/         # HTTPハンドラー
+│   │   │   ├── project_handler.go
+│   │   │   ├── response.go
+│   │   │   ├── support_handler.go
+│   │   │   └── user_handler.go
+│   │   ├── middleware/       # ミドルウェア
+│   │   │   └── auth.go
+│   │   ├── models/          # データモデル
+│   │   │   ├── project.go
+│   │   │   ├── support.go
+│   │   │   └── user.go
+│   │   └── utils/           # ユーティリティ関数
+│   │       ├── auth.go
+│   │       ├── errors.go
+│   │       └── response.go
+│   ├── .air.toml            # Air（ホットリロード）の設定
+│   ├── Dockerfile           # バックエンドのDockerfile
+│   ├── go.mod              # Goの依存関係管理
+│   └── go.sum              # 依存関係のチェックサム
+├── frontend/               # フロントエンド関連ファイル
+├── docker-compose.yml     # Docker Compose設定ファイル
+└── README.md             # プロジェクトのドキュメント
+```
+
 #### 主な機能
 - クラウドファンディング機能
   - 企画の作成・管理
@@ -225,33 +260,6 @@ docker-compose exec app go run cmd/migrate/main.go
 
 # テストの実行
 docker-compose exec app go test ./...
-```
-
-## プロジェクト構成
-```
-go_mysql/
-├── backend/
-│   ├── cmd/
-│   │   └── main.go
-│   ├── models/
-│   │   ├── product.go
-│   │   └── category.go
-│   ├── handlers/
-│   │   └── product_handler.go
-│   ├── db/
-│   │   └── db.go
-│   └── go.mod
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── tsconfig.json
-├── docker-compose.yml
-└── README.md
 ```
 
 ## 学習目標
