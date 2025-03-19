@@ -23,7 +23,7 @@ type ProjectInput struct {
 	Title        string    `json:"title" binding:"required"`
 	Description  string    `json:"description" binding:"required"`
 	TargetAmount int64     `json:"target_amount" binding:"required,min=1000"`
-	Deadline     time.Time `json:"deadline" binding:"required,gtfield=time.Now"`
+	Deadline     time.Time `json:"deadline" binding:"required,gt=now"`
 }
 
 // withTx トランザクションを使用して処理を実行

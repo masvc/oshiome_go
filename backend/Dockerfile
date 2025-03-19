@@ -1,11 +1,11 @@
-FROM golang:1.21-alpine
+FROM golang:1.21
 
 WORKDIR /app
 
 # 必要なパッケージのインストール
-RUN apk add --no-cache git
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
-# Air（ホットリロード用）のインストール
+# Airのインストール
 RUN go install github.com/cosmtrek/air@v1.49.0
 
 # 依存関係のコピー

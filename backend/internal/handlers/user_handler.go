@@ -8,9 +8,16 @@ import (
 	"github.com/masvc/oshiome_go/backend/internal/db"
 	"github.com/masvc/oshiome_go/backend/internal/models"
 	"github.com/masvc/oshiome_go/backend/internal/utils"
+	"gorm.io/gorm"
 )
 
-type UserHandler struct{}
+type UserHandler struct {
+	db *gorm.DB
+}
+
+func NewUserHandler() *UserHandler {
+	return &UserHandler{db: db.GetDB()}
+}
 
 type CreateUserInput struct {
 	Name     string `json:"name" binding:"required"`
@@ -44,7 +51,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		Password: hashedPassword,
 	}
 
-	if err := db.GetDB().Create(&user).Error; err != nil {
+	if err := h.db.Create(&user).Error; err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			c.Error(utils.ErrDuplicateEmail)
 			return
@@ -78,7 +85,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 	}
 
 	var user models.User
-	if err := db.GetDB().Where("email = ?", input.Email).First(&user).Error; err != nil {
+	if err := h.db.Where("email = ?", input.Email).First(&user).Error; err != nil {
 		c.Error(utils.ErrInvalidCredentials)
 		return
 	}
@@ -110,7 +117,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User
 
-	if err := db.GetDB().First(&user, id).Error; err != nil {
+	if err := h.db.First(&user, id).Error; err != nil {
 		c.Error(utils.ErrNotFound.WithDetail("指定されたユーザーが見つかりません"))
 		return
 	}

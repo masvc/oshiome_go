@@ -47,8 +47,8 @@ func main() {
 	r.Use(middleware.ErrorHandler())
 
 	// ハンドラーのインスタンス化
-	userHandler := &handlers.UserHandler{}
-	projectHandler := &handlers.ProjectHandler{}
+	userHandler := handlers.NewUserHandler()
+	projectHandler := handlers.NewProjectHandler()
 
 	// パブリックルート
 	public := r.Group("/api")
