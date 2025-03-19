@@ -12,6 +12,7 @@ import (
 	"github.com/masvc/oshiome_go/backend/internal/db/migrations"
 	"github.com/masvc/oshiome_go/backend/internal/handlers"
 	"github.com/masvc/oshiome_go/backend/internal/middleware"
+	"github.com/masvc/oshiome_go/backend/internal/utils"
 )
 
 func main() {
@@ -28,10 +29,13 @@ func main() {
 	}
 
 	// データベース接続の初期化
-	_, err := db.InitDB()
+	dbInstance, err := db.InitDB()
 	if err != nil {
 		log.Fatal("データベース接続に失敗しました:", err)
 	}
+
+	// Stripeの初期化
+	utils.InitStripe()
 
 	r := gin.Default()
 
@@ -39,7 +43,7 @@ func main() {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Stripe-Signature"},
 		AllowCredentials: true,
 	}))
 
@@ -49,6 +53,7 @@ func main() {
 	// ハンドラーのインスタンス化
 	userHandler := handlers.NewUserHandler()
 	projectHandler := handlers.NewProjectHandler()
+	h := handlers.NewHandler(dbInstance)
 
 	// パブリックルート
 	public := r.Group("/api")
@@ -60,6 +65,9 @@ func main() {
 		// プロジェクト一覧と詳細は認証不要
 		public.GET("/projects", projectHandler.ListProjects)
 		public.GET("/projects/:id", projectHandler.GetProject)
+
+		// Webhook（Stripe-Signatureヘッダーを許可）
+		public.POST("/webhook", h.HandleStripeWebhook)
 	}
 
 	// 認証が必要なルート

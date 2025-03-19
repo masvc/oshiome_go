@@ -20,10 +20,11 @@ func NewProjectHandler() *ProjectHandler {
 }
 
 type ProjectInput struct {
-	Title        string    `json:"title" binding:"required"`
-	Description  string    `json:"description" binding:"required"`
-	TargetAmount int64     `json:"target_amount" binding:"required,min=1000"`
-	Deadline     time.Time `json:"deadline" binding:"required,gt=now"`
+	Title        string               `json:"title" binding:"required"`
+	Description  string               `json:"description" binding:"required"`
+	TargetAmount int64                `json:"target_amount" binding:"required,min=1000"`
+	Deadline     time.Time            `json:"deadline" binding:"required,gt=now"`
+	Status       models.ProjectStatus `json:"status"`
 }
 
 // withTx トランザクションを使用して処理を実行
@@ -134,12 +135,16 @@ func (h *ProjectHandler) UpdateProject(c *gin.Context) {
 	}
 
 	h.withTx(c, func(tx *gorm.DB) error {
-		if err := tx.Model(project).Updates(models.Project{
+		updates := models.Project{
 			Title:        input.Title,
 			Description:  input.Description,
 			TargetAmount: input.TargetAmount,
 			Deadline:     input.Deadline,
-		}).Error; err != nil {
+		}
+		if input.Status != "" {
+			updates.Status = input.Status
+		}
+		if err := tx.Model(project).Updates(updates).Error; err != nil {
 			return utils.ErrInternalServer.WithDetail(utils.ErrMsgProjectUpdateFail)
 		}
 		return nil
