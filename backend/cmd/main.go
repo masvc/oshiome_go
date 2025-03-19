@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -8,11 +9,24 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/masvc/oshiome_go/backend/internal/db"
+	"github.com/masvc/oshiome_go/backend/internal/db/migrations"
 	"github.com/masvc/oshiome_go/backend/internal/handlers"
 	"github.com/masvc/oshiome_go/backend/internal/middleware"
 )
 
 func main() {
+	// コマンドライン引数の解析
+	migrate := flag.Bool("migrate", false, "データベースのマイグレーションを実行")
+	flag.Parse()
+
+	// マイグレーションフラグが指定された場合
+	if *migrate {
+		if err := migrations.RunMigrations(); err != nil {
+			log.Fatal("マイグレーションに失敗しました:", err)
+		}
+		return
+	}
+
 	// データベース接続の初期化
 	_, err := db.InitDB()
 	if err != nil {
