@@ -1,9 +1,6 @@
 package middleware
 
 import (
-	"log"
-	"net/http"
-	"runtime/debug"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -39,49 +36,5 @@ func AuthMiddleware() gin.HandlerFunc {
 		// ユーザーIDをコンテキストに設定
 		c.Set("user_id", userID)
 		c.Next()
-	}
-}
-
-// ErrorHandler エラーハンドリングミドルウェア
-func ErrorHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		defer func() {
-			if err := recover(); err != nil {
-				// パニックが発生した場合のログ出力
-				log.Printf("Panic recovered: %v\nStack trace:\n%s", err, debug.Stack())
-
-				// クライアントへの応答
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"status":  "error",
-					"code":    "INTERNAL_SERVER_ERROR",
-					"message": "予期せぬエラーが発生しました",
-				})
-				c.Abort()
-			}
-		}()
-
-		c.Next()
-
-		// エラーが設定されている場合の処理
-		if len(c.Errors) > 0 {
-			err := c.Errors.Last().Err
-			switch e := err.(type) {
-			case *utils.AppError:
-				c.JSON(e.StatusCode, gin.H{
-					"status":  "error",
-					"code":    e.Code,
-					"message": e.Message,
-					"detail":  e.Detail,
-				})
-			default:
-				// 未知のエラーの場合
-				log.Printf("Unexpected error: %v", err)
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"status":  "error",
-					"code":    "INTERNAL_SERVER_ERROR",
-					"message": "予期せぬエラーが発生しました",
-				})
-			}
-		}
 	}
 }

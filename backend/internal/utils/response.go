@@ -1,17 +1,34 @@
 package utils
 
-// Response APIレスポンスの共通構造体
+// Response はAPIレスポンスの基本構造
 type Response struct {
 	Status  string      `json:"status"`
-	Data    interface{} `json:"data,omitempty"`
 	Message string      `json:"message,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
 }
 
-// NewSuccessResponse 成功レスポンスを生成
+// NewSuccessResponse は成功時のレスポンスを生成
 func NewSuccessResponse(data interface{}) Response {
 	return Response{
 		Status: "success",
 		Data:   data,
+	}
+}
+
+// NewSuccessMessageResponse はメッセージ付きの成功レスポンスを生成
+func NewSuccessMessageResponse(message string) Response {
+	return Response{
+		Status:  "success",
+		Message: message,
+	}
+}
+
+// NewSuccessDataMessageResponse はデータとメッセージ付きの成功レスポンスを生成
+func NewSuccessDataMessageResponse(data interface{}, message string) Response {
+	return Response{
+		Status:  "success",
+		Message: message,
+		Data:    data,
 	}
 }
 
