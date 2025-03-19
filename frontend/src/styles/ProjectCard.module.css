@@ -1,0 +1,16 @@
+.projectImage {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: transparent;
+}
+
+.imageContainer {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}

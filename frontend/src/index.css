@@ -1,0 +1,24 @@
+@import './styles/glitter.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-oshi-pink: #fff6f9;
+  --color-oshi-purple: #6b46c1;
+}
+
+@layer base {
+  html {
+    @apply h-full;
+    font-family: 'M PLUS Rounded 1c', 'Noto Sans JP', sans-serif;
+  }
+  body {
+    @apply h-full m-0 font-sans antialiased bg-gradient-to-b from-white via-oshi-pink-50/50 to-white min-h-screen;
+    @apply bg-white;
+  }
+  #root {
+    @apply h-full;
+  }
+}
