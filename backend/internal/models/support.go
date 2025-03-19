@@ -7,17 +7,16 @@ import (
 )
 
 type Support struct {
-	ID        uint      `gorm:"primary_key" json:"id"`
-	UserID    uint      `gorm:"not null" json:"user_id"`
-	ProjectID uint      `gorm:"not null" json:"project_id"`
-	Amount    int       `gorm:"not null" json:"amount"`
-	Message   string    `gorm:"type:text" json:"message"`
-	Status    string    `gorm:"size:20;default:'pending'" json:"status"` // pending, completed, cancelled
+	ID        uint      `json:"id" gorm:"primaryKey"`
+	UserID    uint      `json:"user_id"`
+	ProjectID uint      `json:"project_id"`
+	Amount    int64     `json:"amount"`
+	Message   string    `json:"message"`
+	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-
-	User    User    `gorm:"foreignkey:UserID" json:"user"`
-	Project Project `gorm:"foreignkey:ProjectID" json:"project"`
+	User      *User     `json:"user,omitempty" gorm:"foreignKey:UserID"`
+	Project   Project   `gorm:"foreignkey:ProjectID" json:"project"`
 }
 
 func (s *Support) BeforeCreate(tx *gorm.DB) error {

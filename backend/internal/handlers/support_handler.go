@@ -12,7 +12,7 @@ type SupportHandler struct{}
 
 type CreateSupportInput struct {
 	ProjectID uint   `json:"project_id" binding:"required"`
-	Amount    int    `json:"amount" binding:"required,min=100"`
+	Amount    int64  `json:"amount" binding:"required,min=100"`
 	Message   string `json:"message"`
 }
 
