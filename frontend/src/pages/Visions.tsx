@@ -1,6 +1,37 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { visionRepository, Vision } from '../repositories/visionRepository';
+import { Vision } from '../types/vision';
+
+// 仮のビジョンデータ
+const mockVisions: Vision[] = [
+  {
+    id: '1',
+    name: '渋谷スクランブルビジョン',
+    location: '東京都渋谷区渋谷2-23-1',
+    size: '横8.0m × 縦4.5m',
+    period: '15秒 × 18回/日',
+    description: '渋谷スクランブル交差点に面した大型ビジョン。1日の通行人数は約50万人で、抜群の視認性を誇ります。',
+    image_url: 'https://picsum.photos/seed/shibuya/800/450',
+  },
+  {
+    id: '2',
+    name: '新宿アルタビジョン',
+    location: '東京都新宿区新宿3-24-3',
+    size: '横6.0m × 縦3.4m',
+    period: '15秒 × 15回/日',
+    description: '新宿駅東口に位置する老舗の大型ビジョン。若者の往来が多く、ファン層へのアプローチに最適です。',
+    image_url: 'https://picsum.photos/seed/shinjuku/800/450',
+  },
+  {
+    id: '3',
+    name: '池袋サンシャインビジョン',
+    location: '東京都豊島区東池袋3-1',
+    size: '横5.5m × 縦3.1m',
+    period: '15秒 × 12回/日',
+    description: '池袋サンシャインシティ前の大型ビジョン。アニメファンや若者の集まるスポットで高い注目度があります。',
+    image_url: 'https://picsum.photos/seed/ikebukuro/800/450',
+  },
+];
 
 export const Visions = () => {
   const [visions, setVisions] = useState<Vision[]>([]);
@@ -11,9 +42,9 @@ export const Visions = () => {
     const fetchVisions = async () => {
       try {
         setLoading(true);
-        const data = await visionRepository.getAll();
-        console.log('取得したビジョンデータ:', data);
-        setVisions(data);
+        // 遅延を追加して非同期処理をシミュレート
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setVisions(mockVisions);
         setError(null);
       } catch (err) {
         console.error('ビジョン取得エラー:', err);

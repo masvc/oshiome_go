@@ -1,7 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { SupportForm } from '../components/features/SupportForm';
-import { projectRepository } from '../repositories/project';
 import { GlitterEffect } from '../components/common/GlitterEffect';
 import { Project } from '../types/project';
 
@@ -16,6 +15,38 @@ const SUPPORT_PLAN: SupportPlan = {
   benefits: ['広告にニックネームを掲載'],
 };
 
+// 仮のプロジェクトデータ
+const mockProjects: Project[] = [
+  {
+    id: '1',
+    title: '渋谷ビジョンで推しの誕生日を祝おう！',
+    description: '渋谷の大型ビジョンで、みんなで一緒に推しの誕生日をお祝いしましょう。',
+    target_amount: 500000,
+    current_amount: 300000,
+    start_date: '2024-04-01',
+    end_date: '2024-05-01',
+    image_url: 'https://picsum.photos/seed/1/800/450',
+    supporters_count: 30,
+    status: 'active',
+    office_status: 'approved',
+    project_hashtag: '#推し誕生日',
+  },
+  {
+    id: '2',
+    title: '池袋サンシャインでバースデー広告',
+    description: '池袋サンシャインシティの大型ビジョンで誕生日広告を実施します。',
+    target_amount: 400000,
+    current_amount: 200000,
+    start_date: '2024-05-15',
+    end_date: '2024-06-15',
+    image_url: 'https://picsum.photos/seed/2/800/450',
+    supporters_count: 20,
+    status: 'active',
+    office_status: 'approved',
+    project_hashtag: '#推し誕生日',
+  },
+];
+
 export const ProjectDetail = () => {
   const { id } = useParams();
   const [showSupportForm, setShowSupportForm] = useState(false);
@@ -29,8 +60,17 @@ export const ProjectDetail = () => {
 
       try {
         setLoading(true);
-        const data = await projectRepository.getWithProgress(id);
-        setProject(data);
+        // 遅延を追加して非同期処理をシミュレート
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // 仮のデータから該当するプロジェクトを検索
+        const foundProject = mockProjects.find(p => p.id === id);
+        if (foundProject) {
+          setProject(foundProject);
+          setError(null);
+        } else {
+          setError('プロジェクトが見つかりませんでした。');
+        }
       } catch (err) {
         console.error('プロジェクト取得エラー:', err);
         setError('プロジェクトの取得に失敗しました。');

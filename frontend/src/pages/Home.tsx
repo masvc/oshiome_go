@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom';
 import { ProjectCard } from '../components/features/ProjectCard';
-import { projectRepository } from '../repositories/project';
 import { Project } from '../types/project';
 import mainVisual from '../assets/mainvisual.png';
 import { useEffect, useState } from 'react';
 import { GlitterEffect } from '../components/common/GlitterEffect';
-import { useAuth } from '../providers/AuthProvider';
 
 // サービスの特徴データ
 const features = [
@@ -74,22 +72,52 @@ const features = [
   },
 ];
 
+// 仮のプロジェクトデータ
+const mockProjects: Project[] = [
+  {
+    id: '1',
+    title: '渋谷ビジョンで推しの誕生日を祝おう！',
+    description: '渋谷の大型ビジョンで、みんなで一緒に推しの誕生日をお祝いしましょう。',
+    target_amount: 500000,
+    current_amount: 300000,
+    end_date: '2024-05-01',
+    image_url: 'https://picsum.photos/seed/1/800/450',
+    supporters_count: 30,
+  },
+  {
+    id: '2',
+    title: '池袋サンシャインでバースデー広告',
+    description: '池袋サンシャインシティの大型ビジョンで誕生日広告を実施します。',
+    target_amount: 400000,
+    current_amount: 200000,
+    end_date: '2024-06-15',
+    image_url: 'https://picsum.photos/seed/2/800/450',
+    supporters_count: 20,
+  },
+  {
+    id: '3',
+    title: '新宿アルタで誕生日をお祝い',
+    description: '新宿アルタのビジョンで、推しの誕生日を華やかにお祝いしましょう。',
+    target_amount: 300000,
+    current_amount: 150000,
+    end_date: '2024-07-30',
+    image_url: 'https://picsum.photos/seed/3/800/450',
+    supporters_count: 15,
+  },
+];
+
 export const Home = () => {
   const [popularProjects, setPopularProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
 
   useEffect(() => {
+    // 仮のデータを使用
     const fetchPopularProjects = async () => {
       try {
         setLoading(true);
-        const data = await projectRepository.getAllWithProgress();
-        // 最新の3件を取得（後で人気順に変更可能）
-        setPopularProjects(data.slice(0, 3));
-      } catch (err) {
-        console.error('プロジェクト取得エラー:', err);
-        setError('プロジェクトの取得に失敗しました。');
+        // 遅延を追加して非同期処理をシミュレート
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setPopularProjects(mockProjects);
       } finally {
         setLoading(false);
       }
@@ -107,8 +135,7 @@ export const Home = () => {
       targetAmount: project.target_amount,
       currentAmount: project.current_amount || 0,
       deadline: project.end_date,
-      imageUrl:
-        project.image_url || 'https://picsum.photos/seed/default/800/450',
+      imageUrl: project.image_url || 'https://picsum.photos/seed/default/800/450',
       supporterCount: project.supporters_count || 0,
     };
   };
@@ -206,10 +233,10 @@ export const Home = () => {
                   企画一覧を見る
                 </Link>
                 <Link
-                  to={user ? "/projects/create" : "/contact"}
+                  to="/contact"
                   className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-3 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-white/20 transition-all font-body text-center text-xs sm:text-base flex-1"
                 >
-                  {user ? "企画を作成" : "企画を始める"}
+                  企画を始める
                 </Link>
               </div>
             </div>
@@ -251,28 +278,12 @@ export const Home = () => {
             </div>
           )}
 
-          {/* エラー状態 */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-              {error}
-            </div>
-          )}
-
           {/* プロジェクト一覧 */}
-          {!loading && !error && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-              {popularProjects.length > 0 ? (
-                popularProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={formatProjectForCard(project)}
-                  />
-                ))
-              ) : (
-                <div className="col-span-3 text-center py-12 text-gray-500">
-                  プロジェクトがありません。
-                </div>
-              )}
+          {!loading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {popularProjects.map((project) => (
+                <ProjectCard key={project.id} {...formatProjectForCard(project)} />
+              ))}
             </div>
           )}
         </section>

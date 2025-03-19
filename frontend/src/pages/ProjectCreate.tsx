@@ -1,33 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../providers/AuthProvider';
 import { ProjectForm } from '../components/features/ProjectForm';
-import { projectRepository } from '../repositories/project';
+
+// 仮のユーザーデータ
+const mockUser = {
+  id: '1',
+  name: 'テストユーザー',
+  email: 'test@example.com',
+};
 
 export const ProjectCreate = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    console.log('Current user:', user);
-  }, [user]);
 
   const handleSubmit = async (formData: any) => {
     try {
       setIsSubmitting(true);
       setError(null);
 
-      // プロジェクトの作成
-      const project = await projectRepository.create({
+      // 仮のプロジェクト作成処理
+      console.log('プロジェクト作成データ:', {
         ...formData,
-        creator_id: user?.id,
-        status: 'pending', // 審査待ち状態
+        creator_id: mockUser.id,
+        status: 'pending',
       });
 
-      // 作成成功後、プロジェクト詳細ページに遷移
-      navigate(`/projects/${project.id}`);
+      // 遅延を追加して非同期処理をシミュレート
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // 作成成功後、プロジェクト一覧ページに遷移
+      navigate('/projects');
     } catch (err) {
       console.error('プロジェクト作成エラー:', err);
       setError('プロジェクトの作成に失敗しました。もう一度お試しください。');
@@ -35,16 +38,6 @@ export const ProjectCreate = () => {
       setIsSubmitting(false);
     }
   };
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex justify-center items-center">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg max-w-md">
-          企画を作成するにはログインが必要です。
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

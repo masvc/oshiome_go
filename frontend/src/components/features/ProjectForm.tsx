@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../providers/AuthProvider';
 
 interface ProjectFormProps {
   onSubmit: (formData: any) => Promise<void>;
@@ -40,7 +38,6 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   onSubmit,
   isSubmitting = false,
 }) => {
-  const { user } = useAuth();
   const [formData, setFormData] = useState<ProjectFormData>(defaultFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -133,10 +130,6 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       newErrors.end_date = '終了日は開始日より後の日付を指定してください';
     }
 
-    if (!formData.thumbnail_url) {
-      newErrors.thumbnail_url = 'サムネイル画像は必須です';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -163,69 +156,25 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       idol_name: formData.idol_name,
       office_status: formData.office_status,
       status: 'draft' as const,
-      thumbnail_url: formData.thumbnail_url,
+      thumbnail_url: formData.thumbnail_url || 'https://picsum.photos/seed/default/800/450',
       current_amount: 0,
     };
 
     await onSubmit(submissionData);
   };
 
-  const handleImageUpload = async (file: File) => {
-    if (!user) {
-      alert('ログインが必要です');
-      return;
-    }
-
-    try {
-      setIsUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}_${Math.random()}.${fileExt}`;
-
-      const { error: uploadError, data } = await supabase.storage
-        .from('project-images')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // 公開URLの取得
-      const { data: { publicUrl } } = supabase.storage
-        .from('project-images')
-        .getPublicUrl(fileName);
-
-      console.log('公開URL:', publicUrl);
-
-      if (!publicUrl) {
-        throw new Error('有効な公開URLの取得に失敗しました');
-      }
-
-      setFormData(prev => ({
-        ...prev,
-        thumbnail_url: publicUrl,
-        image_file: file
-      }));
-
-    } catch (error) {
-      console.error('画像アップロードエラー:', error);
-      if (error instanceof Error) {
-        alert(`画像のアップロードに失敗しました：${error.message}`);
-      } else {
-        alert('画像のアップロードに失敗しました。');
-      }
-    } finally {
-      setIsUploading(false);
-      setUploadProgress(0);
-    }
-  };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      handleImageUpload(file);
+      // 仮の画像URL生成
+      const imageNumber = Math.floor(Math.random() * 10) + 1;
+      const mockImageUrl = `https://picsum.photos/seed/${imageNumber}/800/450`;
+      
+      setFormData(prev => ({
+        ...prev,
+        thumbnail_url: mockImageUrl,
+        image_file: file
+      }));
     }
   };
 
@@ -243,38 +192,32 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               <span className="text-red-500 ml-1">*</span>
             </label>
             <div className="mt-2 flex items-center space-x-4">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-                id="image-upload"
-              />
-              <label
-                htmlFor="image-upload"
-                className="cursor-pointer bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                {isUploading ? '画像をアップロード中...' : '画像を選択'}
-              </label>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <button
+                  type="button"
+                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-oshi-purple-500"
+                >
+                  画像を選択
+                </button>
+              </div>
               {formData.thumbnail_url && (
-                <div className="relative w-24 h-24">
+                <div className="relative w-24 h-24 rounded-lg overflow-hidden">
                   <img
                     src={formData.thumbnail_url}
-                    alt="プレビュー"
-                    className="w-full h-full object-cover rounded-md"
+                    alt="サムネイル"
+                    className="w-full h-full object-cover"
                   />
-                  <button
-                    type="button"
-                    onClick={() => handleChange('thumbnail_url', '')}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
-                  >
-                    ×
-                  </button>
                 </div>
               )}
             </div>
             {errors.thumbnail_url && (
-              <p className="mt-1 text-sm text-red-600">{errors.thumbnail_url}</p>
+              <p className="mt-2 text-sm text-red-600">{errors.thumbnail_url}</p>
             )}
           </div>
 
@@ -288,40 +231,33 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               type="text"
               value={formData.idol_name}
               onChange={(e) => handleChange('idol_name', e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              placeholder="例：田中さくら"
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              placeholder="例：田中花子"
             />
             {errors.idol_name && (
-              <p className="mt-1 text-sm text-red-600">{errors.idol_name}</p>
+              <p className="mt-2 text-sm text-red-600">{errors.idol_name}</p>
             )}
           </div>
 
-          {/* 企画タイトル */}
+          {/* 企画名 */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              企画タイトル
+              企画名
               <span className="text-red-500 ml-1">*</span>
             </label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => handleChange('title', e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              placeholder="例：田中さくら誕生日記念広告企画"
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              placeholder="例：田中花子誕生日記念広告企画"
             />
             {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+              <p className="mt-2 text-sm text-red-600">{errors.title}</p>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* 企画内容 */}
-      <div className="bg-white p-6 rounded-lg shadow-sm">
-        <h3 className="text-xl font-medium text-gray-900 mb-6">企画内容</h3>
-        
-        <div className="space-y-6">
-          {/* 企画説明 */}
+          {/* 企画の説明 */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               企画の説明
@@ -330,102 +266,13 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             <textarea
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
-              rows={6}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              placeholder="企画の目的や内容について説明してください。&#13;&#10;例：&#13;&#10;【企画概要】&#13;&#10;・期間：企画期間&#13;&#10;・場所：掲載場所&#13;&#10;・内容：お誕生日メッセージの掲載&#13;&#10;&#13;&#10;【企画の目的】&#13;&#10;・推しの誕生日をお祝いする&#13;&#10;・ファンの想いを形にする"
+              rows={5}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              placeholder="企画の詳細な説明を入力してください"
             />
             {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+              <p className="mt-2 text-sm text-red-600">{errors.description}</p>
             )}
-          </div>
-
-          {/* ハッシュタグ */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                企画用ハッシュタグ
-              </label>
-              <input
-                type="text"
-                value={formData.project_hashtag}
-                onChange={(e) => handleChange('project_hashtag', e.target.value)}
-                placeholder="#推し生誕祭"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                応援用ハッシュタグ
-              </label>
-              <input
-                type="text"
-                value={formData.support_hashtag}
-                onChange={(e) => handleChange('support_hashtag', e.target.value)}
-                placeholder="#推しを応援"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 期間と金額 */}
-      <div className="bg-white p-6 rounded-lg shadow-sm">
-        <h3 className="text-xl font-medium text-gray-900 mb-6">期間と金額</h3>
-        
-        <div className="space-y-6">
-          {/* 日付関連 */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {/* 誕生日 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                推しの誕生日
-                <span className="text-red-500 ml-1">*</span>
-              </label>
-              <input
-                type="date"
-                value={formData.birthday_date}
-                onChange={(e) => handleChange('birthday_date', e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              />
-              {errors.birthday_date && (
-                <p className="mt-1 text-sm text-red-600">{errors.birthday_date}</p>
-              )}
-            </div>
-
-            {/* 開始日 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                開始日
-                <span className="text-red-500 ml-1">*</span>
-              </label>
-              <input
-                type="date"
-                value={formData.start_date}
-                onChange={(e) => handleChange('start_date', e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              />
-              {errors.start_date && (
-                <p className="mt-1 text-sm text-red-600">{errors.start_date}</p>
-              )}
-            </div>
-
-            {/* 終了日 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                終了日
-                <span className="text-red-500 ml-1">*</span>
-              </label>
-              <input
-                type="date"
-                value={formData.end_date}
-                onChange={(e) => handleChange('end_date', e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              />
-              {errors.end_date && (
-                <p className="mt-1 text-sm text-red-600">{errors.end_date}</p>
-              )}
-            </div>
           </div>
 
           {/* 目標金額 */}
@@ -433,52 +280,143 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             <label className="block text-sm font-medium text-gray-700">
               目標金額
               <span className="text-red-500 ml-1">*</span>
-              <span className="text-gray-500 text-xs ml-2">（10,000円以上）</span>
             </label>
             <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-500 sm:text-sm">¥</span>
+              </div>
               <input
                 type="number"
-                min="10000"
-                step="1000"
                 value={formData.target_amount}
-                onChange={(e) => handleChange('target_amount', parseInt(e.target.value))}
-                className="block w-full pr-12 border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                onChange={(e) => handleChange('target_amount', Number(e.target.value))}
+                className="block w-full pl-7 pr-12 border-gray-300 rounded-md focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
                 placeholder="100000"
+                min="10000"
+                step="10000"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                 <span className="text-gray-500 sm:text-sm">円</span>
               </div>
             </div>
             {errors.target_amount && (
-              <p className="mt-1 text-sm text-red-600">{errors.target_amount}</p>
+              <p className="mt-2 text-sm text-red-600">{errors.target_amount}</p>
             )}
+          </div>
+
+          {/* 誕生日 */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              誕生日
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="date"
+              value={formData.birthday_date}
+              onChange={(e) => handleChange('birthday_date', e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+            />
+            {errors.birthday_date && (
+              <p className="mt-2 text-sm text-red-600">{errors.birthday_date}</p>
+            )}
+          </div>
+
+          {/* 掲載期間 */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                掲載開始日
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                type="date"
+                value={formData.start_date}
+                onChange={(e) => handleChange('start_date', e.target.value)}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              />
+              {errors.start_date && (
+                <p className="mt-2 text-sm text-red-600">{errors.start_date}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                掲載終了日
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                type="date"
+                value={formData.end_date}
+                onChange={(e) => handleChange('end_date', e.target.value)}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              />
+              {errors.end_date && (
+                <p className="mt-2 text-sm text-red-600">{errors.end_date}</p>
+              )}
+            </div>
+          </div>
+
+          {/* ハッシュタグ */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                プロジェクト用ハッシュタグ
+              </label>
+              <input
+                type="text"
+                value={formData.project_hashtag}
+                onChange={(e) => handleChange('project_hashtag', e.target.value)}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+                placeholder="#推し誕生日"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                支援報告用ハッシュタグ
+              </label>
+              <input
+                type="text"
+                value={formData.support_hashtag}
+                onChange={(e) => handleChange('support_hashtag', e.target.value)}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+                placeholder="#推しを応援"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* 送信ボタン */}
-      <div className="flex justify-end">
+      <div className="flex justify-center">
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`
-            inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white
-            ${isSubmitting 
-              ? 'bg-pink-400 cursor-not-allowed' 
-              : 'bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
-            }
-          `}
+          className="bg-gradient-to-r from-oshi-pink-500 to-oshi-purple-500 text-white px-8 py-3 rounded-full hover:from-oshi-pink-600 hover:to-oshi-purple-600 transition-all duration-200 font-medium text-sm sm:text-base shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? (
-            <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <span className="flex items-center">
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               送信中...
-            </>
+            </span>
           ) : (
-            '企画を作成'
+            '企画を作成する'
           )}
         </button>
       </div>

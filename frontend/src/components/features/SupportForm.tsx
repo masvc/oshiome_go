@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '../../lib/auth';
 
 interface SupportFormProps {
   projectId: string;
@@ -10,19 +9,24 @@ interface SupportFormProps {
 
 type PaymentMethod = 'credit_card' | 'paypal' | 'bank_transfer';
 
+// 仮のユーザーデータ
+const mockUser = {
+  name: 'テストユーザー',
+  email: 'test@example.com',
+};
+
 export const SupportForm = ({
   projectId,
   projectTitle,
   amount,
   onClose,
 }: SupportFormProps) => {
-  const { user } = useAuth();
   const [step, setStep] = useState<'confirm' | 'payment' | 'complete'>(
     'confirm'
   );
   const [formData, setFormData] = useState({
-    nickname: user?.name || '',
-    email: user?.email || '',
+    nickname: mockUser.name,
+    email: mockUser.email,
     paymentMethod: '' as PaymentMethod,
     isAnonymous: false,
   });
@@ -41,7 +45,7 @@ export const SupportForm = ({
       return;
     }
 
-    // TODO: 支援処理の実装
+    // 仮の支援処理
     console.log('Support data:', {
       projectId,
       amount,

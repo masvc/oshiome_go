@@ -1,22 +1,20 @@
 import { Link } from 'react-router-dom';
 
 export interface ProjectCardProps {
-  project: {
-    id: string;
-    title: string;
-    description: string;
-    targetAmount: number;
-    currentAmount: number;
-    deadline: string;
-    imageUrl: string;
-    supporterCount: number;
-  };
+  id: string;
+  title: string;
+  description: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline: string;
+  imageUrl: string;
+  supporterCount: number;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
   // 進捗率を計算
   const progress = Math.min(
-    Math.round((project.currentAmount / project.targetAmount) * 100),
+    Math.round((props.currentAmount / props.targetAmount) * 100),
     100
   );
 
@@ -31,7 +29,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
   // 残り日数の計算
   const daysLeft = () => {
-    const end = new Date(project.deadline);
+    const end = new Date(props.deadline);
     const now = new Date();
     const diffTime = end.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -40,19 +38,19 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
   return (
     <Link
-      to={`/projects/${project.id}`}
+      to={`/projects/${props.id}`}
       className="group block bg-white rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all overflow-hidden border border-gray-100"
     >
       <div className="relative aspect-[4/3] sm:aspect-[16/9]">
         <img
-          src={project.imageUrl}
-          alt={project.title}
+          src={props.imageUrl}
+          alt={props.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
         <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
           <h3 className="font-display font-bold text-sm sm:text-base text-white mb-1 sm:mb-2 line-clamp-2 group-hover:text-oshi-pink-200 transition-colors">
-            {project.title}
+            {props.title}
           </h3>
         </div>
       </div>
@@ -61,10 +59,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           <div className="flex justify-between items-baseline">
             <div className="space-y-0.5">
               <div className="font-display font-bold text-lg sm:text-xl text-oshi-purple-500">
-                {formatAmount(project.currentAmount)}
+                {formatAmount(props.currentAmount)}
               </div>
               <div className="text-xs text-gray-500 font-body">
-                目標: {formatAmount(project.targetAmount)}
+                目標: {formatAmount(props.targetAmount)}
               </div>
             </div>
             <div className="text-right">
@@ -96,7 +94,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
               />
             </svg>
-            <span>{project.supporterCount}人が支援</span>
+            <span>{props.supporterCount}人が支援</span>
           </div>
           <div className="flex items-center gap-1.5 text-gray-600 font-body">
             <svg
