@@ -1,9 +1,8 @@
 // API Response types
 export interface ApiResponse<T> {
-  success: boolean;
-  message?: string;
+  status: 'success' | 'error';
   data?: T;
-  error?: string;
+  message?: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -53,3 +52,8 @@ export interface Vision {
   pdf_url: string;
   description: string;
 }
+
+// レスポンスの成功判定用のヘルパー関数
+export const isSuccessResponse = <T>(response: ApiResponse<T>): boolean => {
+  return response.status === 'success';
+};
