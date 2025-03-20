@@ -31,4 +31,15 @@ export const projectService = {
   deleteProject: (id: number) => {
     return client.delete<ApiResponse<void>>(API_ENDPOINTS.project(id));
   },
+
+  // 新規メソッド
+  getMyProjects: async (): Promise<ApiResponse<Project[]>> => {
+    const response = await client.get<ApiResponse<Project[]>>('/projects/my');
+    return response.data;
+  },
+
+  getSupportedProjects: async (): Promise<ApiResponse<Project[]>> => {
+    const response = await client.get<ApiResponse<Project[]>>('/projects/supported');
+    return response.data;
+  }
 }; 
