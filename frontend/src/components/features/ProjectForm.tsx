@@ -1,9 +1,4 @@
-import React, { useState } from 'react';
-
-interface ProjectFormProps {
-  onSubmit: (formData: any) => Promise<void>;
-  isSubmitting?: boolean;
-}
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 
 interface ProjectFormData {
   idol_name: string;
@@ -18,6 +13,19 @@ interface ProjectFormData {
   office_status: 'approved' | 'pending';
   project_hashtag?: string;
   support_hashtag?: string;
+}
+
+interface ProjectSubmissionData {
+  title: string;
+  description: string;
+  target_amount: number;
+  deadline: string;
+  status: 'draft';
+}
+
+interface ProjectFormProps {
+  onSubmit: (formData: ProjectSubmissionData) => Promise<void>;
+  isSubmitting?: boolean;
 }
 
 const defaultFormData: ProjectFormData = {
@@ -46,7 +54,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   const applyTemplate = (idolName: string) => {
     if (!idolName) return;
 
-    setFormData(prev => ({
+    setFormData((prev: ProjectFormData) => ({
       ...prev,
       idol_name: idolName,
       title: `${idolName}誕生日記念広告企画`,
@@ -73,7 +81,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       return date.toISOString().split('T')[0];
     };
 
-    setFormData(prev => ({
+    setFormData((prev: ProjectFormData) => ({
       ...prev,
       start_date: formatDate(startDate),
       end_date: formatDate(endDate),
@@ -81,7 +89,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   };
 
   const handleChange = (field: keyof ProjectFormData, value: string | number | File | null) => {
-    setFormData(prev => ({
+    setFormData((prev: ProjectFormData) => ({
       ...prev,
       [field]: value
     }));
@@ -134,7 +142,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -147,30 +155,25 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       return date.toISOString();
     };
 
-    const submissionData = {
+    const submissionData: ProjectSubmissionData = {
       title: formData.title,
       description: formData.description,
       target_amount: Number(formData.target_amount),
-      start_date: toTimestamp(formData.start_date),
-      end_date: toTimestamp(formData.end_date),
-      idol_name: formData.idol_name,
-      office_status: formData.office_status,
-      status: 'draft' as const,
-      thumbnail_url: formData.thumbnail_url || 'https://picsum.photos/seed/default/800/450',
-      current_amount: 0,
+      deadline: toTimestamp(formData.end_date),
+      status: 'draft',
     };
 
     await onSubmit(submissionData);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // 仮の画像URL生成
       const imageNumber = Math.floor(Math.random() * 10) + 1;
       const mockImageUrl = `https://picsum.photos/seed/${imageNumber}/800/450`;
       
-      setFormData(prev => ({
+      setFormData((prev: ProjectFormData) => ({
         ...prev,
         thumbnail_url: mockImageUrl,
         image_file: file
@@ -385,40 +388,32 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       </div>
 
       {/* 送信ボタン */}
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center space-y-4">
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-gradient-to-r from-oshi-pink-500 to-oshi-purple-500 text-white px-8 py-3 rounded-full hover:from-oshi-pink-600 hover:to-oshi-purple-600 transition-all duration-200 font-medium text-sm sm:text-base shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-oshi-pink-500 to-oshi-purple-500 text-white font-medium rounded-full shadow-sm hover:from-oshi-pink-600 hover:to-oshi-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-oshi-pink-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
-            <span className="flex items-center">
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              送信中...
-            </span>
+            <>
+              <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin"></div>
+              <span>送信中...</span>
+            </>
           ) : (
-            '企画を作成する'
+            '企画を申請する'
           )}
         </button>
+        <div className="w-full max-w-md bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4">
+          <div className="flex items-start space-x-3">
+            <svg className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+            </svg>
+            <div className="text-sm text-amber-800">
+              <p className="font-medium mb-1">申請後の流れ</p>
+              <p>企画は下書き状態で保存され、運営チームによる審査（約5営業日）を経て掲載されます。結果はメールにてご連絡いたします。</p>
+            </div>
+          </div>
+        </div>
       </div>
     </form>
   );

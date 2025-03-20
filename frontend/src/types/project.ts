@@ -1,6 +1,6 @@
 import { User } from './auth';
 
-export type ProjectStatus = 'active' | 'complete' | 'draft' | 'cancelled';
+export type ProjectStatus = 'draft' | 'active' | 'complete';
 
 export interface Project {
   id: number;
@@ -10,9 +10,10 @@ export interface Project {
   current_amount: number;
   deadline: string;
   status: ProjectStatus;
-  user_id: number;
+  thumbnail_url: string | null;
   created_at: string;
   updated_at: string;
+  user_id: number;
   user?: User;
   image_url?: string;
   supporters_count?: number;
@@ -30,10 +31,4 @@ export interface CreateProjectInput {
   status?: ProjectStatus;
 }
 
-export interface UpdateProjectInput {
-  title?: string;
-  description?: string;
-  target_amount?: number;
-  deadline?: string;
-  status?: ProjectStatus;
-} 
+export interface UpdateProjectInput extends Partial<CreateProjectInput> {} 
