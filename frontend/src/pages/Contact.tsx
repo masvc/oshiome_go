@@ -1,24 +1,29 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
+
+interface FormDataType {
+  name: string;
+  email: string;
+  projectTitle: string;
+  description: string;
+}
 
 export const Contact = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataType>({
     name: '',
     email: '',
     projectTitle: '',
     description: '',
-    image: null as File | null,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: フォームの送信処理を実装
     console.log('Form submitted:', formData);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData({ ...formData, image: e.target.files[0] });
-    }
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev: FormDataType) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -70,12 +75,11 @@ export const Contact = () => {
                   <input
                     type="text"
                     id="name"
+                    name="name"
                     required
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-oshi-purple-500 focus:border-transparent transition-all"
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -90,12 +94,11 @@ export const Contact = () => {
                   <input
                     type="email"
                     id="email"
+                    name="email"
                     required
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-oshi-purple-500 focus:border-transparent transition-all"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -110,13 +113,12 @@ export const Contact = () => {
                   <input
                     type="text"
                     id="projectTitle"
+                    name="projectTitle"
                     required
                     placeholder="例：○○さんの誕生日を渋谷の大型ビジョンでお祝い！"
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-oshi-purple-500 focus:border-transparent transition-all"
                     value={formData.projectTitle}
-                    onChange={(e) =>
-                      setFormData({ ...formData, projectTitle: e.target.value })
-                    }
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -130,63 +132,14 @@ export const Contact = () => {
                   </label>
                   <textarea
                     id="description"
+                    name="description"
                     required
                     rows={6}
                     placeholder="企画の目的、実施したい内容、目標金額、実施時期などについて具体的にご記入ください。"
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-oshi-purple-500 focus:border-transparent transition-all resize-none"
                     value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
+                    onChange={handleChange}
                   />
-                </div>
-
-                {/* 画像アップロード */}
-                <div>
-                  <label
-                    htmlFor="image"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    企画イメージ画像
-                  </label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-200 border-dashed rounded-xl bg-gray-50 transition-all hover:border-oshi-purple-400">
-                    <div className="space-y-2 text-center">
-                      <svg
-                        className="mx-auto h-12 w-12 text-gray-400"
-                        stroke="currentColor"
-                        fill="none"
-                        viewBox="0 0 48 48"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <div className="flex text-sm text-gray-600 justify-center">
-                        <label
-                          htmlFor="image"
-                          className="relative cursor-pointer bg-white rounded-md font-medium text-oshi-purple-500 hover:text-oshi-pink-500 focus-within:outline-none"
-                        >
-                          <span>画像をアップロード</span>
-                          <input
-                            id="image"
-                            name="image"
-                            type="file"
-                            accept="image/*"
-                            className="sr-only"
-                            onChange={handleFileChange}
-                          />
-                        </label>
-                        <p className="pl-1">またはドラッグ＆ドロップ</p>
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        PNG, JPG, GIF (最大 10MB)
-                      </p>
-                    </div>
-                  </div>
                 </div>
 
                 {/* 送信ボタン */}
