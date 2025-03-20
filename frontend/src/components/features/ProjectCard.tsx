@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useFavorites } from '../../hooks/useFavorites';
 
 export interface ProjectCardProps {
   id: string;
@@ -26,10 +27,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   currentAmount,
   supporterCount,
   deadline,
-  is_favorite,
+  is_favorite: propIsFavorite,
   onFavoriteToggle,
   creator
 }) => {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isFavoriteState = propIsFavorite ?? isFavorite(id);
+
   // 金額のフォーマット
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat('ja-JP', {
@@ -60,6 +64,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     e.preventDefault(); // リンクのナビゲーションを防ぐ
     if (onFavoriteToggle) {
       onFavoriteToggle(id);
+    } else {
+      toggleFavorite({
+        id,
+        title,
+        description,
+        imageUrl,
+        targetAmount,
+        currentAmount,
+        supporterCount,
+        deadline,
+        creator
+      });
     }
   };
 
@@ -76,31 +92,19 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
         <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-          <h3 className="font-display font-bold text-sm sm:text-base text-white line-clamp-2 group-hover:text-oshi-pink-200 transition-colors">
-            {title}
-          </h3>
-        </div>
-        <div className="absolute top-4 right-2 flex items-center gap-2">
-          {creator && (
-            <div className="flex items-center gap-1.5 bg-gradient-to-r from-oshi-purple-500/90 to-oshi-pink-500/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
-              <img
-                src={creator.avatarUrl}
-                alt={creator.name}
-                className="w-5 h-5 rounded-full border border-white/30"
-              />
-              <span className="text-xs font-bold text-white">{creator.name}</span>
-            </div>
-          )}
-          {onFavoriteToggle && (
+          <div className="flex justify-between items-end">
+            <h3 className="font-display font-bold text-sm sm:text-base text-white line-clamp-2 group-hover:text-oshi-pink-200 transition-colors flex-1 mr-4">
+              {title}
+            </h3>
             <button
               onClick={handleFavoriteClick}
-              className="p-2 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
+              className="p-2 rounded-full bg-black/30 hover:bg-black/50 transition-colors shrink-0"
             >
               <svg
                 className={`w-5 h-5 ${
-                  is_favorite ? 'text-oshi-pink-400' : 'text-white'
+                  isFavoriteState ? 'text-oshi-pink-400' : 'text-white'
                 }`}
-                fill={is_favorite ? 'currentColor' : 'none'}
+                fill={isFavoriteState ? 'currentColor' : 'none'}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -112,6 +116,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                 />
               </svg>
             </button>
+          </div>
+        </div>
+        <div className="absolute top-4 right-2 flex items-center gap-2">
+          {creator && (
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-oshi-purple-500/90 to-oshi-pink-500/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
+              <img
+                src={creator.avatarUrl}
+                alt={creator.name}
+                className="w-5 h-5 rounded-full border border-white/30"
+              />
+              <span className="text-xs font-bold text-white">{creator.name}</span>
+            </div>
           )}
         </div>
       </div>
