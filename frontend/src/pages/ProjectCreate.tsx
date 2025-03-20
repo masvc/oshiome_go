@@ -1,36 +1,37 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProjectForm } from '../components/features/ProjectForm';
-
-// 仮のユーザーデータ
-const mockUser = {
-  id: '1',
-  name: 'テストユーザー',
-  email: 'test@example.com',
-};
+import { projectService } from '../api/services/projectService';
+import { CreateProjectInput } from '../types/project';
+import { useAuthStore } from '../stores/authStore';
 
 export const ProjectCreate = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData: CreateProjectInput) => {
+    if (!isAuthenticated) {
+      setError('プロジェクトを作成するにはログインが必要です。');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setError(null);
 
-      // 仮のプロジェクト作成処理
-      console.log('プロジェクト作成データ:', {
+      const response = await projectService.createProject({
         ...formData,
-        creator_id: mockUser.id,
-        status: 'pending',
+        status: 'draft', // 常にドラフトで作成
       });
 
-      // 遅延を追加して非同期処理をシミュレート
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // 作成成功後、プロジェクト一覧ページに遷移
-      navigate('/projects');
+      if (response) {
+        // 作成成功後、マイプロジェクトページに遷移
+        navigate('/my-projects');
+      } else {
+        setError('プロジェクトの作成に失敗しました。');
+      }
     } catch (err) {
       console.error('プロジェクト作成エラー:', err);
       setError('プロジェクトの作成に失敗しました。もう一度お試しください。');
