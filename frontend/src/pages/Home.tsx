@@ -4,6 +4,7 @@ import { Project } from '../types/project';
 import mainVisual from '../assets/mainvisual.png';
 import { useEffect, useState } from 'react';
 import { GlitterEffect } from '../components/common/GlitterEffect';
+import { projectService } from '../api/services/projectService';
 
 // サービスの特徴データ
 const features = [
@@ -111,13 +112,17 @@ export const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 仮のデータを使用
     const fetchPopularProjects = async () => {
       try {
         setLoading(true);
-        // 遅延を追加して非同期処理をシミュレート
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setPopularProjects(mockProjects);
+        const response = await projectService.getProjects('active');
+        // サポーター数で降順ソートして上位3件を取得
+        const sortedProjects = response.data
+          .sort((a, b) => (b.supporters_count || 0) - (a.supporters_count || 0))
+          .slice(0, 3);
+        setPopularProjects(sortedProjects);
+      } catch (error) {
+        console.error('プロジェクト取得エラー:', error);
       } finally {
         setLoading(false);
       }
@@ -129,7 +134,7 @@ export const Home = () => {
   // プロジェクトデータをProjectCardコンポーネントの形式に変換
   const formatProjectForCard = (project: Project) => {
     return {
-      id: project.id,
+      id: project.id.toString(),
       title: project.title,
       description: project.description || '',
       targetAmount: project.target_amount,
@@ -137,6 +142,10 @@ export const Home = () => {
       deadline: project.end_date,
       imageUrl: project.image_url || 'https://picsum.photos/seed/default/800/450',
       supporterCount: project.supporters_count || 0,
+      creator: project.user ? {
+        name: project.user.name,
+        avatarUrl: project.user.profile_image_url || 'https://picsum.photos/seed/default/100/100'
+      } : undefined
     };
   };
 
