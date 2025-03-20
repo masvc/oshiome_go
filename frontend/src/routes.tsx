@@ -16,6 +16,9 @@ import { MyPage } from './pages/MyPage';
 import { Favorites } from './pages/Favorites';
 import { SupportedProjects } from './pages/SupportedProjects';
 import { OshiTags } from './pages/OshiTags';
+import { LoginForm } from './components/auth/LoginForm';
+import { RegisterForm } from './components/auth/RegisterForm';
+import { PrivateRoute } from './components/auth/PrivateRoute';
 
 export const AppRoutes = () => {
   return (
@@ -23,10 +26,10 @@ export const AppRoutes = () => {
       <Header />
       <main className="flex-grow">
         <Routes>
+          {/* パブリックルート */}
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
-          <Route path="/projects/create" element={<ProjectCreate />} />
           <Route path="/guide" element={<Guide />} />
           <Route path="/agencies" element={<Agencies />} />
           <Route path="/visions" element={<Visions />} />
@@ -34,10 +37,50 @@ export const AppRoutes = () => {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/mypage" element={<MyPage />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/supported-projects" element={<SupportedProjects />} />
-          <Route path="/oshi-tags" element={<OshiTags />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+
+          {/* 保護されたルート */}
+          <Route
+            path="/projects/create"
+            element={
+              <PrivateRoute>
+                <ProjectCreate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/mypage"
+            element={
+              <PrivateRoute>
+                <MyPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/favorites"
+            element={
+              <PrivateRoute>
+                <Favorites />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/supported-projects"
+            element={
+              <PrivateRoute>
+                <SupportedProjects />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/oshi-tags"
+            element={
+              <PrivateRoute>
+                <OshiTags />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </main>
       <Footer />

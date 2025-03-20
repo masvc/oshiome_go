@@ -1,7 +1,7 @@
 import { client } from '../client';
 import { API_ENDPOINTS } from '../config';
 import { User, LoginCredentials, RegisterCredentials } from '../../types/auth';
-import { APIResponse } from '../../types/api';
+import { ApiResponse } from '../../types';
 
 interface AuthResponse {
   user: User;
@@ -11,32 +11,32 @@ interface AuthResponse {
 export const authService = {
   // ログイン
   login: (credentials: LoginCredentials) => {
-    return client.post<APIResponse<AuthResponse>>('/auth/login', credentials);
+    return client.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.auth.login, credentials);
   },
 
   // 新規登録
   register: (credentials: RegisterCredentials) => {
-    return client.post<APIResponse<AuthResponse>>('/auth/register', credentials);
+    return client.post<ApiResponse<AuthResponse>>(API_ENDPOINTS.auth.register, credentials);
   },
 
   // ログアウト
   logout: () => {
-    return client.post<APIResponse<void>>('/auth/logout', {});
+    return Promise.resolve();  // トークンの削除は authStore で行うため、空のPromiseを返す
   },
 
   // 現在のユーザー情報を取得
   getCurrentUser: () => {
-    return client.get<APIResponse<User>>('/auth/me');
+    return client.get<ApiResponse<User>>(API_ENDPOINTS.auth.me);
   },
 
   // パスワードリセット要求
   requestPasswordReset: (email: string) => {
-    return client.post<APIResponse<void>>('/auth/password-reset', { email });
+    return client.post<ApiResponse<void>>(API_ENDPOINTS.auth.passwordReset, { email });
   },
 
   // パスワードリセット
   resetPassword: (token: string, password: string) => {
-    return client.post<APIResponse<void>>('/auth/password-reset/confirm', {
+    return client.post<ApiResponse<void>>(API_ENDPOINTS.auth.passwordResetConfirm, {
       token,
       password,
     });

@@ -1,5 +1,5 @@
 // API設定
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export const API_CONFIG = {
   baseURL: API_BASE_URL,
@@ -13,7 +13,6 @@ export const API_ENDPOINTS = {
   auth: {
     login: '/api/login',
     register: '/api/register',
-    logout: '/api/logout',
     me: '/api/auth/me',
     passwordReset: '/api/auth/password-reset',
     passwordResetConfirm: '/api/auth/password-reset/confirm',

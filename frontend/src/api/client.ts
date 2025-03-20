@@ -1,5 +1,5 @@
 import { API_BASE_URL } from './config';
-import { APIErrorResponse, APIError } from '../../types/error';
+import { APIErrorResponse, APIError } from '../types/error';
 
 // 認証トークンの保存・取得
 const AUTH_TOKEN_KEY = 'auth_token';
