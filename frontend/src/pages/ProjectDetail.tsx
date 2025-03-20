@@ -11,12 +11,113 @@ interface SupportPlan {
   benefits: string[];
 }
 
+// Stripe対応待ちモーダル
+const StripeComingSoonModal = ({ onClose }: { onClose: () => void }) => {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl max-w-md w-full p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">支払い機能について</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="space-y-4">
+          <p className="text-gray-600">
+            現在、Stripeによる支払い機能を実装中です。
+            しばらくお待ちください。
+          </p>
+          <div className="bg-oshi-purple-50 p-4 rounded-lg">
+            <h3 className="font-medium text-oshi-purple-800 mb-2">
+              実装予定の機能
+            </h3>
+            <ul className="space-y-2 text-sm text-oshi-purple-700">
+              <li className="flex items-center gap-2">
+                <svg
+                  className="w-4 h-4 text-oshi-purple-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                クレジットカード決済
+              </li>
+              <li className="flex items-center gap-2">
+                <svg
+                  className="w-4 h-4 text-oshi-purple-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                セキュアな支払い処理
+              </li>
+              <li className="flex items-center gap-2">
+                <svg
+                  className="w-4 h-4 text-oshi-purple-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                支払い履歴の管理
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-6">
+          <button
+            onClick={onClose}
+            className="w-full bg-oshi-purple-500 text-white py-3 rounded-full font-bold hover:bg-oshi-purple-600 transition-colors"
+          >
+            閉じる
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const ProjectDetail = () => {
   const { id } = useParams();
   const [showSupportForm, setShowSupportForm] = useState(false);
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showStripeModal, setShowStripeModal] = useState(false);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -276,7 +377,7 @@ export const ProjectDetail = () => {
                 </h2>
                 <div className="space-y-4">
                   <button
-                    onClick={() => setShowSupportForm(true)}
+                    onClick={() => setShowStripeModal(true)}
                     className="w-full bg-white border-2 border-oshi-purple-200 rounded-lg p-4 hover:border-oshi-purple-500 hover:bg-oshi-purple-50/50 transition-all duration-300 text-left relative group shadow-sm hover:shadow-md"
                   >
                     <div className="flex justify-between items-start mb-3">
@@ -353,6 +454,11 @@ export const ProjectDetail = () => {
           projectId={parseInt(id || '0')}
           onClose={() => setShowSupportForm(false)}
         />
+      )}
+
+      {/* Stripe対応待ちモーダル */}
+      {showStripeModal && (
+        <StripeComingSoonModal onClose={() => setShowStripeModal(false)} />
       )}
     </>
   );

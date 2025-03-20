@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { LoginCredentials } from '../../types/auth';
 import { ErrorMessages } from '../../types/error';
@@ -36,7 +36,7 @@ export const LoginForm = () => {
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">ログイン</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-900">ログイン</h2>
       {error && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
           {error}
@@ -74,11 +74,20 @@ export const LoginForm = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-oshi-purple-600 hover:bg-oshi-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-oshi-purple-500 disabled:opacity-50 transition-colors"
         >
           {isLoading ? 'ログイン中...' : 'ログイン'}
         </button>
       </form>
+      <div className="mt-6 text-center space-y-2">
+        <p className="text-sm text-gray-600">
+          アカウントをお持ちでない方は
+          <Link to="/register" className="ml-1 text-oshi-purple-600 hover:text-oshi-purple-500 font-medium">
+            新規登録
+          </Link>
+          へ
+        </p>
+      </div>
     </div>
   );
 }; 
