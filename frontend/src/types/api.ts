@@ -6,7 +6,7 @@ export interface Project {
   targetAmount: number;
   currentAmount: number;
   deadline: string;
-  status: 'draft' | 'active' | 'ended' | 'cancelled';
+  status: 'draft' | 'active' | 'complete' | 'cancelled';
   supporters_count: number;
   createdAt: string;
   updatedAt: string;

@@ -28,7 +28,7 @@ export const projectRepository = {
   },
 
   // プロジェクトのステータスを変更
-  updateProjectStatus: (id: string, status: 'draft' | 'active' | 'ended' | 'cancelled') => {
+  updateProjectStatus: (id: string, status: 'draft' | 'active' | 'complete' | 'cancelled') => {
     return client.patch<APIResponse<Project>>(`/projects/${id}/status`, { status });
   },
 

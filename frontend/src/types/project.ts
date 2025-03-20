@@ -1,6 +1,6 @@
 import { User } from './auth';
 
-export type ProjectStatus = 'draft' | 'active' | 'ended' | 'cancelled';
+export type ProjectStatus = 'active' | 'complete' | 'draft' | 'cancelled';
 
 export interface Project {
   id: number;
@@ -14,6 +14,12 @@ export interface Project {
   created_at: string;
   updated_at: string;
   user?: User;
+  image_url?: string;
+  supporters_count?: number;
+  creator?: {
+    name: string;
+    avatar_url: string;
+  };
 }
 
 export interface CreateProjectInput {

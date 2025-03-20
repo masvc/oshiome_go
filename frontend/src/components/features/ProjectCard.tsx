@@ -11,6 +11,10 @@ export interface ProjectCardProps {
   deadline: string;
   is_favorite?: boolean;
   onFavoriteToggle?: (projectId: string) => void;
+  creator?: {
+    name: string;
+    avatarUrl: string;
+  };
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -23,7 +27,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   supporterCount,
   deadline,
   is_favorite,
-  onFavoriteToggle
+  onFavoriteToggle,
+  creator
 }) => {
   // 金額のフォーマット
   const formatAmount = (amount: number) => {
@@ -71,32 +76,44 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
         <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-          <h3 className="font-display font-bold text-sm sm:text-base text-white mb-1 sm:mb-2 line-clamp-2 group-hover:text-oshi-pink-200 transition-colors">
+          <h3 className="font-display font-bold text-sm sm:text-base text-white line-clamp-2 group-hover:text-oshi-pink-200 transition-colors">
             {title}
           </h3>
         </div>
-        {onFavoriteToggle && (
-          <button
-            onClick={handleFavoriteClick}
-            className="absolute top-2 right-2 p-2 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
-          >
-            <svg
-              className={`w-5 h-5 ${
-                is_favorite ? 'text-oshi-pink-400' : 'text-white'
-              }`}
-              fill={is_favorite ? 'currentColor' : 'none'}
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+        <div className="absolute top-4 right-2 flex items-center gap-2">
+          {creator && (
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-oshi-purple-500/90 to-oshi-pink-500/90 backdrop-blur-sm px-2 py-1 rounded-full shadow-sm">
+              <img
+                src={creator.avatarUrl}
+                alt={creator.name}
+                className="w-5 h-5 rounded-full border border-white/30"
               />
-            </svg>
-          </button>
-        )}
+              <span className="text-xs font-bold text-white">{creator.name}</span>
+            </div>
+          )}
+          {onFavoriteToggle && (
+            <button
+              onClick={handleFavoriteClick}
+              className="p-2 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
+            >
+              <svg
+                className={`w-5 h-5 ${
+                  is_favorite ? 'text-oshi-pink-400' : 'text-white'
+                }`}
+                fill={is_favorite ? 'currentColor' : 'none'}
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
       <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
         <div className="space-y-2">

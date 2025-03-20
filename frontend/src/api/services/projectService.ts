@@ -4,10 +4,12 @@ import { Project, CreateProjectInput, UpdateProjectInput, ApiResponse, Paginated
 
 export const projectService = {
   // プロジェクト一覧を取得
-  getProjects: (page = 1, perPage = 10) => {
-    return client.get<PaginatedResponse<Project>>(
-      `${API_ENDPOINTS.projects}?page=${page}&perPage=${perPage}`
-    );
+  getProjects: (filter?: 'all' | 'active' | 'complete') => {
+    const params = new URLSearchParams();
+    if (filter && filter !== 'all') {
+      params.append('status', filter);
+    }
+    return client.get<ApiResponse<Project[]>>(`${API_ENDPOINTS.projects}?${params.toString()}`);
   },
 
   // プロジェクト詳細を取得
