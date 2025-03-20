@@ -4,7 +4,7 @@ import { userService } from '../api/services/userService';
 import { User } from '../types';
 
 // モックデータ用の型定義
-type AvatarStyle = 'ADVENTURER' | 'THUMBS' | 'MINIAVS' | 'LORELEI' | 'MICAH' | 'INITIALS' | 'RINGS' | 'MARBLE' | 'SUNSET' | 'PIXEL_ART';
+type AvatarStyle = 'ADVENTURER' | 'THUMBS' | 'MINIAVS' | 'LORELEI' | 'MICAH' | 'INITIALS' | 'RINGS' | 'PIXEL_ART';
 
 const AVATAR_STYLES = {
   ADVENTURER: 'ADVENTURER',
@@ -14,8 +14,6 @@ const AVATAR_STYLES = {
   MICAH: 'MICAH',
   INITIALS: 'INITIALS',
   RINGS: 'RINGS',
-  MARBLE: 'MARBLE',
-  SUNSET: 'SUNSET',
   PIXEL_ART: 'PIXEL_ART'
 } as const;
 
@@ -40,12 +38,6 @@ const AVATAR_STYLE_INFO = {
   },
   RINGS: {
     label: 'リング'
-  },
-  MARBLE: {
-    label: 'マーブル'
-  },
-  SUNSET: {
-    label: 'サンセット'
   },
   PIXEL_ART: {
     label: 'ピクセル'
@@ -139,8 +131,6 @@ export const MyPage = () => {
         MICAH: 'micah',
         INITIALS: 'initials',
         RINGS: 'rings',
-        MARBLE: 'marble',
-        SUNSET: 'sunset',
         PIXEL_ART: 'pixel-art'
       };
       const newAvatarUrl = `https://api.dicebear.com/7.x/${styleMap[style]}/svg?seed=${currentUser?.email}`;
