@@ -63,7 +63,11 @@ func (h *ProjectHandler) ListProjects(c *gin.Context) {
 	var projects []models.Project
 	query := h.db.Preload("User")
 
-	if c.Query("status") == "" {
+	status := c.Query("status")
+	if status != "" {
+		query = query.Where("status = ?", status)
+	} else {
+		// デフォルトでは実施中のプロジェクトのみを表示
 		query = query.Where("status = ?", models.ProjectStatusActive)
 	}
 
@@ -173,4 +177,41 @@ func (h *ProjectHandler) DeleteProject(c *gin.Context) {
 	if !c.IsAborted() {
 		respond(c, http.StatusOK, gin.H{"message": "プロジェクトを削除しました"})
 	}
+}
+
+// ListMyProjects ユーザーの主催プロジェクト一覧を取得
+func (h *ProjectHandler) ListMyProjects(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.Error(utils.ErrUnauthorized)
+		return
+	}
+
+	var projects []models.Project
+	if err := h.db.Preload("User").Where("user_id = ?", userID).Find(&projects).Error; err != nil {
+		c.Error(utils.ErrInternalServer.WithDetail(utils.ErrMsgProjectListFail))
+		return
+	}
+
+	respond(c, http.StatusOK, projects)
+}
+
+// ListSupportedProjects ユーザーの支援プロジェクト一覧を取得
+func (h *ProjectHandler) ListSupportedProjects(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.Error(utils.ErrUnauthorized)
+		return
+	}
+
+	var projects []models.Project
+	if err := h.db.Preload("User").
+		Joins("JOIN supports ON supports.project_id = projects.id").
+		Where("supports.user_id = ?", userID).
+		Find(&projects).Error; err != nil {
+		c.Error(utils.ErrInternalServer.WithDetail(utils.ErrMsgProjectListFail))
+		return
+	}
+
+	respond(c, http.StatusOK, projects)
 }

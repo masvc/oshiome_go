@@ -211,8 +211,16 @@ export const ProjectDetail = () => {
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-md text-sm font-medium">
-                        {project.status === 'active' ? '実施中' : '終了'}
+                      <span className={`px-2 py-1 rounded-md text-sm font-medium ${
+                        project.status === 'draft' ? 'bg-gray-100 text-gray-600' :
+                        project.status === 'active' ? 'bg-green-100 text-green-600' :
+                        project.status === 'complete' ? 'bg-blue-100 text-blue-600' :
+                        'bg-red-100 text-red-600'
+                      }`}>
+                        {project.status === 'draft' ? '下書き' :
+                         project.status === 'active' ? '実施中' :
+                         project.status === 'complete' ? '完了' :
+                         'キャンセル'}
                       </span>
                     </div>
                     {/* 企画者情報 */}

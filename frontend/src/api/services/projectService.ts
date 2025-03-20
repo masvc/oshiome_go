@@ -4,7 +4,7 @@ import { Project, CreateProjectInput, UpdateProjectInput, ApiResponse, Paginated
 
 export const projectService = {
   // プロジェクト一覧を取得
-  getProjects: (filter?: 'all' | 'active' | 'complete') => {
+  getProjects: (filter?: 'all' | 'active' | 'complete' | 'draft') => {
     const params = new URLSearchParams();
     if (filter && filter !== 'all') {
       params.append('status', filter);
@@ -33,13 +33,13 @@ export const projectService = {
   },
 
   // 新規メソッド
-  getMyProjects: async (): Promise<ApiResponse<Project[]>> => {
-    const response = await client.get<ApiResponse<Project[]>>('/projects/my');
-    return response.data;
+  getMyProjects: async (): Promise<Project[]> => {
+    const response = await client.get<ApiResponse<Project[]>>(API_ENDPOINTS.myProjects);
+    return response.data ?? [];
   },
 
-  getSupportedProjects: async (): Promise<ApiResponse<Project[]>> => {
-    const response = await client.get<ApiResponse<Project[]>>('/projects/supported');
-    return response.data;
+  getSupportedProjects: async (): Promise<Project[]> => {
+    const response = await client.get<ApiResponse<Project[]>>(API_ENDPOINTS.supportedProjects);
+    return response.data ?? [];
   }
 }; 
