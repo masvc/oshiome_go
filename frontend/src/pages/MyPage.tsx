@@ -1,71 +1,127 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuthStore } from '../stores/authStore';
+import { userService } from '../api/services/userService';
+import { User } from '../types';
 
 // モックデータ用の型定義
-type AvatarStyle = 'ADVENTURER' | 'PIXEL_ART' | 'IDENTICON';
+type AvatarStyle = 'ADVENTURER' | 'THUMBS' | 'MINIAVS' | 'LORELEI' | 'MICAH' | 'INITIALS' | 'RINGS' | 'MARBLE' | 'SUNSET' | 'PIXEL_ART';
 
 const AVATAR_STYLES = {
   ADVENTURER: 'ADVENTURER',
-  PIXEL_ART: 'PIXEL_ART',
-  IDENTICON: 'IDENTICON'
+  THUMBS: 'THUMBS',
+  MINIAVS: 'MINIAVS',
+  LORELEI: 'LORELEI',
+  MICAH: 'MICAH',
+  INITIALS: 'INITIALS',
+  RINGS: 'RINGS',
+  MARBLE: 'MARBLE',
+  SUNSET: 'SUNSET',
+  PIXEL_ART: 'PIXEL_ART'
 } as const;
 
 const AVATAR_STYLE_INFO = {
   ADVENTURER: {
-    label: 'アドベンチャー',
-    category: 'イラスト'
+    label: 'アドベンチャー'
+  },
+  THUMBS: {
+    label: 'サムネイル'
+  },
+  MINIAVS: {
+    label: 'ミニアバター'
+  },
+  LORELEI: {
+    label: 'ロレライ'
+  },
+  MICAH: {
+    label: 'ミカ'
+  },
+  INITIALS: {
+    label: 'イニシャル'
+  },
+  RINGS: {
+    label: 'リング'
+  },
+  MARBLE: {
+    label: 'マーブル'
+  },
+  SUNSET: {
+    label: 'サンセット'
   },
   PIXEL_ART: {
-    label: 'ピクセルアート',
-    category: 'イラスト'
-  },
-  IDENTICON: {
-    label: 'アイデンティコン',
-    category: 'パターン'
+    label: 'ピクセル'
   }
 };
 
 export const MyPage = () => {
+  const { user: currentUser } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [profile, setProfile] = useState({
-    nickname: 'ユーザー1',
-    email: 'user1@example.com',
-    bio: 'よろしくお願いします！',
-    profile_image_url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=user1'
-  });
+  const [profile, setProfile] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProfile, setEditedProfile] = useState(profile);
+  const [editedProfile, setEditedProfile] = useState<User | null>(null);
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [selectedAvatarStyle, setSelectedAvatarStyle] = useState<AvatarStyle>('ADVENTURER');
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!currentUser?.id) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await userService.getUser(currentUser.id);
+        setProfile(response.data);
+        setEditedProfile(response.data);
+      } catch (error: any) {
+        setError('プロフィール情報の取得に失敗しました');
+        console.error('プロフィール取得エラー:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [currentUser?.id]);
+
   const handleProfileUpdate = async () => {
+    if (!currentUser?.id || !editedProfile) return;
+
     try {
       setLoading(true);
       setError(null);
       
-      // モック: プロフィール更新の成功をシミュレート
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setProfile(editedProfile);
+      const response = await userService.updateUser(currentUser.id, {
+        name: editedProfile.name,
+        bio: editedProfile.bio,
+        profile_image_url: editedProfile.profile_image_url,
+      });
+
+      setProfile(response.data);
       setIsEditing(false);
     } catch (error: any) {
       setError('プロフィールの更新に失敗しました');
+      console.error('プロフィール更新エラー:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handlePasswordChange = async () => {
+    if (!currentUser?.id) return;
+
     try {
       setLoading(true);
       setError(null);
 
-      // モック: パスワード更新の成功をシミュレート
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await userService.updatePassword(currentUser.id, currentPassword, newPassword);
       setNewPassword('');
+      setCurrentPassword('');
       setShowPasswordChange(false);
     } catch (error: any) {
       setError('パスワードの更新に失敗しました');
+      console.error('パスワード更新エラー:', error);
     } finally {
       setLoading(false);
     }
@@ -73,9 +129,23 @@ export const MyPage = () => {
 
   const handleAvatarStyleChange = (style: AvatarStyle) => {
     setSelectedAvatarStyle(style);
-    // モック: 新しいアバターURLを生成
-    const newAvatarUrl = `https://api.dicebear.com/7.x/${style.toLowerCase()}/svg?seed=user1`;
-    setEditedProfile({ ...editedProfile, profile_image_url: newAvatarUrl });
+    if (editedProfile) {
+      // スタイル名をDicebearのAPI用に変換
+      const styleMap: Record<AvatarStyle, string> = {
+        ADVENTURER: 'adventurer',
+        THUMBS: 'thumbs',
+        MINIAVS: 'miniavs',
+        LORELEI: 'lorelei',
+        MICAH: 'micah',
+        INITIALS: 'initials',
+        RINGS: 'rings',
+        MARBLE: 'marble',
+        SUNSET: 'sunset',
+        PIXEL_ART: 'pixel-art'
+      };
+      const newAvatarUrl = `https://api.dicebear.com/7.x/${styleMap[style]}/svg?seed=${currentUser?.email}`;
+      setEditedProfile({ ...editedProfile, profile_image_url: newAvatarUrl });
+    }
   };
 
   const avatarStyles = Object.entries(AVATAR_STYLE_INFO).map(([value, info]) => ({
@@ -83,18 +153,12 @@ export const MyPage = () => {
     ...info
   }));
 
-  // カテゴリーごとにアバターをグループ化
-  const groupedAvatarStyles = avatarStyles.reduce((acc, style) => {
-    const category = style.category;
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(style);
-    return acc;
-  }, {} as Record<string, typeof avatarStyles>);
-
   if (loading && !profile) {
     return <div className="text-center p-4">読み込み中...</div>;
+  }
+
+  if (!profile) {
+    return <div className="text-center p-4">プロフィールが見つかりません</div>;
   }
 
   return (
@@ -124,14 +188,10 @@ export const MyPage = () => {
                   onChange={(e) => handleAvatarStyleChange(e.target.value as AvatarStyle)}
                   className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500"
                 >
-                  {Object.entries(groupedAvatarStyles).map(([category, styles]) => (
-                    <optgroup key={category} label={category}>
-                      {styles.map((style) => (
-                        <option key={style.value} value={style.value}>
-                          {style.label}
-                        </option>
-                      ))}
-                    </optgroup>
+                  {avatarStyles.map((style) => (
+                    <option key={style.value} value={style.value}>
+                      {style.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -143,7 +203,7 @@ export const MyPage = () => {
           <div className="space-y-4">
             <div>
               <h2 className="text-sm font-medium text-gray-500">ニックネーム</h2>
-              <p className="mt-1">{profile?.nickname}</p>
+              <p className="mt-1">{profile?.name}</p>
             </div>
             <div>
               <h2 className="text-sm font-medium text-gray-500">メールアドレス</h2>
@@ -176,8 +236,8 @@ export const MyPage = () => {
               </label>
               <input
                 type="text"
-                value={editedProfile.nickname || ''}
-                onChange={(e) => setEditedProfile({ ...editedProfile, nickname: e.target.value })}
+                value={editedProfile?.name || ''}
+                onChange={(e) => editedProfile && setEditedProfile({ ...editedProfile, name: e.target.value })}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500"
               />
             </div>
@@ -187,9 +247,9 @@ export const MyPage = () => {
               </label>
               <input
                 type="email"
-                value={editedProfile.email || ''}
-                onChange={(e) => setEditedProfile({ ...editedProfile, email: e.target.value })}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500"
+                value={editedProfile?.email || ''}
+                disabled
+                className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 shadow-sm"
               />
             </div>
             <div>
@@ -197,8 +257,8 @@ export const MyPage = () => {
                 自己紹介
               </label>
               <textarea
-                value={editedProfile.bio || ''}
-                onChange={(e) => setEditedProfile({ ...editedProfile, bio: e.target.value })}
+                value={editedProfile?.bio || ''}
+                onChange={(e) => editedProfile && setEditedProfile({ ...editedProfile, bio: e.target.value })}
                 rows={4}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500"
               />
@@ -231,6 +291,17 @@ export const MyPage = () => {
             <form onSubmit={(e) => { e.preventDefault(); handlePasswordChange(); }} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
+                  現在のパスワード
+                </label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
                   新しいパスワード
                 </label>
                 <input
@@ -243,7 +314,7 @@ export const MyPage = () => {
               <div className="flex space-x-4">
                 <button
                   type="submit"
-                  disabled={loading || !newPassword}
+                  disabled={loading || !currentPassword || !newPassword}
                   className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 transition-colors disabled:opacity-50"
                 >
                   {loading ? '更新中...' : 'パスワードを更新'}
@@ -252,6 +323,7 @@ export const MyPage = () => {
                   type="button"
                   onClick={() => {
                     setShowPasswordChange(false);
+                    setCurrentPassword('');
                     setNewPassword('');
                   }}
                   className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
