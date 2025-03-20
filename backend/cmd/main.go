@@ -40,12 +40,13 @@ func main() {
 	r := gin.Default()
 
 	// CORSの設定
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Stripe-Signature"},
-		AllowCredentials: true,
-	}))
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:5173"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Stripe-Signature"}
+	config.AllowCredentials = true
+	config.ExposeHeaders = []string{"Content-Length"}
+	r.Use(cors.New(config))
 
 	// ミドルウェアの設定
 	r.Use(middleware.ErrorHandler())
@@ -75,6 +76,7 @@ func main() {
 	protected.Use(middleware.AuthMiddleware())
 	{
 		// ユーザー関連
+		protected.GET("/auth/me", userHandler.GetCurrentUser)
 		protected.GET("/users/:id", userHandler.GetUser)
 
 		// プロジェクト関連（作成・更新・削除は認証必要）

@@ -127,3 +127,23 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		Data:   user,
 	})
 }
+
+// GetCurrentUser 現在のログインユーザーの情報を取得
+func (h *UserHandler) GetCurrentUser(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.Error(utils.ErrUnauthorized.WithDetail("認証情報が見つかりません"))
+		return
+	}
+
+	var user models.User
+	if err := h.db.First(&user, userID).Error; err != nil {
+		c.Error(utils.ErrNotFound.WithDetail("ユーザーが見つかりません"))
+		return
+	}
+
+	c.JSON(http.StatusOK, Response{
+		Status: "success",
+		Data:   user,
+	})
+}
