@@ -20,6 +20,8 @@ export const API_ENDPOINTS = {
   // プロジェクト関連
   projects: '/api/projects',
   project: (id: number) => `/api/projects/${id}`,
+  myProjects: '/api/projects/my',
+  supportedProjects: '/api/projects/supported',
   // 支援関連
   supports: '/api/supports',
   support: (id: number) => `/api/supports/${id}`,

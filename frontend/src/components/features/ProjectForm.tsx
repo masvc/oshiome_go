@@ -13,6 +13,7 @@ interface ProjectFormData {
   office_status: 'approved' | 'pending';
   project_hashtag?: string;
   support_hashtag?: string;
+  office_approved: boolean;
 }
 
 interface ProjectSubmissionData {
@@ -21,6 +22,8 @@ interface ProjectSubmissionData {
   target_amount: number;
   deadline: string;
   status: 'draft';
+  thumbnail_url: string;
+  office_approved: boolean;
 }
 
 interface ProjectFormProps {
@@ -40,6 +43,7 @@ const defaultFormData: ProjectFormData = {
   office_status: 'pending',
   project_hashtag: '',
   support_hashtag: '',
+  office_approved: false,
 };
 
 export const ProjectForm: React.FC<ProjectFormProps> = ({
@@ -142,6 +146,26 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        // TODO: 実際のファイルアップロード処理を実装
+        // 一時的にダミーのURLを生成
+        const imageNumber = Math.floor(Math.random() * 10) + 1;
+        const mockImageUrl = `https://picsum.photos/seed/${imageNumber}/800/450`;
+        
+        setFormData((prev: ProjectFormData) => ({
+          ...prev,
+          thumbnail_url: mockImageUrl,
+          image_file: file
+        }));
+      } catch (error) {
+        console.error('画像アップロードエラー:', error);
+      }
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -160,25 +184,12 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       description: formData.description,
       target_amount: Number(formData.target_amount),
       deadline: toTimestamp(formData.end_date),
+      thumbnail_url: formData.thumbnail_url,
+      office_approved: formData.office_approved,
       status: 'draft',
     };
 
     await onSubmit(submissionData);
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // 仮の画像URL生成
-      const imageNumber = Math.floor(Math.random() * 10) + 1;
-      const mockImageUrl = `https://picsum.photos/seed/${imageNumber}/800/450`;
-      
-      setFormData((prev: ProjectFormData) => ({
-        ...prev,
-        thumbnail_url: mockImageUrl,
-        image_file: file
-      }));
-    }
   };
 
   return (
@@ -222,6 +233,24 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             {errors.thumbnail_url && (
               <p className="mt-2 text-sm text-red-600">{errors.thumbnail_url}</p>
             )}
+          </div>
+
+          {/* 事務所承認 */}
+          <div className="relative flex items-start">
+            <div className="flex items-center h-5">
+              <input
+                type="checkbox"
+                checked={formData.office_approved}
+                onChange={(e) => handleChange('office_approved', e.target.checked)}
+                className="h-4 w-4 text-oshi-purple-600 focus:ring-oshi-purple-500 border-gray-300 rounded"
+              />
+            </div>
+            <div className="ml-3 text-sm">
+              <label htmlFor="office_approved" className="font-medium text-gray-700">
+                事務所承認済み
+              </label>
+              <p className="text-gray-500">事務所から企画の承認を得ている場合はチェックしてください</p>
+            </div>
           </div>
 
           {/* 推しの名前 */}

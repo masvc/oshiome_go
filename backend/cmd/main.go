@@ -82,6 +82,10 @@ func main() {
 
 		// プロジェクト関連（作成・更新・削除は認証必要）
 		protected.POST("/projects", projectHandler.CreateProject)
+		// マイプロジェクトと支援プロジェクト（:idパラメータを使用するルートより先に定義）
+		protected.GET("/projects/my", projectHandler.ListMyProjects)
+		protected.GET("/projects/supported", projectHandler.ListSupportedProjects)
+		// IDパラメータを使用するルート
 		protected.PUT("/projects/:id", projectHandler.UpdateProject)
 		protected.DELETE("/projects/:id", projectHandler.DeleteProject)
 	}

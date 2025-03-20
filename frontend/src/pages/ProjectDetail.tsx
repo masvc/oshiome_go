@@ -217,7 +217,7 @@ export const ProjectDetail = () => {
                         project.status === 'complete' ? 'bg-blue-100 text-blue-600' :
                         'bg-red-100 text-red-600'
                       }`}>
-                        {project.status === 'draft' ? '下書き' :
+                        {project.status === 'draft' ? '審査中' :
                          project.status === 'active' ? '実施中' :
                          project.status === 'complete' ? '完了' :
                          'キャンセル'}
