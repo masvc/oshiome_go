@@ -151,3 +151,47 @@ npm run dev
 2. 🔐 認証基盤の実装
 3. 💳 決済機能の実装
 4. 🧪 テストの実装と品質向上 
+
+## 🚀 本番環境へのデプロイ
+
+### さくらサーバーへのデプロイ手順
+
+1. 本番用ビルドの作成（ローカル環境）
+```bash
+# Dockerを使用したビルド
+docker build -f Dockerfile.build -t oshiome-frontend-build .
+
+# ビルド結果の取得
+docker create --name temp-container oshiome-frontend-build
+docker cp temp-container:/usr/share/nginx/html ./dist
+docker rm temp-container
+```
+
+2. ビルドファイルの転送
+```bash
+# distディレクトリの内容をサーバーに転送
+scp -r dist/* アカウント名@アカウント名.sakura.ne.jp:~/public_html/
+```
+
+3. 設定ファイルの転送
+```bash
+# .htaccessファイルの転送（必要な場合）
+scp .htaccess アカウント名@アカウント名.sakura.ne.jp:~/public_html/
+```
+
+### サーバーメンテナンス
+
+#### ログの確認
+```bash
+# アクセスログ
+tail -f ~/logs/access.log
+
+# エラーログ
+tail -f ~/logs/error.log
+```
+
+#### バックアップ
+```bash
+# 静的ファイルのバックアップ
+tar -czf frontend_backup_$(date +%Y%m%d).tar.gz ~/public_html/
+``` 
