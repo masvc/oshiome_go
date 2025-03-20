@@ -100,12 +100,6 @@ export const Footer = () => {
             <div className="mt-4 md:mt-0 flex items-center gap-4">
               <button
                 onClick={() => setShowTeamIcon(true)}
-                className="text-xs md:text-xs text-gray-400 hover:text-oshi-pink-500 transition-colors font-body py-2 px-2 -mx-2"
-              >
-                運営管理用
-              </button>
-              <button
-                onClick={() => setShowTeamIcon(true)}
                 className="text-xs text-gray-400 hover:text-oshi-pink-500 transition-colors font-body py-2 px-2 -mx-2"
               >
                 運営元
