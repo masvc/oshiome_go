@@ -42,6 +42,9 @@ frontend/
 - [x] Tailwind CSS設定
 - [x] 開発環境のDocker化
 - [x] ESLint + Prettier設定
+- [x] 本番環境用Dockerfile設定
+- [x] Nginx設定
+- [x] 環境変数設定
 
 ### 🎨 UIコンポーネント
 - [x] 共通コンポーネント
@@ -107,8 +110,6 @@ frontend/
 - [ ] ローディング状態の改善
 - [ ] アニメーションの追加
 
-## 🔄 進行中の機能
-
 ### 🧪 品質管理（優先度：中）
 - [ ] 基本的なユニットテスト
 - [ ] コンポーネントテスト
@@ -119,64 +120,6 @@ frontend/
 - [ ] ユーザー行動分析
 - [ ] コンバージョン計測
 
-## 📝 コンポーネント設計
-
-### 共通コンポーネント
-```tsx
-// ボタン
-<Button variant="primary" size="md">
-  ログイン
-</Button>
-
-// 入力フィールド
-<Input
-  type="email"
-  label="メールアドレス"
-  error={errors.email}
-  {...register('email')}
-/>
-
-// カード
-<Card>
-  <Card.Header>タイトル</Card.Header>
-  <Card.Body>コンテンツ</Card.Body>
-  <Card.Footer>フッター</Card.Footer>
-</Card>
-```
-
-### ページレイアウト
-```tsx
-<Layout>
-  <Header />
-  <Main>
-    <PageTitle>プロジェクト一覧</PageTitle>
-    <Content>{children}</Content>
-  </Main>
-  <Footer />
-</Layout>
-```
-
-## 🚀 開発フロー
-
-### 1. 環境構築
-```bash
-# プロジェクトのクローン
-git clone <repository>
-cd frontend
-
-# 依存関係のインストール
-npm install
-
-# 開発サーバーの起動
-npm run dev
-```
-
-### 2. 実装の優先順位
-1. 🔌 バックエンドAPI連携の実装
-2. 🔐 認証基盤の実装
-3. 💳 決済機能の実装
-4. 🧪 テストの実装と品質向上 
-
 ## 🚀 本番環境へのデプロイ
 
 ### さくらサーバーへのデプロイ手順
@@ -184,10 +127,10 @@ npm run dev
 1. 本番用ビルドの作成（ローカル環境）
 ```bash
 # Dockerを使用したビルド
-docker build -f Dockerfile.build -t oshiome-frontend-build .
+docker build -f Dockerfile.prod -t oshiome-frontend-prod .
 
 # ビルド結果の取得
-docker create --name temp-container oshiome-frontend-build
+docker create --name temp-container oshiome-frontend-prod
 docker cp temp-container:/usr/share/nginx/html ./dist
 docker rm temp-container
 ```
@@ -200,8 +143,8 @@ scp -r dist/* アカウント名@アカウント名.sakura.ne.jp:~/public_html/
 
 3. 設定ファイルの転送
 ```bash
-# .htaccessファイルの転送（必要な場合）
-scp .htaccess アカウント名@アカウント名.sakura.ne.jp:~/public_html/
+# nginx.confの転送
+scp nginx.conf アカウント名@アカウント名.sakura.ne.jp:~/nginx.conf
 ```
 
 ### サーバーメンテナンス
