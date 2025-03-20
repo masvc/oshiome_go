@@ -14,7 +14,7 @@ import { Privacy } from './pages/Privacy';
 import { Legal } from './pages/Legal';
 import { MyPage } from './pages/MyPage';
 import { Favorites } from './pages/Favorites';
-import { SupportedProjects } from './pages/SupportedProjects';
+import { MyProjects } from './pages/MyProjects';
 import { OshiTags } from './pages/OshiTags';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
@@ -58,18 +58,18 @@ export const AppRoutes = () => {
             }
           />
           <Route
-            path="/favorites"
+            path="/my-projects"
             element={
               <PrivateRoute>
-                <Favorites />
+                <MyProjects />
               </PrivateRoute>
             }
           />
           <Route
-            path="/supported-projects"
+            path="/favorites"
             element={
               <PrivateRoute>
-                <SupportedProjects />
+                <Favorites />
               </PrivateRoute>
             }
           />
