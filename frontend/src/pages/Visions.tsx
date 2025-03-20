@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Vision } from '../types/vision';
 
-// 仮のビジョンデータ
+// モックデータ
 const mockVisions: Vision[] = [
   {
     id: '1',
