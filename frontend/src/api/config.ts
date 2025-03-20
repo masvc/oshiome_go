@@ -1,11 +1,33 @@
 // API設定
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 export const API_CONFIG = {
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+};
+
+export const API_ENDPOINTS = {
+  // 認証関連
+  auth: {
+    login: '/api/login',
+    register: '/api/register',
+    logout: '/api/logout',
+    me: '/api/auth/me',
+    passwordReset: '/api/auth/password-reset',
+    passwordResetConfirm: '/api/auth/password-reset/confirm',
+  },
+  // プロジェクト関連
+  projects: '/api/projects',
+  project: (id: number) => `/api/projects/${id}`,
+  // 支援関連
+  supports: '/api/supports',
+  support: (id: number) => `/api/supports/${id}`,
+  projectSupports: (projectId: number) => `/api/projects/${projectId}/supports`,
+  userSupports: (userId: number) => `/api/users/${userId}/supports`,
+  // ユーザー関連
+  user: (id: number) => `/api/users/${id}`,
 };
 
 // 共通のfetchラッパー

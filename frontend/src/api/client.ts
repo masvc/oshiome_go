@@ -1,11 +1,5 @@
 import { API_BASE_URL } from './config';
-
-export class APIError extends Error {
-  constructor(public status: number, message: string) {
-    super(message);
-    this.name = 'APIError';
-  }
-}
+import { APIErrorResponse, APIError } from '../../types/error';
 
 // 認証トークンの保存・取得
 const AUTH_TOKEN_KEY = 'auth_token';
@@ -20,6 +14,20 @@ export const setStoredToken = (token: string): void => {
 
 export const removeStoredToken = (): void => {
   localStorage.removeItem(AUTH_TOKEN_KEY);
+};
+
+// エラーレスポンスをパース
+const parseErrorResponse = async (response: Response): Promise<APIError> => {
+  try {
+    const error = await response.json();
+    return error;
+  } catch {
+    return {
+      code: 'UNKNOWN_ERROR',
+      message: '予期せぬエラーが発生しました',
+      status: 'error',
+    };
+  }
 };
 
 export const client = {
@@ -41,7 +49,8 @@ export const client = {
       if (response.status === 401) {
         removeStoredToken();
       }
-      throw new APIError(response.status, await response.text());
+      const error = await parseErrorResponse(response);
+      throw new APIErrorResponse(error.code, error.message, error.detail);
     }
 
     return response.json();

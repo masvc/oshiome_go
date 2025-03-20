@@ -1,38 +1,49 @@
-// User related types
-export interface User {
-  id: string;
-  username: string;
-  full_name: string;
-  avatar_url: string | null;
-  updated_at: string;
+// API Response types
+export interface ApiResponse<T> {
+  success: boolean;
+  message?: string;
+  data?: T;
+  error?: string;
 }
 
-// Project related types
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail_url: string | null;
-  target_amount: number;
-  current_amount: number;
-  start_date: string;
-  end_date: string;
-  creator_id: string;
-  idol_name: string;
-  office_status: 'approved' | 'pending';
-  status: 'draft' | 'active' | 'ended' | 'cancelled';
-  project_hashtag: string | null;
-  support_hashtag: string | null;
-  created_at: string;
-  updated_at: string;
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
 }
 
-// Project creation type (送信時に使用する型)
-export type CreateProjectInput = Omit<Project, 'id' | 'created_at' | 'updated_at'>;
+// 基本型のエクスポート
+export * from './auth';
+export * from './project';
+export * from './support';
+export * from './error';
 
-// Vision related types
+// 支払い状態の型
+export type PaymentStatus = 'pending' | 'succeeded' | 'failed';
+
+// プロジェクト関連の追加型
+export interface ProjectContribution {
+  project_id: number;
+  supporter_id: number;
+  amount: number;
+  payment_status: PaymentStatus;
+  created_at?: string;
+}
+
+export interface ProjectContent {
+  project_id: number;
+  title?: string;
+  content: string;
+  date: string;
+}
+
+// 広告関連の型定義
 export interface Vision {
-  id: string;
+  id: number;
   name: string;
   location: string;
   period: string;
@@ -41,36 +52,4 @@ export interface Vision {
   image_url: string;
   pdf_url: string;
   description: string;
-}
-
-// Contribution related types
-export interface Contribution {
-  project_id: string;
-  supporter_id: string;
-  amount: number;
-  payment_status: 'pending' | 'succeeded' | 'failed';
-  created_at?: string;
-}
-
-// Project Schedule related types
-export interface ProjectSchedule {
-  project_id: string;
-  schedule_date: string;
-  content: string;
-}
-
-// Project Update related types
-export interface ProjectUpdate {
-  project_id: string;
-  title: string;
-  content: string;
-  update_date: string;
-}
-
-// API Response types
-export interface ApiResponse<T> {
-  success: boolean;
-  message?: string;
-  data?: T;
-  error?: string;
 }
