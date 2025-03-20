@@ -4,20 +4,27 @@ export interface ProjectCardProps {
   id: string;
   title: string;
   description: string;
+  imageUrl: string;
   targetAmount: number;
   currentAmount: number;
-  deadline: string;
-  imageUrl: string;
   supporterCount: number;
+  deadline: string;
+  is_favorite?: boolean;
+  onFavoriteToggle?: (projectId: string) => void;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
-  // 進捗率を計算
-  const progress = Math.min(
-    Math.round((props.currentAmount / props.targetAmount) * 100),
-    100
-  );
-
+export const ProjectCard: React.FC<ProjectCardProps> = ({
+  id,
+  title,
+  description,
+  imageUrl,
+  targetAmount,
+  currentAmount,
+  supporterCount,
+  deadline,
+  is_favorite,
+  onFavoriteToggle
+}) => {
   // 金額のフォーマット
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat('ja-JP', {
@@ -28,41 +35,78 @@ export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
   };
 
   // 残り日数の計算
-  const daysLeft = () => {
-    const end = new Date(props.deadline);
-    const now = new Date();
-    const diffTime = end.getTime() - now.getTime();
+  const calculateRemainingDays = (deadline: string) => {
+    const today = new Date();
+    const deadlineDate = new Date(deadline);
+    const diffTime = deadlineDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.max(0, diffDays);
+    return diffDays > 0 ? diffDays : 0;
+  };
+
+  // 進捗率の計算
+  const calculateProgress = (current: number, target: number) => {
+    return Math.min(Math.round((current / target) * 100), 100);
+  };
+
+  const progress = calculateProgress(currentAmount, targetAmount);
+  const remainingDays = calculateRemainingDays(deadline);
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // リンクのナビゲーションを防ぐ
+    if (onFavoriteToggle) {
+      onFavoriteToggle(id);
+    }
   };
 
   return (
     <Link
-      to={`/projects/${props.id}`}
+      to={`/projects/${id}`}
       className="group block bg-white rounded-lg sm:rounded-xl shadow-md hover:shadow-lg transition-all overflow-hidden border border-gray-100"
     >
       <div className="relative aspect-[4/3] sm:aspect-[16/9]">
         <img
-          src={props.imageUrl}
-          alt={props.title}
+          src={imageUrl}
+          alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
         <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
           <h3 className="font-display font-bold text-sm sm:text-base text-white mb-1 sm:mb-2 line-clamp-2 group-hover:text-oshi-pink-200 transition-colors">
-            {props.title}
+            {title}
           </h3>
         </div>
+        {onFavoriteToggle && (
+          <button
+            onClick={handleFavoriteClick}
+            className="absolute top-2 right-2 p-2 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
+          >
+            <svg
+              className={`w-5 h-5 ${
+                is_favorite ? 'text-oshi-pink-400' : 'text-white'
+              }`}
+              fill={is_favorite ? 'currentColor' : 'none'}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </button>
+        )}
       </div>
       <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between items-baseline">
             <div className="space-y-0.5">
               <div className="font-display font-bold text-lg sm:text-xl text-oshi-purple-500">
-                {formatAmount(props.currentAmount)}
+                {formatAmount(currentAmount)}
               </div>
               <div className="text-xs text-gray-500 font-body">
-                目標: {formatAmount(props.targetAmount)}
+                目標: {formatAmount(targetAmount)}
               </div>
             </div>
             <div className="text-right">
@@ -94,7 +138,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
               />
             </svg>
-            <span>{props.supporterCount}人が支援</span>
+            <span>{supporterCount}人が支援</span>
           </div>
           <div className="flex items-center gap-1.5 text-gray-600 font-body">
             <svg
@@ -110,7 +154,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <span>残り{daysLeft()}日</span>
+            <span>残り{remainingDays}日</span>
           </div>
         </div>
       </div>

@@ -12,6 +12,10 @@ import { Visions } from './pages/Visions';
 import { Terms } from './pages/Terms';
 import { Privacy } from './pages/Privacy';
 import { Legal } from './pages/Legal';
+import { MyPage } from './pages/MyPage';
+import { Favorites } from './pages/Favorites';
+import { SupportedProjects } from './pages/SupportedProjects';
+import { OshiTags } from './pages/OshiTags';
 
 export const AppRoutes = () => {
   return (
@@ -30,6 +34,10 @@ export const AppRoutes = () => {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/supported-projects" element={<SupportedProjects />} />
+          <Route path="/oshi-tags" element={<OshiTags />} />
         </Routes>
       </main>
       <Footer />

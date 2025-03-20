@@ -1,64 +1,55 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../providers/AuthProvider';
-import { profileRepository, AVATAR_STYLES, AVATAR_STYLE_INFO, type AvatarStyle } from '../repositories/profile';
+import { useState } from 'react';
+
+// モックデータ用の型定義
+type AvatarStyle = 'ADVENTURER' | 'PIXEL_ART' | 'IDENTICON';
+
+const AVATAR_STYLES = {
+  ADVENTURER: 'ADVENTURER',
+  PIXEL_ART: 'PIXEL_ART',
+  IDENTICON: 'IDENTICON'
+} as const;
+
+const AVATAR_STYLE_INFO = {
+  ADVENTURER: {
+    label: 'アドベンチャー',
+    category: 'イラスト'
+  },
+  PIXEL_ART: {
+    label: 'ピクセルアート',
+    category: 'イラスト'
+  },
+  IDENTICON: {
+    label: 'アイデンティコン',
+    category: 'パターン'
+  }
+};
 
 export const MyPage = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState({
+    nickname: 'ユーザー1',
+    email: 'user1@example.com',
+    bio: 'よろしくお願いします！',
+    profile_image_url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=user1'
+  });
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProfile, setEditedProfile] = useState<any>({});
+  const [editedProfile, setEditedProfile] = useState(profile);
   const [newPassword, setNewPassword] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
-  const [selectedAvatarStyle, setSelectedAvatarStyle] = useState<AvatarStyle>(AVATAR_STYLES.ADVENTURER);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/signin');
-      return;
-    }
-    fetchProfile();
-  }, [user, navigate]);
-
-  const fetchProfile = async () => {
-    try {
-      setLoading(true);
-      const data = await profileRepository.getProfile(user?.id || '');
-      setProfile(data);
-      setEditedProfile(data);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [selectedAvatarStyle, setSelectedAvatarStyle] = useState<AvatarStyle>('ADVENTURER');
 
   const handleProfileUpdate = async () => {
     try {
       setLoading(true);
       setError(null);
-
-      // アバターURLを更新
-      const avatarUrl = profileRepository.getDefaultAvatarUrl(user?.id || '', selectedAvatarStyle);
       
-      await profileRepository.updateProfile(user?.id || '', {
-        nickname: editedProfile.nickname,
-        bio: editedProfile.bio,
-        profile_image_url: avatarUrl,
-      });
-
-      if (editedProfile.email && editedProfile.email !== profile?.email) {
-        await profileRepository.updateEmail(editedProfile.email);
-      }
-
-      await fetchProfile();
+      // モック: プロフィール更新の成功をシミュレート
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setProfile(editedProfile);
       setIsEditing(false);
     } catch (error: any) {
-      setError(error.message);
+      setError('プロフィールの更新に失敗しました');
     } finally {
       setLoading(false);
     }
@@ -69,29 +60,12 @@ export const MyPage = () => {
       setLoading(true);
       setError(null);
 
-      await profileRepository.updatePassword(newPassword);
-
+      // モック: パスワード更新の成功をシミュレート
+      await new Promise(resolve => setTimeout(resolve, 1000));
       setNewPassword('');
       setShowPasswordChange(false);
     } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !user?.id) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      await profileRepository.uploadProfileImage(user.id, file);
-      await fetchProfile();
-    } catch (error: any) {
-      setError(error.message);
+      setError('パスワードの更新に失敗しました');
     } finally {
       setLoading(false);
     }
@@ -99,8 +73,8 @@ export const MyPage = () => {
 
   const handleAvatarStyleChange = (style: AvatarStyle) => {
     setSelectedAvatarStyle(style);
-    // プレビュー用にURLを更新
-    const newAvatarUrl = profileRepository.getDefaultAvatarUrl(user?.id || '', style);
+    // モック: 新しいアバターURLを生成
+    const newAvatarUrl = `https://api.dicebear.com/7.x/${style.toLowerCase()}/svg?seed=user1`;
     setEditedProfile({ ...editedProfile, profile_image_url: newAvatarUrl });
   };
 
@@ -241,7 +215,7 @@ export const MyPage = () => {
                 type="button"
                 onClick={() => {
                   setIsEditing(false);
-                  setEditedProfile(profile || {});
+                  setEditedProfile(profile);
                 }}
                 className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
               >
