@@ -71,7 +71,7 @@ export const Header = () => {
                   className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-gray-50 transition-colors"
                 >
                   <img
-                    src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${user.id}`}
+                    src={user.profile_image_url}
                     alt="ユーザーアイコン"
                     className="w-8 h-8 rounded-full border-2 border-oshi-pink-200"
                   />
