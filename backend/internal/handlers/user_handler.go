@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -30,6 +32,12 @@ type LoginInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
+type UpdateUserInput struct {
+	Name            string `json:"name"`
+	Bio             string `json:"bio"`
+	ProfileImageURL string `json:"profile_image_url"`
+}
+
 // CreateUser 新規ユーザー登録
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var input CreateUserInput
@@ -46,9 +54,11 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	user := models.User{
-		Name:     input.Name,
-		Email:    input.Email,
-		Password: hashedPassword,
+		Name:            input.Name,
+		Email:           input.Email,
+		Password:        hashedPassword,
+		Bio:             "よろしくお願いします！",
+		ProfileImageURL: fmt.Sprintf("https://api.dicebear.com/7.x/adventurer/svg?seed=%s", input.Email),
 	}
 
 	if err := h.db.Create(&user).Error; err != nil {
@@ -139,6 +149,61 @@ func (h *UserHandler) GetCurrentUser(c *gin.Context) {
 	var user models.User
 	if err := h.db.First(&user, userID).Error; err != nil {
 		c.Error(utils.ErrNotFound.WithDetail("ユーザーが見つかりません"))
+		return
+	}
+
+	c.JSON(http.StatusOK, Response{
+		Status: "success",
+		Data:   user,
+	})
+}
+
+// UpdateUser ユーザー情報を更新
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	// パラメータからユーザーIDを取得
+	userID := c.Param("id")
+
+	// 認証済みユーザーのIDを取得
+	authUserID, exists := c.Get("user_id")
+	if !exists {
+		c.Error(utils.ErrUnauthorized)
+		return
+	}
+
+	// 文字列のユーザーIDをuintに変換
+	uid, err := strconv.ParseUint(userID, 10, 32)
+	if err != nil {
+		c.Error(utils.ErrInvalidInput.WithDetail("無効なユーザーIDです"))
+		return
+	}
+
+	// 自分以外のユーザー情報は更新できない
+	if uint(uid) != authUserID.(uint) {
+		c.Error(utils.ErrUnauthorized.WithDetail("他のユーザーの情報は更新できません"))
+		return
+	}
+
+	var input UpdateUserInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.Error(utils.ErrInvalidInput.WithDetail(err.Error()))
+		return
+	}
+
+	var user models.User
+	if err := h.db.First(&user, userID).Error; err != nil {
+		c.Error(utils.ErrNotFound.WithDetail("ユーザーが見つかりません"))
+		return
+	}
+
+	// 更新するフィールドを設定
+	updates := models.User{
+		Name:            input.Name,
+		Bio:             input.Bio,
+		ProfileImageURL: input.ProfileImageURL,
+	}
+
+	if err := h.db.Model(&user).Updates(updates).Error; err != nil {
+		c.Error(utils.ErrInternalServer.WithDetail("ユーザー情報の更新に失敗しました"))
 		return
 	}
 

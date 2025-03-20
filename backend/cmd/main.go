@@ -78,6 +78,7 @@ func main() {
 		// ユーザー関連
 		protected.GET("/auth/me", userHandler.GetCurrentUser)
 		protected.GET("/users/:id", userHandler.GetUser)
+		protected.PUT("/users/:id", userHandler.UpdateUser)
 
 		// プロジェクト関連（作成・更新・削除は認証必要）
 		protected.POST("/projects", projectHandler.CreateProject)
