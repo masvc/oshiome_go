@@ -56,3 +56,6 @@ lerna-debug.log*
 # Binary
 bin/
 tmp/
+
+# Uploads
+backend/uploads/

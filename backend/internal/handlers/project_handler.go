@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -92,7 +95,7 @@ func (h *ProjectHandler) GetProject(c *gin.Context) {
 // CreateProject プロジェクトを作成
 func (h *ProjectHandler) CreateProject(c *gin.Context) {
 	var input ProjectInput
-	if err := c.ShouldBindJSON(&input); err != nil {
+	if err := c.ShouldBind(&input); err != nil {
 		c.Error(utils.ErrInvalidInput.WithDetail(err.Error()))
 		return
 	}
@@ -103,6 +106,30 @@ func (h *ProjectHandler) CreateProject(c *gin.Context) {
 		return
 	}
 
+	// サムネイル画像の処理
+	var thumbnailURL string
+	file, err := c.FormFile("thumbnail")
+	if err == nil {
+		// アップロードディレクトリの作成
+		uploadDir := "uploads/projects"
+		if err := os.MkdirAll(uploadDir, 0755); err != nil {
+			c.Error(utils.ErrInternalServer.WithDetail("アップロードディレクトリの作成に失敗しました"))
+			return
+		}
+
+		// ファイル名の生成（一意性を確保するためにタイムスタンプを使用）
+		filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), filepath.Ext(file.Filename))
+		filepath := filepath.Join(uploadDir, filename)
+
+		// ファイルの保存
+		if err := c.SaveUploadedFile(file, filepath); err != nil {
+			c.Error(utils.ErrInternalServer.WithDetail("ファイルのアップロードに失敗しました"))
+			return
+		}
+
+		thumbnailURL = "/" + filepath
+	}
+
 	project := &models.Project{
 		Title:        input.Title,
 		Description:  input.Description,
@@ -110,6 +137,7 @@ func (h *ProjectHandler) CreateProject(c *gin.Context) {
 		Deadline:     input.Deadline,
 		UserID:       userID.(uint),
 		Status:       models.ProjectStatusDraft,
+		ThumbnailURL: thumbnailURL,
 	}
 
 	h.withTx(c, func(tx *gorm.DB) error {

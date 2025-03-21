@@ -24,6 +24,7 @@ type Project struct {
 	Deadline       time.Time      `json:"deadline" gorm:"not null"`
 	UserID         uint           `json:"user_id" gorm:"not null"`
 	Status         ProjectStatus  `json:"status" gorm:"type:varchar(20);default:'draft'"`
+	ThumbnailURL   string         `json:"thumbnail_url" gorm:"size:255"`
 	OfficeApproved int            `json:"office_approved" gorm:"type:tinyint;default:1"` // 0: 承認済, 1: 確認中
 	CreatedAt      time.Time      `json:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at"`
