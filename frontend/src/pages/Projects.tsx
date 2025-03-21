@@ -131,16 +131,22 @@ export const Projects = () => {
 
         {/* プロジェクト一覧 */}
         {!loading && !error && (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.length > 0 ? (
-              projects.map((project) => (
-                <ProjectCard key={project.id} {...formatProjectForCard(project)} />
-              ))
-            ) : (
-              <div className="col-span-3 text-center py-12 text-gray-500">
-                プロジェクトがありません。
-              </div>
-            )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {projects.map((project) => (
+              <ProjectCard
+                key={project.id}
+                id={project.id.toString()}
+                title={project.title}
+                description={project.description}
+                imageUrl={project.thumbnail_url || 'https://via.placeholder.com/400x200'}
+                targetAmount={project.target_amount}
+                currentAmount={project.current_amount}
+                supporterCount={project.supporters_count || 0}
+                deadline={project.deadline}
+                creator={project.creator}
+                office_approved={project.office_approved}
+              />
+            ))}
           </div>
         )}
       </div>

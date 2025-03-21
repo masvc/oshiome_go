@@ -115,9 +115,16 @@ export const Home = () => {
     const fetchPopularProjects = async () => {
       try {
         setLoading(true);
-        const response = await projectService.getProjects('active');
+        const response = await projectService.getProjects();
+        if (!response?.data) {
+          throw new Error('プロジェクトデータが取得できませんでした');
+        }
+        // アクティブなプロジェクトのみをフィルタリング
+        const activeProjects = response.data.filter(
+          (project: Project) => project.status === 'active'
+        );
         // サポーター数で降順ソートして上位3件を取得
-        const sortedProjects = response.data
+        const sortedProjects = activeProjects
           .sort((a, b) => (b.supporters_count || 0) - (a.supporters_count || 0))
           .slice(0, 3);
         setPopularProjects(sortedProjects);
@@ -145,7 +152,8 @@ export const Home = () => {
       creator: project.user ? {
         name: project.user.name,
         avatarUrl: project.user.profile_image_url || 'https://picsum.photos/seed/default/100/100'
-      } : undefined
+      } : undefined,
+      office_approved: project.office_approved
     };
   };
 

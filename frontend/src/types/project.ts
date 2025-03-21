@@ -21,6 +21,7 @@ export interface Project {
     name: string;
     avatar_url: string;
   };
+  office_approved: number;
 }
 
 export interface CreateProjectInput {

@@ -222,6 +222,12 @@ export const ProjectDetail = () => {
                          project.status === 'complete' ? '完了' :
                          'キャンセル'}
                       </span>
+                      <span className={`text-sm font-medium ${
+                        project.office_approved === 0 ? 'text-green-600' :
+                        'text-yellow-600'
+                      }`}>
+                        {project.office_approved === 0 ? '事務所承認済' : '事務所確認中'}
+                      </span>
                     </div>
                     {/* 企画者情報 */}
                     <div className="flex items-center gap-3">
