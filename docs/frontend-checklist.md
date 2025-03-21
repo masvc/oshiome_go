@@ -14,6 +14,8 @@
 - **フォーム**: React Hook Form
 - **状態管理**: Zustand
 - **ルーティング**: React Router v6
+- **アバター生成**: DiceBear Avatars（APIキー不要）
+- **画像最適化**: Sharp
 
 ## 📁 プロジェクト構成
 ```
@@ -55,6 +57,7 @@ frontend/
   - [x] Modal
   - [x] Form
   - [x] SupportForm（支援フォーム）
+  - [x] Avatar（DiceBearを使用）
 - [x] レイアウト
   - [x] Header
   - [x] Footer
@@ -66,6 +69,7 @@ frontend/
 - [x] リクエスト/レスポンスの型定義
 - [x] エラーハンドリングの実装
 - [x] 認証トークンの管理
+- [x] アバター生成APIとの連携
 
 ### 🎯 コアビジネス機能（モック実装）
 - [x] プロジェクト機能
@@ -81,6 +85,7 @@ frontend/
   - [x] 支援したプロジェクト表示
   - [x] 推しタグ管理
   - [x] プロフィール更新機能
+  - [x] アバターカスタマイズ機能
 
 ### 📱 UX改善
 - [x] レスポンシブデザイン
