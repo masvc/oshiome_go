@@ -9,11 +9,8 @@ interface ProjectFormData {
   end_date: string;
   birthday_date: string;
   thumbnail_url?: string;
-  image_file?: File;
-  office_status: 'approved' | 'pending';
   project_hashtag?: string;
   support_hashtag?: string;
-  office_approved: boolean;
 }
 
 interface ProjectSubmissionData {
@@ -23,7 +20,6 @@ interface ProjectSubmissionData {
   deadline: string;
   status: 'draft';
   thumbnail_url: string;
-  office_approved: boolean;
 }
 
 interface ProjectFormProps {
@@ -40,10 +36,8 @@ const defaultFormData: ProjectFormData = {
   end_date: '',
   birthday_date: '',
   thumbnail_url: '',
-  office_status: 'pending',
   project_hashtag: '',
   support_hashtag: '',
-  office_approved: false,
 };
 
 export const ProjectForm: React.FC<ProjectFormProps> = ({
@@ -157,8 +151,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
         
         setFormData((prev: ProjectFormData) => ({
           ...prev,
-          thumbnail_url: mockImageUrl,
-          image_file: file
+          thumbnail_url: mockImageUrl
         }));
       } catch (error) {
         console.error('画像アップロードエラー:', error);
@@ -184,8 +177,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
       description: formData.description,
       target_amount: Number(formData.target_amount),
       deadline: toTimestamp(formData.end_date),
-      thumbnail_url: formData.thumbnail_url,
-      office_approved: formData.office_approved,
+      thumbnail_url: formData.thumbnail_url || '',  // undefinedの場合は空文字列を設定
       status: 'draft',
     };
 
@@ -233,24 +225,6 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             {errors.thumbnail_url && (
               <p className="mt-2 text-sm text-red-600">{errors.thumbnail_url}</p>
             )}
-          </div>
-
-          {/* 事務所承認 */}
-          <div className="relative flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                type="checkbox"
-                checked={formData.office_approved}
-                onChange={(e) => handleChange('office_approved', e.target.checked)}
-                className="h-4 w-4 text-oshi-purple-600 focus:ring-oshi-purple-500 border-gray-300 rounded"
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="office_approved" className="font-medium text-gray-700">
-                事務所承認済み
-              </label>
-              <p className="text-gray-500">事務所から企画の承認を得ている場合はチェックしてください</p>
-            </div>
           </div>
 
           {/* 推しの名前 */}

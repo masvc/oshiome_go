@@ -21,7 +21,7 @@ export interface Project {
     name: string;
     avatar_url: string;
   };
-  office_approved: number;
+  office_approved: number;  // 0: 承認済み, 1: 確認中
 }
 
 export interface CreateProjectInput {
