@@ -3,10 +3,13 @@ import { API_ENDPOINTS } from '../config';
 import { Support, CreateSupportInput, UpdateSupportInput, ApiResponse, PaginatedResponse } from '../../types';
 
 export const supportService = {
-  // プロジェクトの支援一覧を取得
+  // プロジェクトの支援一覧を取得（認証不要）
   getProjectSupports: (projectId: number, page = 1, perPage = 10) => {
-    return client.get<PaginatedResponse<Support>>(
-      `${API_ENDPOINTS.projectSupports(projectId)}?page=${page}&perPage=${perPage}`
+    return client.fetch<PaginatedResponse<Support>>(
+      `${API_ENDPOINTS.projectSupports(projectId)}?page=${page}&perPage=${perPage}`,
+      {
+        credentials: 'omit', // 認証情報を送信しない
+      }
     );
   },
 

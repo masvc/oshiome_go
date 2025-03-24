@@ -6,6 +6,7 @@ import { Project } from '../types/project';
 import { Support } from '../types/support';
 import { projectService } from '../api/services/projectService';
 import { supportService } from '../api/services/supportService';
+import { useAuthStore } from '../stores/authStore';
 
 // 支援プラン
 interface SupportPlan {
@@ -115,6 +116,7 @@ const StripeComingSoonModal = ({ onClose }: { onClose: () => void }) => {
 
 export const ProjectDetail = () => {
   const { id } = useParams();
+  const { isAuthenticated } = useAuthStore();
   const [showSupportForm, setShowSupportForm] = useState(false);
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -150,6 +152,15 @@ export const ProjectDetail = () => {
 
     fetchProject();
   }, [id]);
+
+  const handleSupportClick = () => {
+    if (!isAuthenticated) {
+      // ログインページにリダイレクト
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+      return;
+    }
+    setShowStripeModal(true);
+  };
 
   if (loading) {
     return (
@@ -448,7 +459,7 @@ export const ProjectDetail = () => {
                 </h2>
                 <div className="space-y-4">
                   <button
-                    onClick={() => setShowStripeModal(true)}
+                    onClick={handleSupportClick}
                     className="w-full bg-white border-2 border-oshi-purple-200 rounded-lg p-4 hover:border-oshi-purple-500 hover:bg-oshi-purple-50/50 transition-all duration-300 text-left relative group shadow-sm hover:shadow-md"
                   >
                     <div className="flex justify-between items-start mb-3">
