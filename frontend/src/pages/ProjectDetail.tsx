@@ -185,8 +185,8 @@ export const ProjectDetail = () => {
               <div className="aspect-w-16 aspect-h-9 lg:aspect-h-10">
                 <img
                   src={
-                    project.image_url ||
-                    'https://placehold.co/800x450'
+                    project.thumbnail_url ||
+                    'https://picsum.photos/800/450'
                   }
                   alt={project.title}
                   className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
@@ -248,7 +248,7 @@ export const ProjectDetail = () => {
                         <p className="text-sm font-bold text-gray-900">{project.user?.name}</p>
                       </div>
                       <img
-                        src={project.user?.profile_image_url || 'https://placehold.co/100x100'}
+                        src={project.user?.profile_image_url || 'https://picsum.photos/100/100'}
                         alt={project.user?.name || '企画者'}
                         className="w-10 h-10 rounded-full border-2 border-oshi-purple-100"
                       />
