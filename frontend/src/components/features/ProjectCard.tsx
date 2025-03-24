@@ -5,10 +5,10 @@ export interface ProjectCardProps {
   id: string;
   title: string;
   description: string;
-  imageUrl: string;
+  thumbnail_url: string;
   targetAmount: number;
   currentAmount: number;
-  supporterCount: number;
+  supporters_count: number;
   deadline: string;
   is_favorite?: boolean;
   onFavoriteToggle?: (projectId: string) => void;
@@ -16,17 +16,17 @@ export interface ProjectCardProps {
     name: string;
     avatarUrl: string;
   };
-  office_approved: number;  // 0: 承認済み, 1: 確認中
+  office_approved: boolean;  // true: 確認中, false: 承認済み
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
   id,
   title,
   description,
-  imageUrl,
+  thumbnail_url,
   targetAmount,
   currentAmount,
-  supporterCount,
+  supporters_count,
   deadline,
   is_favorite: propIsFavorite,
   onFavoriteToggle,
@@ -71,10 +71,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         id,
         title,
         description,
-        imageUrl,
+        thumbnail_url,
         targetAmount,
         currentAmount,
-        supporterCount,
+        supporters_count,
         deadline,
         creator
       });
@@ -88,7 +88,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     >
       <div className="relative aspect-[4/3] sm:aspect-[16/9]">
         <img
-          src={imageUrl}
+          src={thumbnail_url || 'https://via.placeholder.com/400x200'}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -176,12 +176,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                   d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>
-              <span>{supporterCount}人が支援</span>
+              <span>{supporters_count}人が支援</span>
             </div>
             <span className={`text-xs ${
-              office_approved === 0 ? 'text-green-600' : 'text-yellow-600'
+              !office_approved ? 'text-green-600' : 'text-yellow-600'
             }`}>
-              {office_approved === 0 ? '事務所承認済' : '事務所確認中'}
+              {!office_approved ? '事務所承認済' : '事務所確認中'}
             </span>
             <div className="flex items-center gap-1.5 text-gray-600 font-body">
               <svg

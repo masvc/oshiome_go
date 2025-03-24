@@ -15,13 +15,8 @@ export interface Project {
   updated_at: string;
   user_id: number;
   user?: User;
-  image_url?: string;
-  supporters_count?: number;
-  creator?: {
-    name: string;
-    avatar_url: string;
-  };
-  office_approved: number;  // 0: 承認済み, 1: 確認中
+  supporters_count: number;
+  office_approved: boolean;  // true: 確認中, false: 承認済み
 }
 
 export interface CreateProjectInput {
