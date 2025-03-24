@@ -1,5 +1,7 @@
+# 本番環境用のDockerfile
 FROM golang:1.21-alpine
 
+# 作業ディレクトリの設定
 WORKDIR /app
 
 # 必要なパッケージのインストール
@@ -7,15 +9,17 @@ RUN apk add --no-cache \
     git \
     postgresql-client
 
-# 依存関係のコピーとダウンロード
+# Goモジュールファイルのコピー
 COPY go.mod go.sum ./
+
+# 依存関係のダウンロード
 RUN go mod download
 
 # ソースコードのコピー
 COPY . .
 
 # アプリケーションのビルド
-RUN go build -o main ./cmd/api/main.go
+RUN go build -o main ./cmd/main.go
 
 # ポートの公開
 EXPOSE 8000
