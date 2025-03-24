@@ -14,25 +14,35 @@
 - **フォーム**: React Hook Form
 - **状態管理**: Zustand
 - **ルーティング**: React Router v6
-- **アバター生成**: DiceBear Avatars（APIキー不要）
+- **アバター生成**: DiceBear Avatars
 
 ## 📁 プロジェクト構成
 ```
 frontend/
 ├── src/
 │   ├── components/     # UIコンポーネント
+│   │   ├── common/    # 共通コンポーネント
+│   │   ├── features/  # 機能別コンポーネント
+│   │   └── layouts/   # レイアウトコンポーネント
 │   ├── pages/         # ページコンポーネント
 │   ├── types/         # 型定義
 │   ├── api/           # API通信
+│   │   ├── client.ts  # APIクライアント
+│   │   ├── config.ts  # API設定
+│   │   └── services/  # APIサービス
 │   ├── stores/        # 状態管理（Zustand）
-│   ├── contexts/      # Reactコンテキスト
 │   ├── hooks/         # カスタムフック
-│   ├── repositories/  # データアクセス層
 │   ├── utils/         # ユーティリティ
 │   ├── styles/        # スタイル定義
 │   └── assets/        # 静的アセット
 ├── public/            # 静的ファイル
-└── package.json       # 依存関係
+├── index.html         # エントリーポイント
+├── package.json       # 依存関係
+├── tsconfig.json      # TypeScript設定
+├── vite.config.ts     # Vite設定
+├── tailwind.config.js # Tailwind設定
+├── Dockerfile         # 開発環境用Dockerfile
+└── Dockerfile.prod    # 本番環境用Dockerfile
 ```
 
 ## ✅ 実装済み機能
@@ -40,6 +50,9 @@ frontend/
 ### 🏗 プロジェクト設定
 - [x] Vite + React + TypeScript環境構築
 - [x] Tailwind CSS設定
+  - [x] カスタムテーマ設定
+  - [x] カスタムユーティリティ
+  - [x] カスタムアニメーション
 - [x] 開発環境のDocker化
 - [x] ESLint + Prettier設定
 - [x] 本番環境用Dockerfile設定
@@ -50,24 +63,49 @@ frontend/
 
 ### 🎨 UIコンポーネント
 - [x] 共通コンポーネント
-  - [x] Button
-  - [x] Input
-  - [x] Card
-  - [x] Modal
-  - [x] Form
-  - [x] SupportForm（支援フォーム）
-  - [x] Avatar（DiceBearを使用）
+  - [x] Button（バリエーション付き）
+  - [x] Input（バリデーション対応）
+  - [x] Card（プロジェクト、支援用）
+  - [x] Modal（確認、フォーム用）
+  - [x] Form（React Hook Form統合）
+  - [x] Loading（スケルトン、スピナー）
+  - [x] Error（エラーメッセージ、フォールバック）
+  - [x] Avatar（DiceBear統合）
+  - [x] Badge（ステータス表示）
+  - [x] Progress（進捗バー）
+  - [x] Tooltip
+  - [x] Dropdown
+- [x] 機能コンポーネント
+  - [x] ProjectCard
+  - [x] SupportForm
+  - [x] FavoriteButton
+  - [x] ProjectProgress
+  - [x] UserAvatar
+  - [x] TagList
 - [x] レイアウト
-  - [x] Header
+  - [x] Header（レスポンシブ対応）
   - [x] Footer
-  - [x] Navigation
+  - [x] Navigation（モバイル対応）
+  - [x] Sidebar
+  - [x] Container
 
 ### 🔌 API連携
 - [x] API Clientの実装
-- [x] エンドポイントの設定
-- [x] リクエスト/レスポンスの型定義
-- [x] エラーハンドリングの実装
+  - [x] エラーハンドリング
+  - [x] リクエストインターセプター
+  - [x] レスポンスインターセプター
+- [x] 型定義
+  - [x] リクエスト/レスポンス型
+  - [x] エラー型
+  - [x] ユーティリティ型
+- [x] APIサービス
+  - [x] 認証サービス
+  - [x] プロジェクトサービス
+  - [x] サポートサービス
+  - [x] お気に入りサービス
 - [x] 認証トークンの管理
+  - [x] Cookie認証対応
+  - [x] トークンリフレッシュ
 - [x] アバター生成APIとの連携
 
 ### 🎯 コアビジネス機能
@@ -76,105 +114,147 @@ frontend/
   - [x] プロジェクト詳細表示
   - [x] プロジェクト作成フォーム
   - [x] プロジェクト編集機能
+  - [x] プロジェクト削除機能
+  - [x] プロジェクト検索・フィルタリング
+  - [x] プロジェクトステータス管理
 - [x] 支援機能
   - [x] 支援フォーム
   - [x] 支援履歴表示
+  - [x] 支援メッセージ管理
+  - [x] 支援統計表示
+- [x] お気に入り機能
+  - [x] お気に入り追加・削除
+  - [x] お気に入り一覧表示
+  - [x] お気に入りの永続化
 - [x] マイページ機能
+  - [x] プロフィール表示・編集
   - [x] お気に入りプロジェクト表示
   - [x] 支援したプロジェクト表示
   - [x] 推しタグ管理
-  - [x] プロフィール更新機能
-  - [x] アバターカスタマイズ機能
+  - [x] アバターカスタマイズ
 
 ### 📱 UX改善
 - [x] レスポンシブデザイン
-- [x] シンプルなローディング表示
-- [x] 基本的なエラー表示
-- [x] フォームバリデーション（React Hook Form）
-- [x] モーダルUIの実装
-- [x] ステップ形式のフォーム（支援フォーム）
-- [x] カスタムフックによる共通ロジックの抽象化
+  - [x] モバイルファースト
+  - [x] ブレイクポイント最適化
+  - [x] タッチ操作対応
+- [x] ローディング表示
+  - [x] スケルトンローディング
+  - [x] プログレッシブローディング
+  - [x] エラーフォールバック
+- [x] フォームUX
+  - [x] リアルタイムバリデーション
+  - [x] エラーメッセージ
+  - [x] 入力補助
+- [x] アニメーション
+  - [x] トランジション
+  - [x] ホバーエフェクト
+  - [x] ローディングアニメーション
+- [x] エラーハンドリング
+  - [x] エラーバウンダリー
+  - [x] フォールバックUI
+  - [x] オフライン対応
 
 ### 🔐 認証基盤
-- [x] ログインフォームの実装
-- [x] 新規登録フォームの実装
-- [x] 認証状態管理の実装（Zustand）
+- [x] ログインフォーム
+- [x] 新規登録フォーム
+- [x] 認証状態管理（Zustand）
 - [x] 認証APIとの連携
-- [x] 保護されたルートの実装
-- [x] トークンリフレッシュの実装
+- [x] 保護されたルート
+- [x] トークンリフレッシュ
+- [x] ログアウト機能
+- [x] パスワードリセット
 
 ## 🔄 進行中の機能
 
 ### 💳 決済機能
 - [ ] Stripe決済連携
-- [ ] 決済APIとの連携
-- [ ] 決済フォームのUI実装
-- [ ] 決済履歴の表示
-- [ ] 支援金額の管理機能
+  - [ ] 決済フォーム
+  - [ ] カード情報保存
+  - [ ] 支払い履歴
+- [ ] 決済フロー
+  - [ ] 金額選択
+  - [ ] 支援確認
+  - [ ] 完了画面
+- [ ] 支援管理
+  - [ ] 支援状況表示
+  - [ ] キャンセル機能
+  - [ ] 領収書発行
 
 ### 🎨 UIの改善
-- [ ] フォームのバリデーション強化
-- [ ] エラーメッセージの多言語対応（i18n）
-- [ ] ローディング状態の改善（Suspense対応）
-- [ ] アニメーションの追加（Framer Motion）
-- [ ] ダークモード対応
-- [ ] アクセシビリティ対応（ARIA）
+- [ ] アクセシビリティ
+  - [ ] ARIA属性
+  - [ ] キーボード操作
+  - [ ] スクリーンリーダー対応
+- [ ] パフォーマンス
+  - [ ] 画像最適化
+  - [ ] コード分割
+  - [ ] メモ化
+- [ ] アニメーション
+  - [ ] ページトランジション
+  - [ ] スクロールアニメーション
+  - [ ] マイクロインタラクション
 
 ### 🧪 品質管理
-- [ ] Jest + React Testing Libraryによるユニットテスト
-- [ ] Storybookによるコンポーネントカタログ
-- [ ] Cypressによるe2eテスト
-- [ ] パフォーマンス最適化
-  - [ ] Code Splitting
-  - [ ] 画像最適化
+- [ ] テスト
+  - [ ] ユニットテスト
+  - [ ] 統合テスト
+  - [ ] E2Eテスト
+- [ ] パフォーマンス
+  - [ ] Lighthouse最適化
   - [ ] バンドルサイズ最適化
+  - [ ] レンダリング最適化
+- [ ] エラー監視
+  - [ ] Sentry導入
+  - [ ] エラーレポート
+  - [ ] クラッシュレポート
 
 ### 📊 分析機能
-- [ ] Google Analytics 4連携
-- [ ] ユーザー行動分析
-- [ ] コンバージョン計測
-- [ ] エラー監視（Sentry）
+- [ ] アナリティクス
+  - [ ] GA4設定
+  - [ ] イベントトラッキング
+  - [ ] コンバージョン計測
+- [ ] ヒートマップ
+  - [ ] クリック追跡
+  - [ ] スクロール分析
+  - [ ] 行動分析
+- [ ] パフォーマンス分析
+  - [ ] Core Web Vitals
+  - [ ] ユーザー体験指標
+  - [ ] パフォーマンスモニタリング
 
-## 🚀 本番環境へのデプロイ
+## 🚀 開発環境のセットアップ
 
-### Renderでのデプロイ手順
-
-1. 本番用ビルドの作成（ローカル環境）
+### フロントエンド固有の開発コマンド
 ```bash
-# Dockerを使用したビルド
-docker build -f Dockerfile.prod -t oshiome-frontend-prod .
+# パッケージのインストール
+docker compose exec frontend pnpm install
 
-# ビルド結果の取得
-docker create --name temp-container oshiome-frontend-prod
-docker cp temp-container:/usr/share/nginx/html ./dist
-docker rm temp-container
+# 型チェック
+docker compose exec frontend pnpm type-check
+
+# リントチェック
+docker compose exec frontend pnpm lint
+
+# テスト実行
+docker compose exec frontend pnpm test
+
+# ビルド
+docker compose exec frontend pnpm build
 ```
 
-2. ビルドファイルの転送
-```bash
-# distディレクトリの内容をサーバーに転送
-scp -r dist/* アカウント名@アカウント名.sakura.ne.jp:~/public_html/
-```
+基本的な開発環境のセットアップ手順は[README.md](../readme.md#開発環境のセットアップ)を参照してください。
 
-3. 設定ファイルの転送
-```bash
-# nginx.confの転送
-scp nginx.conf アカウント名@アカウント名.sakura.ne.jp:~/nginx.conf
-```
+### 開発時の注意点
+- コンポーネントの作成は`src/components`以下の適切なディレクトリに配置
+- 新しいページの追加は`src/pages`に配置
+- APIクライアントの実装は`src/api/services`に配置
+- 型定義は`src/types`に配置
+- カスタムフックは`src/hooks`に配置
 
-### サーバーメンテナンス
-
-#### ログの確認
-```bash
-# アクセスログ
-tail -f ~/logs/access.log
-
-# エラーログ
-tail -f ~/logs/error.log
-```
-
-#### バックアップ
-```bash
-# 静的ファイルのバックアップ
-tar -czf frontend_backup_$(date +%Y%m%d).tar.gz ~/public_html/
-``` 
+### コーディング規約
+- コンポーネントは関数コンポーネントで実装
+- Props型は明示的に定義
+- カスタムフックは`use`プレフィックスを使用
+- コンポーネントのスタイルはTailwind CSSで実装
+- 再利用可能なユーティリティ関数は`src/utils`に配置 

@@ -3,7 +3,7 @@
 ## 概要
 このプロジェクトは以下の構成でDockerを使用してローカル開発環境を構築しています：
 - バックエンド: Go + Air（ホットリロード）
-- フロントエンド: Node.js + Vite
+- フロントエンド: Node.js + Vite + React
 - データベース: PostgreSQL
 - Adminer: データベース管理用
 
@@ -61,7 +61,7 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    - Name: `oshiome-db`（任意の名前）
    - Database: `oshiome`
    - User: `oshiome_user`
-   - Region: `Singapore (Southeast Asia)`（既存のサービスと同じリージョン）
+   - Region: `Singapore (Southeast Asia)`
    - PostgreSQL Version: `16`
    - Instance Type: `Free`
    - Storage: `1 GB`
@@ -88,15 +88,15 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 
 ### 2. バックエンドのデプロイ
 1. Renderダッシュボードで「New +」をクリックし、「Web Service」を選択
-2. GitHubリポジトリ（masvc/oshiome_go）を選択
+2. GitHubリポジトリを選択
 3. 以下の設定を行う：
    - Name: `oshiome-backend`
    - Environment: `Docker`
    - Branch: `main`
    - Root Directory: `backend`
    - Instance Type: Free
-   - Region: `Singapore (Southeast Asia)`（データベースと同じリージョン）
-   - Dockerfile Path: `Dockerfile.prod`（本番環境用）
+   - Region: `Singapore (Southeast Asia)`
+   - Dockerfile Path: `Dockerfile.prod`
 
 4. 環境変数を設定（「Environment」タブ）：
    ```
@@ -113,15 +113,15 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 
 ### 3. フロントエンドのデプロイ
 1. Renderダッシュボードで「New +」をクリックし、「Web Service」を選択
-2. GitHubリポジトリ（masvc/oshiome_go）を選択
+2. GitHubリポジトリを選択
 3. 以下の設定を行う：
-   - Name: `oshiome`（メインのフロントエンドサービス）
+   - Name: `oshiome`
    - Environment: `Docker`
    - Branch: `main`
    - Root Directory: `frontend`
    - Instance Type: Free
-   - Region: `Singapore (Southeast Asia)`（他のサービスと同じリージョン）
-   - Dockerfile Path: `frontend/Dockerfile.prod`
+   - Region: `Singapore (Southeast Asia)`
+   - Dockerfile Path: `Dockerfile.prod`
    - Docker Build Context Directory: `frontend`
 
 4. 環境変数を設定：
@@ -129,18 +129,13 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    VITE_API_URL=https://oshiome-backend.onrender.com
    ```
 
-5. その他の設定：
-   - Health Check Path: 設定不要
-   - Pre-Deploy Command: 設定不要
-   - Auto-Deploy: Yes
-
-6. 「Create Web Service」をクリック
+5. 「Create Web Service」をクリック
 
 ### 4. CORS設定
-1. バックエンド（`backend/cmd/main.go`）
+1. バックエンド（`backend/internal/middleware/cors.go`）
    ```go
    config := cors.Config{
-       AllowOrigins:     []string{"http://localhost:5173", "https://oshiome.onrender.com"},
+       AllowOrigins:     strings.Split(os.Getenv("CORS_ALLOWED_ORIGINS"), ","),
        AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
        AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
        AllowCredentials: true,
@@ -172,32 +167,6 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    }
    ```
 
-### 5. 環境変数の型定義
-1. フロントエンド（`frontend/src/env.d.ts`）
-   ```typescript
-   /// <reference types="vite/client" />
-
-   interface ImportMetaEnv {
-       readonly VITE_API_URL: string
-   }
-
-   interface ImportMeta {
-       readonly env: ImportMetaEnv
-   }
-   ```
-
-2. API設定（`frontend/src/api/config.ts`）
-   ```typescript
-   export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-
-   export const fetchConfig: RequestInit = {
-       credentials: 'include',
-       headers: {
-           'Content-Type': 'application/json',
-       },
-   }
-   ```
-
 ## デプロイ後の確認
 
 ### 1. 各サービスの状態確認
@@ -205,7 +174,6 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    - データベース: 「ready」状態であることを確認
    - バックエンド: 緑色の「Deploy successful」が表示されるまで待つ
    - フロントエンド: 緑色の「Deploy successful」が表示されるまで待つ
-   - エラーが発生した場合は、ログを確認
 
 2. 各サービスのURLをメモ：
    - バックエンド: `https://oshiome-backend.onrender.com`
@@ -214,12 +182,14 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 ### 2. アプリケーションの動作確認
 1. フロントエンドのURLにアクセス
 2. 以下の機能を確認：
-   - ログイン/新規登録
-   - データの表示
-   - データの作成/編集/削除
+   - ユーザー登録・ログイン
+   - プロジェクト一覧表示
+   - プロジェクト詳細表示
+   - お気に入り機能
+   - プロジェクト作成（ログイン後）
 
 ### 3. エラーが発生した場合の対処
-1. ログの確認方法：
+1. ログの確認：
    - Renderダッシュボードで該当サービスを選択
    - 「Logs」タブをクリック
    - エラーメッセージを確認
@@ -228,32 +198,13 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    - データベース接続エラー
      - 環境変数の設定を確認
      - データベースの接続情報を確認
-     - パスワードが正しく設定されているか確認
-     - データベースのステータスが「available」であることを確認
-   - ビルドエラー
-     - Dockerfileの内容を確認
-     - 依存関係が正しく設定されているか確認
-     - 本番環境では`Dockerfile.prod`を使用することを確認
-   - アプリケーション起動エラー
-     - ポート番号の設定を確認
-     - 環境変数が正しく設定されているか確認
-     - アプリケーションが正しいポートでリッスンしているか確認
-
-### 6. デプロイ後のトラブルシューティング
-1. CORS関連のエラー
-   - バックエンドの`AllowOrigins`に正しいフロントエンドのURLが含まれているか確認
-   - nginxの設定で`Access-Control-Allow-Origin`ヘッダーが正しく設定されているか確認
-   - `credentials: 'include'`の設定がフロントエンドで有効になっているか確認
-
-2. 環境変数関連のエラー
-   - Renderダッシュボードで`VITE_API_URL`が正しく設定されているか確認
-   - 型定義ファイル（`env.d.ts`）が正しく配置されているか確認
-   - ビルド時に環境変数が正しく注入されているか確認
-
-3. API通信のエラー
-   - バックエンドのURLが正しく設定されているか確認
-   - nginxの`proxy_pass`の設定が正しいか確認
-   - ネットワークタブでリクエストとレスポンスを確認
+     - データベースのステータスを確認
+   - CORS関連のエラー
+     - 環境変数`CORS_ALLOWED_ORIGINS`の設定を確認
+     - nginxの設定を確認
+   - 認証関連のエラー
+     - `JWT_SECRET`の設定を確認
+     - Cookie設定を確認
 
 ## 本番環境での注意点
 
@@ -261,11 +212,9 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 - 本番環境のパスワードは強力なものを使用
 - 環境変数は必ずRenderの管理画面で設定
 - `.env`ファイルはGitHubにコミットしない
-- データベースのパスワードは定期的に変更することを推奨
-- 本番環境では`JWT_SECRET`は十分に長いランダムな文字列を使用
-- データベースのアクセス制御を適切に設定（必要に応じてIP制限を検討）
-- `JWT_SECRET`と`DB_PASSWORD`は異なる値を使用することを推奨
-- パスワードやシークレットキーは定期的に更新することを推奨
+- データベースのパスワードは定期的に変更
+- `JWT_SECRET`は十分に長いランダムな文字列を使用
+- データベースのアクセス制御を適切に設定
 
 ### 2. パフォーマンス
 - 無料プランではスリープ状態になる可能性がある
@@ -273,7 +222,6 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 - データベースの接続数に制限がある
 - 無料プランのデータベースは1GBのストレージ制限がある
 - 無料プランでは256MBのRAMと0.1 CPUの制限がある
-- データベースは2025年4月23日に期限切れになる（無料プランの場合）
 
 ### 3. メンテナンス
 - 定期的にログを確認
