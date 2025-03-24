@@ -1,10 +1,7 @@
 // API設定
-export const API_BASE_URL = import.meta.env.VITE_API_URL;
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-if (!API_BASE_URL) {
-  throw new Error('VITE_API_URL environment variable is not set');
-}
-
+// APIの設定
 export const API_CONFIG = {
   baseURL: API_BASE_URL,
   headers: {
@@ -12,6 +9,7 @@ export const API_CONFIG = {
   },
 };
 
+// APIエンドポイントの定義
 export const API_ENDPOINTS = {
   // 認証関連
   auth: {
@@ -49,6 +47,7 @@ export async function fetchAPI<T>(
   const response = await fetch(url, {
     ...options,
     headers,
+    credentials: 'include', // CORSリクエストでクッキーを送信
   });
 
   if (!response.ok) {

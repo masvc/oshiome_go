@@ -47,11 +47,22 @@ func main() {
 
 	// CORSの設定
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"}
+	config.AllowOrigins = []string{
+		"http://localhost:5173",
+		"https://oshiome.onrender.com",
+	}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Stripe-Signature"}
+	config.AllowHeaders = []string{
+		"Origin",
+		"Content-Type",
+		"Authorization",
+		"Stripe-Signature",
+		"Accept",
+		"X-Requested-With",
+	}
 	config.AllowCredentials = true
 	config.ExposeHeaders = []string{"Content-Length"}
+	config.MaxAge = 86400 // プリフライトリクエストのキャッシュ時間（24時間）
 	r.Use(cors.New(config))
 
 	// ミドルウェアの設定
