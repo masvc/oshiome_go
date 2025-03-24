@@ -144,12 +144,17 @@ export const ProjectDetail = () => {
 
         if (projectResponse.data) {
           setProject(projectResponse.data);
-          setSupports(supportsResponse.data || []);
+          if (supportsResponse && 'data' in supportsResponse) {
+            setSupports(Array.isArray(supportsResponse.data) ? supportsResponse.data : []);
+          } else {
+            console.error('支援メッセージのフォーマットが不正です:', supportsResponse);
+            setSupports([]);
+          }
         }
         setError(null);
       } catch (err) {
-        console.error('プロジェクト取得エラー:', err);
-        setError('プロジェクトの取得に失敗しました。');
+        console.error('データ取得エラー:', err);
+        setError('データの取得に失敗しました。');
       } finally {
         setLoading(false);
       }
@@ -410,7 +415,7 @@ export const ProjectDetail = () => {
                   応援メッセージ
                 </h2>
                 <div className="space-y-4">
-                  {project.supports?.map((support) => (
+                  {supports.map((support) => (
                     <div key={support.id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
                       <div className="flex items-start gap-3">
                         <img
@@ -430,7 +435,7 @@ export const ProjectDetail = () => {
                       </div>
                     </div>
                   ))}
-                  {(!project.supports || project.supports.length === 0) && (
+                  {supports.length === 0 && (
                     <p className="text-gray-500 text-center py-4">まだ応援メッセージはありません</p>
                   )}
                 </div>

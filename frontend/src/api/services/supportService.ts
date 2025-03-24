@@ -1,11 +1,11 @@
 import { client } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { Support, CreateSupportInput, UpdateSupportInput, ApiResponse, PaginatedResponse } from '../../types';
+import { Support, CreateSupportInput, UpdateSupportInput, ApiResponse } from '../../types';
 
 export const supportService = {
   // プロジェクトの支援一覧を取得（認証不要）
   getProjectSupports: (projectId: number, page = 1, perPage = 10) => {
-    return client.fetch<PaginatedResponse<Support>>(
+    return client.fetch<ApiResponse<Support[]>>(
       `${API_ENDPOINTS.projectSupports(projectId)}?page=${page}&perPage=${perPage}`,
       {
         credentials: 'omit', // 認証情報を送信しない
@@ -30,7 +30,7 @@ export const supportService = {
 
   // ユーザーの支援履歴を取得
   getUserSupports: (userId: number, page = 1, perPage = 10) => {
-    return client.get<PaginatedResponse<Support>>(
+    return client.get<ApiResponse<Support[]>>(
       `${API_ENDPOINTS.userSupports(userId)}?page=${page}&perPage=${perPage}`
     );
   },

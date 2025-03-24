@@ -44,7 +44,11 @@ func (h *ProjectHandler) withTx(c *gin.Context, fn func(*gorm.DB) error) {
 // getProject プロジェクトの取得と権限チェック
 func (h *ProjectHandler) getProject(c *gin.Context, checkOwner bool) (*models.Project, error) {
 	var project models.Project
-	if err := h.db.Preload("User").First(&project, c.Param("id")).Error; err != nil {
+	if err := h.db.
+		Preload("User").
+		Preload("Supports").
+		Preload("Supports.User").
+		First(&project, c.Param("id")).Error; err != nil {
 		return nil, utils.ErrNotFound.WithDetail(utils.ErrMsgProjectNotFound)
 	}
 

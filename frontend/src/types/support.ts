@@ -3,14 +3,15 @@ import { User } from './auth';
 
 export interface Support {
   id: number;
-  amount: number;
-  message?: string;
-  project_id: number;
   user_id: number;
+  project_id: number;
+  amount: number;
+  message: string;
+  status: string;
   created_at: string;
   updated_at: string;
-  project?: Project;
   user?: User;
+  project?: Project;
 }
 
 export interface CreateSupportInput {

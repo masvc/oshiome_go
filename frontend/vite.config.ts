@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
   return {
-    base: './',
+    base: mode === 'production' ? env.VITE_BASE_URL || '/' : './',
     plugins: [react()],
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-router-dom'],

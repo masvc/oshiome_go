@@ -70,7 +70,22 @@ func (h *SupportHandler) CreateSupport(c *gin.Context) {
 
 	// トランザクション開始
 	tx := db.GetDB().Begin()
+	if tx.Error != nil {
+		c.JSON(http.StatusInternalServerError, Response{
+			Status: "error",
+			Error:  "トランザクションの開始に失敗しました",
+		})
+		return
+	}
 
+	// トランザクションのロールバックを保証
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// 支援の作成
 	if err := tx.Create(&support).Error; err != nil {
 		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, Response{
@@ -82,7 +97,7 @@ func (h *SupportHandler) CreateSupport(c *gin.Context) {
 
 	// プロジェクトの現在の支援額を更新
 	project.CurrentAmount += input.Amount
-	if err := tx.Save(&project).Error; err != nil {
+	if err := tx.Model(&project).Update("current_amount", project.CurrentAmount).Error; err != nil {
 		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, Response{
 			Status: "error",
@@ -91,7 +106,15 @@ func (h *SupportHandler) CreateSupport(c *gin.Context) {
 		return
 	}
 
-	tx.Commit()
+	// トランザクションのコミット
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, Response{
+			Status: "error",
+			Error:  "トランザクションのコミットに失敗しました",
+		})
+		return
+	}
 
 	// 作成したサポート情報を関連データと共に取得
 	if err := db.GetDB().
