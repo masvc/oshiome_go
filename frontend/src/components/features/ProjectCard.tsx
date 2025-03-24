@@ -88,7 +88,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     >
       <div className="relative aspect-[4/3] sm:aspect-[16/9]">
         <img
-          src={thumbnail_url || 'https://via.placeholder.com/400x200'}
+          src={thumbnail_url || 'https://picsum.photos/400/200'}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
