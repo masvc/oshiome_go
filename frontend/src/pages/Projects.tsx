@@ -3,6 +3,7 @@ import { Project } from '../types/project';
 import { ProjectCard } from '../components/features/ProjectCard';
 import { GlitterEffect } from '../components/common/GlitterEffect';
 import { projectService } from '../api/services/projectService';
+import { formatProjectForCard } from '../utils/projectUtils';
 
 type ProjectFilter = 'all' | 'active' | 'complete';
 
@@ -47,24 +48,6 @@ export const Projects = () => {
 
     fetchProjects();
   }, [activeFilter]);
-
-  // プロジェクトデータをProjectCardコンポーネントの形式に変換
-  const formatProjectForCard = (project: Project) => {
-    return {
-      id: project.id.toString(),
-      title: project.title,
-      description: project.description,
-      targetAmount: project.target_amount,
-      currentAmount: project.current_amount,
-      deadline: project.deadline,
-      imageUrl: project.image_url || 'https://picsum.photos/seed/default/800/450',
-      supporterCount: project.supporters_count || 0,
-      creator: project.user ? {
-        name: project.user.name,
-        avatarUrl: project.user.profile_image_url || 'https://picsum.photos/seed/default/100/100'
-      } : undefined
-    };
-  };
 
   return (
     <>
@@ -135,16 +118,7 @@ export const Projects = () => {
             {projects.map((project) => (
               <ProjectCard
                 key={project.id}
-                id={project.id.toString()}
-                title={project.title}
-                description={project.description}
-                imageUrl={project.thumbnail_url || 'https://via.placeholder.com/400x200'}
-                targetAmount={project.target_amount}
-                currentAmount={project.current_amount}
-                supporterCount={project.supporters_count || 0}
-                deadline={project.deadline}
-                creator={project.creator}
-                office_approved={project.office_approved}
+                {...formatProjectForCard(project)}
               />
             ))}
           </div>

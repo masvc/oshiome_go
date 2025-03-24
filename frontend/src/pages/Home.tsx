@@ -1,10 +1,11 @@
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ProjectCard } from '../components/features/ProjectCard';
 import { Project } from '../types/project';
 import mainVisual from '../assets/mainvisual.png';
-import { useEffect, useState } from 'react';
 import { GlitterEffect } from '../components/common/GlitterEffect';
 import { projectService } from '../api/services/projectService';
+import { formatProjectForCard } from '../utils/projectUtils';
 
 // サービスの特徴データ
 const features = [
@@ -73,40 +74,6 @@ const features = [
   },
 ];
 
-// 仮のプロジェクトデータ
-const mockProjects: Project[] = [
-  {
-    id: '1',
-    title: '渋谷ビジョンで推しの誕生日を祝おう！',
-    description: '渋谷の大型ビジョンで、みんなで一緒に推しの誕生日をお祝いしましょう。',
-    target_amount: 500000,
-    current_amount: 300000,
-    end_date: '2024-05-01',
-    image_url: 'https://picsum.photos/seed/1/800/450',
-    supporters_count: 30,
-  },
-  {
-    id: '2',
-    title: '池袋サンシャインでバースデー広告',
-    description: '池袋サンシャインシティの大型ビジョンで誕生日広告を実施します。',
-    target_amount: 400000,
-    current_amount: 200000,
-    end_date: '2024-06-15',
-    image_url: 'https://picsum.photos/seed/2/800/450',
-    supporters_count: 20,
-  },
-  {
-    id: '3',
-    title: '新宿アルタで誕生日をお祝い',
-    description: '新宿アルタのビジョンで、推しの誕生日を華やかにお祝いしましょう。',
-    target_amount: 300000,
-    current_amount: 150000,
-    end_date: '2024-07-30',
-    image_url: 'https://picsum.photos/seed/3/800/450',
-    supporters_count: 15,
-  },
-];
-
 export const Home = () => {
   const [popularProjects, setPopularProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,25 +104,6 @@ export const Home = () => {
 
     fetchPopularProjects();
   }, []);
-
-  // プロジェクトデータをProjectCardコンポーネントの形式に変換
-  const formatProjectForCard = (project: Project) => {
-    return {
-      id: project.id.toString(),
-      title: project.title,
-      description: project.description || '',
-      targetAmount: project.target_amount,
-      currentAmount: project.current_amount || 0,
-      deadline: project.end_date,
-      imageUrl: project.image_url || 'https://picsum.photos/seed/default/800/450',
-      supporterCount: project.supporters_count || 0,
-      creator: project.user ? {
-        name: project.user.name,
-        avatarUrl: project.user.profile_image_url || 'https://picsum.photos/seed/default/100/100'
-      } : undefined,
-      office_approved: project.office_approved
-    };
-  };
 
   return (
     <>
