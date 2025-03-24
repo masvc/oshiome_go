@@ -9,180 +9,165 @@
 
 Renderでも同様にDockerを使用してデプロイすることができます。以下では、具体的な手順と注意点について説明します。
 
-## デプロイ手順
+## デプロイ前の準備
 
-### 1. リモートリポジトリの準備
-1. GitHubにリポジトリを作成します（まだの場合）
-2. ローカルリポジトリをGitHubにプッシュします：
+### 1. 必要なアカウントの準備
+1. GitHubアカウント
+   - [GitHub](https://github.com)でアカウントを作成（まだの場合）
+   - リポジトリへのアクセス権限があることを確認
+
+2. Renderアカウント
+   - [Render](https://render.com)でアカウントを作成
+   - GitHubアカウントと連携
+   - クレジットカード情報の登録（無料プランでも必要）
+
+### 2. ローカル環境の確認
+1. アプリケーションが正常に動作することを確認
    ```bash
-   # 既存のリモートリポジトリを確認
-   git remote -v
+   # ローカル環境でアプリケーションを起動
+   docker compose up -d
    
-   # もし設定されていない場合は追加
-   git remote add origin git@github.com:masvc/oshiome_go.git
-   
-   # メインブランチをプッシュ
-   git push -u origin main
+   # 各サービスが正常に起動していることを確認
+   docker compose ps
    ```
 
-### 2. Renderアカウントの準備
-1. [Render](https://render.com)にアカウントを作成します
-2. GitHubアカウントと連携します
-3. リポジトリ（masvc/oshiome_go）へのアクセス権限を付与します
+2. データベースのマイグレーションが正常に実行できることを確認
+   ```bash
+   # バックエンドコンテナに入る
+   docker compose exec backend sh
+   
+   # マイグレーションを実行
+   go run cmd/api/main.go migrate
+   ```
 
-### 3. バックエンドのデプロイ
+### 3. GitHubへのプッシュ
+1. 変更をコミット
+   ```bash
+   git add .
+   git commit -m "デプロイ用の準備"
+   ```
+
+2. GitHubにプッシュ
+   ```bash
+   git push origin main
+   ```
+
+## デプロイ手順
+
+### 1. データベースのデプロイ
+1. Renderダッシュボードにログイン
+2. 「New +」をクリックし、「PostgreSQL」を選択
+3. 以下の設定を行う：
+   - Name: `oshiome-db`（任意の名前）
+   - Database: `oshiome`
+   - User: 任意のユーザー名（例：`oshiome_user`）
+   - Password: 安全なパスワードを設定
+   - Region: 東京リージョンを選択（`Tokyo (Northeast Asia)`）
+   - Instance Type: Free
+
+4. 「Create Database」をクリック
+5. データベースが作成されたら、接続情報をメモ：
+   - Internal Database URL
+   - External Database URL
+   - Host
+   - Port
+   - Database
+   - User
+   - Password
+
+### 2. バックエンドのデプロイ
 1. Renderダッシュボードで「New +」をクリックし、「Web Service」を選択
 2. GitHubリポジトリ（masvc/oshiome_go）を選択
-3. 以下の設定を行います：
-   - Name: oshiome-backend
-   - Environment: Docker
-   - Branch: main
-   - Root Directory: backend
-   - Instance Type: Free（開発環境の場合）
+3. 以下の設定を行う：
+   - Name: `oshiome-backend`
+   - Environment: `Docker`
+   - Branch: `main`
+   - Root Directory: `backend`
+   - Instance Type: Free
+   - Region: 東京リージョンを選択
 
-### 4. フロントエンドのデプロイ
+4. 環境変数を設定（「Environment」タブ）：
+   ```
+   DB_HOST=（PostgreSQLのホスト名）
+   DB_PORT=5432
+   DB_USER=（設定したユーザー名）
+   DB_PASSWORD=（設定したパスワード）
+   DB_NAME=oshiome
+   SERVER_PORT=8000
+   JWT_SECRET=（任意の文字列、例：`your-secret-key-123`）
+   ```
+
+5. 「Create Web Service」をクリック
+
+### 3. フロントエンドのデプロイ
 1. 同様に「New +」から「Web Service」を選択
 2. 同じGitHubリポジトリを選択
-3. 以下の設定を行います：
-   - Name: oshiome-frontend
-   - Environment: Docker
-   - Branch: main
-   - Root Directory: frontend
-   - Instance Type: Free（開発環境の場合）
+3. 以下の設定を行う：
+   - Name: `oshiome-frontend`
+   - Environment: `Docker`
+   - Branch: `main`
+   - Root Directory: `frontend`
+   - Instance Type: Free
+   - Region: 東京リージョンを選択
 
-### 5. 環境変数の設定
-Renderダッシュボードの「Environment」タブで以下の環境変数を設定します：
+4. 環境変数を設定：
+   ```
+   VITE_API_URL=https://oshiome-backend.onrender.com
+   ```
 
-#### バックエンド用
-```
-DB_HOST=your-postgres-host.onrender.com
-DB_PORT=5432
-DB_USER=your-postgres-user
-DB_PASSWORD=your-postgres-password
-DB_NAME=oshiome
-SERVER_PORT=8000
-JWT_SECRET=your-secret-key
-```
+5. 「Create Web Service」をクリック
 
-#### フロントエンド用
-```
-VITE_API_URL=https://oshiome-backend.onrender.com
-```
+## デプロイ後の確認
 
-### 6. データベースの設定
-1. Renderダッシュボードで「New +」をクリックし、「PostgreSQL」を選択
-2. 以下の設定を行います：
-   - Name: oshiome-db
-   - Database: oshiome
-   - User: your-postgres-user
-   - Password: your-postgres-password
-3. 作成されたデータベースの接続情報をバックエンドの環境変数に設定
+### 1. 各サービスの状態確認
+1. Renderダッシュボードで各サービスの状態を確認
+   - 緑色の「Deploy successful」が表示されるまで待つ
+   - エラーが発生した場合は、ログを確認
 
-## 注意点とよくある問題
+2. 各サービスのURLをメモ：
+   - バックエンド: `https://oshiome-backend.onrender.com`
+   - フロントエンド: `https://oshiome-frontend.onrender.com`
 
-### 1. バックエンドの設定
-- `backend/Dockerfile`は開発環境用の設定になっています
-- 本番環境用に以下の変更が必要です：
-  ```dockerfile
-  FROM golang:1.21-alpine
+### 2. アプリケーションの動作確認
+1. フロントエンドのURLにアクセス
+2. 以下の機能を確認：
+   - ログイン/新規登録
+   - データの表示
+   - データの作成/編集/削除
 
-  WORKDIR /app
+### 3. エラーが発生した場合の対処
+1. ログの確認方法：
+   - Renderダッシュボードで該当サービスを選択
+   - 「Logs」タブをクリック
+   - エラーメッセージを確認
 
-  COPY go.mod go.sum ./
-  RUN go mod download
+2. よくある問題と解決方法：
+   - データベース接続エラー
+     - 環境変数の設定を確認
+     - データベースの接続情報を確認
+   - ビルドエラー
+     - Dockerfileの内容を確認
+     - 依存関係が正しく設定されているか確認
+   - アプリケーション起動エラー
+     - ポート番号の設定を確認
+     - 環境変数が正しく設定されているか確認
 
-  COPY . .
+## 本番環境での注意点
 
-  RUN go build -o main ./cmd/api/main.go
+### 1. セキュリティ
+- 本番環境のパスワードは強力なものを使用
+- 環境変数は必ずRenderの管理画面で設定
+- `.env`ファイルはGitHubにコミットしない
 
-  EXPOSE 8000
+### 2. パフォーマンス
+- 無料プランではスリープ状態になる可能性がある
+- 初回アクセス時に起動に時間がかかる
+- データベースの接続数に制限がある
 
-  CMD ["./main"]
-  ```
-
-### 2. フロントエンドの設定
-- `frontend/Dockerfile`は開発環境用の設定になっています
-- 本番環境用に`Dockerfile.prod`を使用します：
-  ```dockerfile
-  FROM node:18-alpine as build
-
-  WORKDIR /app
-
-  COPY package*.json ./
-  RUN npm install
-
-  COPY . .
-  RUN npm run build
-
-  FROM nginx:alpine
-  COPY --from=build /app/dist /usr/share/nginx/html
-  EXPOSE 80
-  CMD ["nginx", "-g", "daemon off;"]
-  ```
-
-### 3. ポート番号について
-- Renderは自動的に`PORT`環境変数を設定します
-- バックエンドは`8000`ポートでリッスンするように設定されています
-- フロントエンドは`80`ポートでリッスンするように設定されています
-- ローカル開発環境では以下のポートが使用されています：
-  - バックエンド: 8000
-  - フロントエンド: 5173
-  - PostgreSQL: 5432
-  - Adminer: 8080
-
-### 4. データベース接続
-- Renderのデータベースは外部からの接続を許可する必要があります
-- データベースの接続URLは`postgres://user:password@host:5432/dbname`の形式で設定します
-- 接続情報はRenderダッシュボードの「PostgreSQL」セクションで確認できます
-- ローカル開発環境では以下の接続情報が使用されています：
-  ```
-  DB_HOST=postgres
-  DB_PORT=5432
-  DB_USER=postgres
-  DB_PASSWORD=postgres
-  DB_NAME=oshiome
-  ```
-
-### 5. ビルド時間の制限
-- Renderの無料プランではビルド時間に制限があります
-- 必要に応じて有料プランへのアップグレードを検討してください
-
-### 6. 環境変数の管理
-- 機密情報は必ずRenderの環境変数として設定します
-- `.env`ファイルはGitHubにコミットしないように注意してください
-- 本番環境用の`.env`ファイルは別途管理してください
-
-## トラブルシューティング
-
-### 1. ビルドが失敗する場合
-- Dockerfileの内容を確認
-- 必要な依存関係がすべて含まれているか確認
-- ビルドログを確認して具体的なエラーメッセージを確認
-- 特に注意が必要な点：
-  - Goのバージョンが1.21であることを確認
-  - Node.jsのバージョンが18であることを確認
-  - 必要なビルドツールがすべて含まれていることを確認
-  - `docker-compose.yml`の`version`属性は無視されるため、削除することを推奨
-
-### 2. アプリケーションが起動しない場合
-- ログを確認して具体的なエラーメッセージを確認
-- ポート番号の設定が正しいか確認
-- データベース接続が正常か確認
-- 特に注意が必要な点：
-  - バックエンドの`main.go`が正しくビルドされているか
-  - フロントエンドのビルドが成功しているか
-  - 環境変数が正しく設定されているか
-  - コンテナの健康状態を確認（`docker compose ps`で確認可能）
-
-### 3. データベース接続エラー
-- データベースの接続情報が正しいか確認
-- データベースが起動しているか確認
-- ファイアウォールの設定を確認
-- 特に注意が必要な点：
-  - PostgreSQLのバージョンが15であることを確認
-  - データベースのユーザー権限が適切に設定されているか
-  - 接続文字列が正しい形式になっているか
-  - ローカル開発環境では`postgres`というホスト名を使用していることを確認
+### 3. メンテナンス
+- 定期的にログを確認
+- バックアップの設定を検討
+- モニタリングの設定を検討
 
 ## 参考リンク
 - [Render公式ドキュメント](https://render.com/docs)
