@@ -24,5 +24,11 @@ RUN go build -o main ./cmd/main.go
 # ポートの公開
 EXPOSE 8000
 
+# 起動スクリプトの作成
+RUN echo '#!/bin/sh\n\
+./main -migrate\n\
+./main' > /app/start.sh && \
+chmod +x /app/start.sh
+
 # アプリケーションの実行
-CMD ["./main"] 
+CMD ["/app/start.sh"] 
