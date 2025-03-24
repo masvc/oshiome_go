@@ -17,6 +17,11 @@ type User struct {
 	UpdatedAt       time.Time `json:"updated_at"`
 }
 
+// TableName GORMのテーブル名を明示的に指定
+func (User) TableName() string {
+	return "users"
+}
+
 func (u *User) BeforeCreate(tx *gorm.DB) error {
 	u.CreatedAt = time.Now()
 	u.UpdatedAt = time.Now()

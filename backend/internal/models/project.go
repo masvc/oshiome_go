@@ -34,6 +34,11 @@ type Project struct {
 	SupportersCount int            `json:"supporters_count" gorm:"-"`
 }
 
+// TableName GORMのテーブル名を明示的に指定
+func (Project) TableName() string {
+	return "projects"
+}
+
 func (p *Project) BeforeCreate(tx *gorm.DB) error {
 	p.CreatedAt = time.Now()
 	p.UpdatedAt = time.Now()
