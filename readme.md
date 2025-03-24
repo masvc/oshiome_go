@@ -1,168 +1,125 @@
-# 推しおめプロジェクト
+# 推しおめ
+
+## プロジェクト概要
+
 推し（Vtuber、アイドル等）の誕生日を祝うためのクラウドファンディングプラットフォーム。
 ファンが連携して駅広告やデジタルサイネージなどにお誕生日広告を出すことのできるサービス。
 
 ## プロジェクト構成
+
 ```
 oshiome_go/
-├── backend/          # Goによるバックエンド実装
-├── frontend/         # フロントエンド関連ファイル
-├── docs/            # プロジェクトドキュメント
-├── docker-compose.yml
-└── README.md
+├── backend/          # バックエンド（Go + Gin）
+├── frontend/         # フロントエンド（React + TypeScript）
+├── docs/            # ドキュメント
+└── docker-compose.yml
 ```
 
 ## 技術スタック
 
 ### バックエンド
+詳細は[backend-checklist.md](./docs/backend-checklist.md)を参照
 - **言語**: Go (Golang) 1.21
 - **フレームワーク**: Gin
-- **データベース**: PostgreSQL 15
-- **ORM**: GORM v2
+- **データベース**: PostgreSQL 16
 - **認証**: JWT
-- **開発ツール**: Air（ホットリロード）
-- **コンテナ化**: Docker & Docker Compose
-- **ログ管理**: Zap
-- **バリデーション**: validator/v10
 
 ### フロントエンド
-- **フレームワーク**: Vite + React
+詳細は[frontend-checklist.md](./docs/frontend-checklist.md)を参照
 - **言語**: TypeScript
-- **UIライブラリ**: Tailwind CSS
-- **UIコンポーネント**: Headless UI
-- **アイコン**: Heroicons
-- **HTTPクライアント**: fetch API
-- **フォーム**: React Hook Form
-- **状態管理**: Zustand
-- **ルーティング**: React Router v6
-- **アバター生成**: DiceBear Avatars
+- **フレームワーク**: React
+- **ビルドツール**: Vite
+- **スタイリング**: TailwindCSS
 
-## ✅ 実装済み機能
+## 実装済み機能
 
-### 認証・認可
-- ユーザー登録・ログイン機能
-- JWTベースの認証システム
-- 保護されたルートの実装
-- カスタマイズ可能なユーザーアバター
+### 認証機能
+- ユーザー登録
+- ログイン/ログアウト
+- パスワードリセット
 
-### プロジェクト管理
-- プロジェクトの作成・編集・削除
-- プロジェクト一覧表示（ページネーション対応）
-- プロジェクトの検索・フィルタリング
-- タグによるプロジェクト管理
+### プロジェクト機能
+- プロジェクト一覧表示
+- プロジェクト詳細表示
+- プロジェクト検索
+- プロジェクトフィルター
+- プロジェクトページネーション
 
 ### 支援機能
-- 支援情報の登録
-- 支援履歴の表示
-- 支援統計の集計
+- 支援フォーム
+- Stripe決済処理
+- 支援完了通知
 
-### UI/UX
-- レスポンシブデザイン
-- モダンなUIコンポーネント
-- フォームバリデーション
-- エラーハンドリング
-- ローディング表示
-- アバターカスタマイズインターフェース
-
-## 🔄 開発中の機能
-
-### 決済システム
-- Stripe APIの統合
-- 決済フローの実装
-- 支援金額の管理
-- 決済履歴の表示
-
-### セキュリティ強化
-- レート制限の実装
-- セキュリティヘッダーの設定
-- 入力値の検証強化
-- CSRF対策
-
-### パフォーマンス最適化
-- キャッシュ戦略（Redis）
-- N+1問題の対処
-- クエリの最適化
-- Code Splitting
-
-### 監視・分析
-- APM（New Relic/Datadog）
-- Prometheus/Grafana
-- Google Analytics 4
-- エラー監視（Sentry）
+### マイページ機能
+- 支援履歴
+- お気に入りプロジェクト
+- プロフィール編集
 
 ## 開発環境のセットアップ
 
 ### 前提条件
-- Go 1.21以上
-- Node.js 18以上
-- Docker と Docker Compose
-- Air（ホットリロード用）
+- Docker
+- Docker Compose
+- Git
 
-### バックエンドのセットアップ
+### 1. リポジトリのクローン
 ```bash
-# リポジトリのクローン
-git clone [repository-url]
+git clone [リポジトリURL]
 cd oshiome_go
+```
 
-# 依存パッケージのインストール
-cd backend
-go mod download
-
-# 環境変数の設定
+### 2. 環境変数の設定
+```bash
+# .envファイルの作成
 cp .env.example .env
-# .envファイルを編集して必要な値を設定
 
-# データベースの起動とマイグレーション
-docker-compose up -d postgres
-go run cmd/main.go -migrate
-
-# 開発サーバーの起動
-air
+# 必要な環境変数を設定
+VITE_API_URL=http://localhost:8000
 ```
 
-### フロントエンドのセットアップ
+### 3. 開発環境の起動
 ```bash
-# フロントエンドディレクトリに移動
-cd frontend
+# Dockerコンテナの起動
+docker compose up -d
 
-# 依存パッケージのインストール
-npm install
-
-# 開発サーバーの起動
-npm run dev
+# フロントエンドのログを確認
+docker compose logs -f frontend
 ```
 
-### Docker Composeによる起動
+### 4. 開発の開始
+- フロントエンドは http://localhost:5173 でアクセス可能
+- バックエンドは http://localhost:8000 でアクセス可能
+- ホットリロードが有効なため、コードの変更は自動的に反映されます
+
+### 5. 開発環境の停止
 ```bash
-# 全サービスの起動
-docker-compose up -d
-
-# ログの確認
-docker-compose logs -f
+# コンテナの停止
+docker compose down
 ```
-
-## 本番環境へのデプロイ
-
-### Renderでのデプロイ
-詳細なデプロイ手順は[deploy.md](./docs/deploy.md)を参照してください。
 
 ## 環境変数
-必要な環境変数の一覧は以下の通りです：
 
 ### バックエンド
-- `SERVER_PORT`: サーバーポート
-- `DB_HOST`: データベースホスト
-- `DB_PORT`: データベースポート
-- `DB_NAME`: データベース名
-- `DB_USER`: データベースユーザー
-- `DB_PASSWORD`: データベースパスワード
-- `JWT_SECRET`: JWT署名キー
+```
+SERVER_PORT=8000
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=oshiome
+DB_USER=oshiome_user
+DB_PASSWORD=your-password
+JWT_SECRET=your-jwt-secret
+CORS_ALLOWED_ORIGINS=http://localhost:5173,https://oshiome.onrender.com
+```
 
 ### フロントエンド
-- `VITE_API_URL`: バックエンドAPIのURL
+```
+VITE_API_URL=http://localhost:8000
+```
 
-## 詳細なドキュメント
-- バックエンドの詳細: [backend-checklist.md](./docs/backend-checklist.md)
-- フロントエンドの詳細: [frontend-checklist.md](./docs/frontend-checklist.md)
+## デプロイ
+デプロイ手順の詳細は[deploy.md](./docs/deploy.md)を参照してください。
+
+## ライセンス
+MIT
 
 
