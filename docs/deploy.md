@@ -68,22 +68,21 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    - High Availability: `Disabled`（無料プランでは利用不可）
 
 4. 「Create Database」をクリック
-5. データベースが作成されたら、接続情報をメモ：
-   - Hostname: `dpg-cvgimhaqgecs739fi530-a`
-   - Port: `5432`
-   - Database: `oshiome`
-   - Username: `oshiome_user`
-   - Password: （設定したパスワード）
-   - Internal Database URL: （データベース準備完了後に表示）
-   - External Database URL: （データベース準備完了後に表示）
-
-6. データベースの接続情報は後でバックエンドの環境変数設定で使用します
-
-7. データベースの作成完了を待つ
+5. データベースの作成完了を待つ
    - ステータスが「creating」から「ready」になるまで待機
    - 完了後、接続情報が表示される
 
-8. アクセス制御の設定
+6. データベースの接続情報を確認
+   - `oshiome-db`の「Connect」タブをクリック
+   - 以下の情報をメモ：
+     - Hostname: `dpg-cvgimhaqgecs739fi530-a`
+     - Port: `5432`
+     - Database: `oshiome`
+     - Username: `oshiome_user`
+     - Password: （表示されたパスワード）
+     - Internal Database URL: （表示されたURL）
+
+7. アクセス制御の設定
    - デフォルトで`0.0.0.0/0`（すべてのIPからのアクセスを許可）が設定されている
    - 本番環境では必要に応じて制限を検討
 
@@ -104,7 +103,7 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    DB_HOST=dpg-cvgimhaqgecs739fi530-a
    DB_PORT=5432
    DB_USER=oshiome_user
-   DB_PASSWORD=oshiome1234
+   DB_PASSWORD=（データベースのパスワード）
    DB_NAME=oshiome
    SERVER_PORT=8000
    JWT_SECRET=jwt-secret-key-2024-03-24
@@ -113,22 +112,29 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 5. 「Create Web Service」をクリック
 
 ### 3. フロントエンドのデプロイ
-1. 同様に「New +」から「Web Service」を選択
-2. 同じGitHubリポジトリを選択
+1. Renderダッシュボードで「New +」をクリックし、「Web Service」を選択
+2. GitHubリポジトリ（masvc/oshiome_go）を選択
 3. 以下の設定を行う：
-   - Name: `oshiome-frontend`
+   - Name: `oshiome`（メインのフロントエンドサービス）
    - Environment: `Docker`
    - Branch: `main`
    - Root Directory: `frontend`
    - Instance Type: Free
    - Region: `Singapore (Southeast Asia)`（他のサービスと同じリージョン）
+   - Dockerfile Path: `frontend/Dockerfile.prod`
+   - Docker Build Context Directory: `frontend`
 
 4. 環境変数を設定：
    ```
    VITE_API_URL=https://oshiome-backend.onrender.com
    ```
 
-5. 「Create Web Service」をクリック
+5. その他の設定：
+   - Health Check Path: 設定不要
+   - Pre-Deploy Command: 設定不要
+   - Auto-Deploy: Yes
+
+6. 「Create Web Service」をクリック
 
 ## デプロイ後の確認
 
@@ -141,7 +147,7 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 
 2. 各サービスのURLをメモ：
    - バックエンド: `https://oshiome-backend.onrender.com`
-   - フロントエンド: `https://oshiome-frontend.onrender.com`
+   - フロントエンド: `https://oshiome.onrender.com`
 
 ### 2. アプリケーションの動作確認
 1. フロントエンドのURLにアクセス
@@ -160,6 +166,8 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    - データベース接続エラー
      - 環境変数の設定を確認
      - データベースの接続情報を確認
+     - パスワードが正しく設定されているか確認
+     - データベースのステータスが「available」であることを確認
    - ビルドエラー
      - Dockerfileの内容を確認
      - 依存関係が正しく設定されているか確認
