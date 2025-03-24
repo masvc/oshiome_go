@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/masvc/oshiome_go/backend/internal/db"
 	"github.com/masvc/oshiome_go/backend/internal/db/migrations"
 	"github.com/masvc/oshiome_go/backend/internal/handlers"
@@ -16,6 +17,11 @@ import (
 )
 
 func main() {
+	// .envファイルの読み込み
+	if err := godotenv.Load(); err != nil {
+		log.Printf("Warning: .env file not found")
+	}
+
 	// コマンドライン引数の解析
 	migrate := flag.Bool("migrate", false, "データベースのマイグレーションを実行")
 	flag.Parse()

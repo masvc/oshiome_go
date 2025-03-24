@@ -8,6 +8,7 @@
 *.test
 *.out
 go.work
+app
 
 # Go workspace
 .idea/
@@ -47,6 +48,7 @@ lerna-debug.log*
 .env
 .env.*
 !.env.example
+!.env.production
 
 # Database
 *.db
@@ -58,4 +60,22 @@ bin/
 tmp/
 
 # Uploads
-backend/uploads/
+uploads/
+
+# デプロイ関連
+*.pem
+*.key
+*.crt
+*.csr
+nginx.conf
+apache2.conf
+.htaccess
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
