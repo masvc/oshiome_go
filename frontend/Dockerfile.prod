@@ -9,7 +9,9 @@ RUN npm install
 # ソースコードのコピー
 COPY . .
 
-# 本番用ビルド
+# 本番用ビルド（環境変数を渡す）
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build:prod
 
 # ビルド結果のみをコピー
