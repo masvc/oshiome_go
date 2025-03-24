@@ -12,9 +12,11 @@ export const projectService = {
     return client.get<ApiResponse<Project[]>>(`${API_ENDPOINTS.projects}?${params.toString()}`);
   },
 
-  // プロジェクト詳細を取得
+  // プロジェクト詳細を取得（認証不要）
   getProject: (id: number) => {
-    return client.get<ApiResponse<Project>>(API_ENDPOINTS.project(id));
+    return client.fetch<ApiResponse<Project>>(API_ENDPOINTS.project(id), {
+      credentials: 'omit', // 認証情報を送信しない
+    });
   },
 
   // プロジェクトを作成
