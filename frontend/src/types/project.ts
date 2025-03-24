@@ -1,4 +1,5 @@
 import { User } from './auth';
+import { Support } from './support';
 
 export type ProjectStatus = 'draft' | 'active' | 'complete';
 
@@ -11,12 +12,14 @@ export interface Project {
   deadline: string;
   status: ProjectStatus;
   thumbnail_url: string | null;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
   user_id: number;
   user?: User;
   supporters_count: number;
   office_approved: boolean;  // true: 確認中, false: 承認済み
+  supports?: Support[];
 }
 
 export interface CreateProjectInput {

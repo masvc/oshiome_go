@@ -3,7 +3,9 @@ import { Link, useParams } from 'react-router-dom';
 import { SupportForm } from '../components/features/SupportForm';
 import { GlitterEffect } from '../components/common/GlitterEffect';
 import { Project } from '../types/project';
+import { Support } from '../types/support';
 import { projectService } from '../api/services/projectService';
+import { supportService } from '../api/services/supportService';
 
 // 支援プラン
 interface SupportPlan {
@@ -118,6 +120,7 @@ export const ProjectDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showStripeModal, setShowStripeModal] = useState(false);
+  const [supports, setSupports] = useState<Support[]>([]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -125,8 +128,17 @@ export const ProjectDetail = () => {
 
       try {
         setLoading(true);
-        const response = await projectService.getProject(parseInt(id));
-        setProject(response.data);
+        const [projectResponse, supportsResponse] = await Promise.all([
+          projectService.getProject(parseInt(id)),
+          supportService.getProjectSupports(parseInt(id))
+        ]);
+
+        if (projectResponse.data) {
+          setProject({
+            ...projectResponse.data,
+            supports: supportsResponse.data
+          });
+        }
         setError(null);
       } catch (err) {
         console.error('プロジェクト取得エラー:', err);
@@ -223,10 +235,10 @@ export const ProjectDetail = () => {
                          'キャンセル'}
                       </span>
                       <span className={`text-sm font-medium ${
-                        project.office_approved === 0 ? 'text-green-600' :
+                        project.office_approved === false ? 'text-green-600' :
                         'text-yellow-600'
                       }`}>
-                        {project.office_approved === 0 ? '事務所承認済' : '事務所確認中'}
+                        {project.office_approved === false ? '事務所承認済' : '事務所確認中'}
                       </span>
                     </div>
                     {/* 企画者情報 */}
@@ -367,6 +379,51 @@ export const ProjectDetail = () => {
                   </div>
                 </div>
               </div>
+
+              {/* 応援メッセージ */}
+              <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 lg:p-6 mt-4">
+                <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-oshi-purple-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
+                  </svg>
+                  応援メッセージ
+                </h2>
+                <div className="space-y-4">
+                  {project.supports?.map((support) => (
+                    <div key={support.id} className="border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={support.user?.profile_image_url || 'https://via.placeholder.com/40x40'}
+                          alt={support.user?.name}
+                          className="w-10 h-10 rounded-full"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <p className="font-medium text-gray-900">{support.user?.name}</p>
+                            <p className="text-sm text-gray-500">
+                              {new Date(support.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <p className="text-gray-600 mt-1 whitespace-pre-line">{support.message}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {(!project.supports || project.supports.length === 0) && (
+                    <p className="text-gray-500 text-center py-4">まだ応援メッセージはありません</p>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* 右側：支援情報 */}
@@ -399,7 +456,7 @@ export const ProjectDetail = () => {
                         <h3 className="font-bold text-gray-900">基本プラン</h3>
                       </div>
                       <span className="text-lg font-bold text-oshi-purple-500">
-                        ¥1,000
+                        ¥3,000
                       </span>
                     </div>
                     <ul className="space-y-2 text-sm text-gray-600 mb-10">
@@ -465,7 +522,7 @@ export const ProjectDetail = () => {
       {/* 支援フォームモーダル */}
       {showSupportForm && (
         <SupportForm
-          projectId={parseInt(id || '0')}
+          projectId={id || '0'}
           onClose={() => setShowSupportForm(false)}
         />
       )}
