@@ -136,6 +136,68 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 
 6. 「Create Web Service」をクリック
 
+### 4. CORS設定
+1. バックエンド（`backend/cmd/main.go`）
+   ```go
+   config := cors.Config{
+       AllowOrigins:     []string{"http://localhost:5173", "https://oshiome.onrender.com"},
+       AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+       AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+       AllowCredentials: true,
+       MaxAge:           12 * time.Hour,
+   }
+   ```
+
+2. フロントエンド（`frontend/nginx.conf`）
+   ```nginx
+   location /api/ {
+       proxy_pass https://oshiome-backend.onrender.com/api/;
+       proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       proxy_set_header X-Forwarded-Proto $scheme;
+
+       if ($request_method = 'OPTIONS') {
+           add_header 'Access-Control-Allow-Origin' $http_origin;
+           add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+           add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+           add_header 'Access-Control-Max-Age' 43200;
+           add_header 'Content-Type' 'text/plain charset=UTF-8';
+           add_header 'Content-Length' 0;
+           return 204;
+       }
+
+       add_header 'Access-Control-Allow-Origin' $http_origin;
+       add_header 'Access-Control-Allow-Credentials' 'true';
+   }
+   ```
+
+### 5. 環境変数の型定義
+1. フロントエンド（`frontend/src/env.d.ts`）
+   ```typescript
+   /// <reference types="vite/client" />
+
+   interface ImportMetaEnv {
+       readonly VITE_API_URL: string
+   }
+
+   interface ImportMeta {
+       readonly env: ImportMetaEnv
+   }
+   ```
+
+2. API設定（`frontend/src/api/config.ts`）
+   ```typescript
+   export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+   export const fetchConfig: RequestInit = {
+       credentials: 'include',
+       headers: {
+           'Content-Type': 'application/json',
+       },
+   }
+   ```
+
 ## デプロイ後の確認
 
 ### 1. 各サービスの状態確認
@@ -176,6 +238,22 @@ Renderでも同様にDockerを使用してデプロイすることができま�
      - ポート番号の設定を確認
      - 環境変数が正しく設定されているか確認
      - アプリケーションが正しいポートでリッスンしているか確認
+
+### 6. デプロイ後のトラブルシューティング
+1. CORS関連のエラー
+   - バックエンドの`AllowOrigins`に正しいフロントエンドのURLが含まれているか確認
+   - nginxの設定で`Access-Control-Allow-Origin`ヘッダーが正しく設定されているか確認
+   - `credentials: 'include'`の設定がフロントエンドで有効になっているか確認
+
+2. 環境変数関連のエラー
+   - Renderダッシュボードで`VITE_API_URL`が正しく設定されているか確認
+   - 型定義ファイル（`env.d.ts`）が正しく配置されているか確認
+   - ビルド時に環境変数が正しく注入されているか確認
+
+3. API通信のエラー
+   - バックエンドのURLが正しく設定されているか確認
+   - nginxの`proxy_pass`の設定が正しいか確認
+   - ネットワークタブでリクエストとレスポンスを確認
 
 ## 本番環境での注意点
 
