@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
+import { Project as AppProject } from '../types/project';
 
-interface Project {
+interface FavoriteProject {
   id: string;
   title: string;
   description: string;
-  imageUrl: string;
+  thumbnail_url: string;
   targetAmount: number;
   currentAmount: number;
-  supporterCount: number;
+  supporters_count: number;
   deadline: string;
   is_favorite?: boolean;
   creator?: {
@@ -16,29 +17,93 @@ interface Project {
   };
 }
 
+// AppProjectからFavoriteProjectへの変換関数
+const convertToFavoriteProject = (project: AppProject): FavoriteProject => {
+  return {
+    id: project.id.toString(),
+    title: project.title,
+    description: project.description,
+    thumbnail_url: project.thumbnail_url || '',
+    targetAmount: project.target_amount,
+    currentAmount: project.current_amount,
+    supporters_count: project.supporters_count,
+    deadline: project.deadline,
+    is_favorite: true,
+    creator: project.user ? {
+      name: project.user.name,
+      avatarUrl: project.user.profile_image_url || ''
+    } : undefined
+  };
+};
+
+// FavoriteProjectとして扱えるかチェックする型ガード関数
+const isFavoriteProject = (project: any): project is FavoriteProject => {
+  return (
+    typeof project === 'object' &&
+    'id' in project &&
+    'title' in project &&
+    'description' in project
+  );
+};
+
 export const useFavorites = () => {
-  const [favorites, setFavorites] = useState<Project[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteProject[]>([]);
 
   useEffect(() => {
     // ローカルストレージからお気に入りを読み込む
     const storedFavorites = localStorage.getItem('favorites');
     if (storedFavorites) {
-      console.log('ローカルストレージからお気に入りを読み込み:', JSON.parse(storedFavorites));
-      setFavorites(JSON.parse(storedFavorites));
+      try {
+        const parsed = JSON.parse(storedFavorites);
+        // 古い形式のデータを新しい形式に変換
+        const converted = parsed.map((fav: any) => ({
+          id: fav.id,
+          title: fav.title,
+          description: fav.description,
+          thumbnail_url: fav.thumbnail_url || fav.imageUrl || '',
+          targetAmount: fav.target_amount || fav.targetAmount,
+          currentAmount: fav.current_amount || fav.currentAmount,
+          supporters_count: fav.supporters_count || fav.supporterCount,
+          deadline: fav.deadline,
+          is_favorite: true,
+          creator: fav.creator
+        }));
+        setFavorites(converted);
+      } catch (error) {
+        console.error('お気に入りの読み込みに失敗しました:', error);
+        setFavorites([]);
+      }
     }
   }, []);
 
-  const toggleFavorite = (project: Project) => {
+  const toggleFavorite = (project: AppProject | FavoriteProject) => {
     setFavorites(prevFavorites => {
-      const isFavorite = prevFavorites.some(fav => fav.id === project.id);
-      const newFavorites = isFavorite
-        ? prevFavorites.filter(fav => fav.id !== project.id)
-        : [...prevFavorites, { ...project, is_favorite: true }];
+      const projectId = typeof project.id === 'number' ? project.id.toString() : project.id;
+      const isFavorite = prevFavorites.some(fav => fav.id === projectId);
       
-      // ローカルストレージに保存
-      console.log('お気に入りを保存:', newFavorites);
-      localStorage.setItem('favorites', JSON.stringify(newFavorites));
-      return newFavorites;
+      if (isFavorite) {
+        const newFavorites = prevFavorites.filter(fav => fav.id !== projectId);
+        localStorage.setItem('favorites', JSON.stringify(newFavorites));
+        return newFavorites;
+      } else {
+        const favoriteProject = 'target_amount' in project 
+          ? convertToFavoriteProject(project as AppProject)
+          : {
+              id: project.id,
+              title: project.title,
+              description: project.description,
+              thumbnail_url: project.thumbnail_url,
+              targetAmount: (project as any).targetAmount,
+              currentAmount: (project as any).currentAmount,
+              supporters_count: project.supporters_count,
+              deadline: project.deadline,
+              is_favorite: true,
+              creator: project.creator
+            };
+        const newFavorites = [...prevFavorites, favoriteProject];
+        localStorage.setItem('favorites', JSON.stringify(newFavorites));
+        return newFavorites;
+      }
     });
   };
 

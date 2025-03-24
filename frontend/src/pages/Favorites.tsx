@@ -2,32 +2,6 @@ import { useState } from 'react';
 import { ProjectCard } from '../components/features/ProjectCard';
 import { useFavorites } from '../hooks/useFavorites';
 
-// モックデータ
-const mockFavoriteProjects = [
-  {
-    id: '1',
-    title: '推しの誕生日を渋谷の街頭ビジョンでお祝い！',
-    description: '大好きな推しの誕生日を、渋谷の大型ビジョンでみんなでお祝いしましょう！',
-    imageUrl: 'https://picsum.photos/seed/project1/800/600',
-    targetAmount: 300000,
-    currentAmount: 280000,
-    supporterCount: 42,
-    deadline: '2024-04-30',
-    is_favorite: true
-  },
-  {
-    id: '2',
-    title: '推しへの感謝の気持ちを池袋の広告で伝えたい！',
-    description: '日頃の感謝を込めて、池袋の駅広告でメッセージを届けます。',
-    imageUrl: 'https://picsum.photos/seed/project2/800/600',
-    targetAmount: 500000,
-    currentAmount: 320000,
-    supporterCount: 64,
-    deadline: '2024-05-15',
-    is_favorite: true
-  }
-];
-
 export const Favorites = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,9 +10,8 @@ export const Favorites = () => {
   const handleRemoveFavorite = async (projectId: string) => {
     try {
       setLoading(true);
-      // ローカルストレージの更新はuseFavoritesフックで行われる
       await new Promise(resolve => setTimeout(resolve, 500));
-      toggleFavorite({ id: projectId } as any); // 型エラーを回避するための一時的な対応
+      toggleFavorite({ id: projectId } as any);
     } catch (error: any) {
       setError('お気に入りの解除に失敗しました');
     } finally {
@@ -92,8 +65,18 @@ export const Favorites = () => {
           {favorites.map((project) => (
             <ProjectCard
               key={project.id}
-              {...project}
+              id={project.id}
+              title={project.title}
+              description={project.description}
+              thumbnail_url={project.thumbnail_url}
+              targetAmount={project.targetAmount}
+              currentAmount={project.currentAmount}
+              supporters_count={project.supporters_count}
+              deadline={project.deadline}
+              is_favorite={true}
               onFavoriteToggle={() => handleRemoveFavorite(project.id)}
+              creator={project.creator}
+              office_approved={false}
             />
           ))}
         </div>
