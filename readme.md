@@ -17,7 +17,7 @@ oshiome_go/
 ### バックエンド
 - **言語**: Go (Golang) 1.21
 - **フレームワーク**: Gin
-- **データベース**: MySQL 8.0
+- **データベース**: PostgreSQL 15
 - **ORM**: GORM v2
 - **認証**: JWT
 - **決済システム**: Stripe
@@ -117,7 +117,7 @@ cp .env.example .env
 # .envファイルを編集して必要な値を設定
 
 # データベースの起動とマイグレーション
-docker-compose up -d mysql
+docker-compose up -d postgres
 go run cmd/main.go -migrate
 
 # 開発サーバーの起動

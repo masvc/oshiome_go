@@ -7,7 +7,7 @@
 ## 💻 技術スタック
 - **言語**: Go (Golang) 1.21
 - **フレームワーク**: Gin
-- **データベース**: MySQL 8.0
+- **データベース**: PostgreSQL 15
 - **ORM**: GORM v2
 - **認証**: JWT
 - **決済システム**: Stripe
@@ -238,7 +238,7 @@ go mod download
 ### 2. データベースの準備
 ```bash
 # Docker Composeでデータベースを起動
-docker-compose up -d mysql
+docker-compose up -d postgres
 
 # マイグレーションの実行
 go run cmd/main.go -migrate
@@ -300,7 +300,7 @@ tail -f ~/app/error.log
 #### バックアップ
 ```bash
 # データベースバックアップ
-mysqldump -u [ユーザー名] -p [データベース名] > backup_$(date +%Y%m%d).sql
+pg_dump -U [ユーザー名] [データベース名] > backup_$(date +%Y%m%d).sql
 ```
 
 ## 📋 次のステップ（優先順位順）
@@ -332,7 +332,7 @@ mysqldump -u [ユーザー名] -p [データベース名] > backup_$(date +%Y%m%
 1. データベース接続エラー
 ```bash
 # 接続確認
-mysql -h $DB_HOST -u $DB_USER -p $DB_NAME
+psql -h $DB_HOST -U $DB_USER -d $DB_NAME
 
 # ファイアウォール設定確認
 sudo ufw status

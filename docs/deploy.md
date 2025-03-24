@@ -4,7 +4,7 @@
 このプロジェクトは以下の構成でDockerを使用してローカル開発環境を構築しています：
 - バックエンド: Go + Air（ホットリロード）
 - フロントエンド: Node.js + Vite
-- データベース: MySQL
+- データベース: PostgreSQL
 - Adminer: データベース管理用
 
 Renderでも同様にDockerを使用してデプロイすることができます。以下では、具体的な手順と注意点について説明します。
@@ -55,10 +55,10 @@ Renderダッシュボードの「Environment」タブで以下の環境変数を
 
 #### バックエンド用
 ```
-DB_HOST=your-mysql-host.onrender.com
-DB_PORT=3306
-DB_USER=your-mysql-user
-DB_PASSWORD=your-mysql-password
+DB_HOST=your-postgres-host.onrender.com
+DB_PORT=5432
+DB_USER=your-postgres-user
+DB_PASSWORD=your-postgres-password
 DB_NAME=oshiome
 SERVER_PORT=8000
 JWT_SECRET=your-secret-key
@@ -70,12 +70,12 @@ VITE_API_URL=https://oshiome-backend.onrender.com
 ```
 
 ### 6. データベースの設定
-1. Renderダッシュボードで「New +」をクリックし、「MySQL」を選択
+1. Renderダッシュボードで「New +」をクリックし、「PostgreSQL」を選択
 2. 以下の設定を行います：
    - Name: oshiome-db
    - Database: oshiome
-   - User: your-mysql-user
-   - Password: your-mysql-password
+   - User: your-postgres-user
+   - Password: your-postgres-password
 3. 作成されたデータベースの接続情報をバックエンドの環境変数に設定
 
 ## 注意点とよくある問題
@@ -127,19 +127,19 @@ VITE_API_URL=https://oshiome-backend.onrender.com
 - ローカル開発環境では以下のポートが使用されています：
   - バックエンド: 8000
   - フロントエンド: 5173
-  - MySQL: 3306
+  - PostgreSQL: 5432
   - Adminer: 8080
 
 ### 4. データベース接続
-- RenderのMySQLは外部からの接続を許可する必要があります
-- データベースの接続URLは`mysql://user:password@host:3306/dbname`の形式で設定します
-- 接続情報はRenderダッシュボードの「MySQL」セクションで確認できます
+- Renderのデータベースは外部からの接続を許可する必要があります
+- データベースの接続URLは`postgres://user:password@host:5432/dbname`の形式で設定します
+- 接続情報はRenderダッシュボードの「PostgreSQL」セクションで確認できます
 - ローカル開発環境では以下の接続情報が使用されています：
   ```
-  DB_HOST=mysql
-  DB_PORT=3306
-  DB_USER=root
-  DB_PASSWORD=rootpassword
+  DB_HOST=postgres
+  DB_PORT=5432
+  DB_USER=postgres
+  DB_PASSWORD=postgres
   DB_NAME=oshiome
   ```
 
@@ -179,14 +179,14 @@ VITE_API_URL=https://oshiome-backend.onrender.com
 - データベースが起動しているか確認
 - ファイアウォールの設定を確認
 - 特に注意が必要な点：
-  - MySQLのバージョンが8.0であることを確認
+  - PostgreSQLのバージョンが15であることを確認
   - データベースのユーザー権限が適切に設定されているか
   - 接続文字列が正しい形式になっているか
-  - ローカル開発環境では`mysql`というホスト名を使用していることを確認
+  - ローカル開発環境では`postgres`というホスト名を使用していることを確認
 
 ## 参考リンク
 - [Render公式ドキュメント](https://render.com/docs)
 - [Docker公式ドキュメント](https://docs.docker.com/)
 - [Go公式ドキュメント](https://golang.org/doc/)
 - [Node.js公式ドキュメント](https://nodejs.org/docs/)
-- [MySQL公式ドキュメント](https://dev.mysql.com/doc/)
+- [PostgreSQL公式ドキュメント](https://www.postgresql.org/docs/)
