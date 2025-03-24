@@ -3,7 +3,10 @@ FROM golang:1.21
 WORKDIR /app
 
 # 必要なパッケージのインストール
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    git \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Airのインストール
 RUN go install github.com/cosmtrek/air@v1.49.0

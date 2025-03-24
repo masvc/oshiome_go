@@ -19,6 +19,11 @@ type Support struct {
 	Project   Project   `gorm:"foreignkey:ProjectID" json:"project"`
 }
 
+// TableName GORMのテーブル名を明示的に指定
+func (Support) TableName() string {
+	return "supports"
+}
+
 func (s *Support) BeforeCreate(tx *gorm.DB) error {
 	s.CreatedAt = time.Now()
 	s.UpdatedAt = time.Now()

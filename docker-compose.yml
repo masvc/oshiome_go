@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -10,15 +8,15 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
       - DB_NAME=oshiome
       - SERVER_PORT=8000
       - JWT_SECRET=your-secret-key
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     command: air
 
@@ -36,33 +34,32 @@ services:
     depends_on:
       - backend
 
-  mysql:
-    image: mysql:8.0
+  postgres:
+    image: postgres:15-alpine
     platform: linux/amd64
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=oshiome
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=oshiome
     volumes:
-      - mysql_data:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 10s
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+  adminer:
+    image: adminer
     ports:
-      - "8080:80"
+      - "8080:8080"
     environment:
-      - PMA_HOST=mysql
-      - MYSQL_ROOT_PASSWORD=rootpassword
+      - ADMINER_DEFAULT_SERVER=postgres
     depends_on:
-      - mysql
+      - postgres
 
 volumes:
-  mysql_data: 
+  postgres_data: 

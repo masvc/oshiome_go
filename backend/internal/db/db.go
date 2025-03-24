@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/masvc/oshiome_go/backend/internal/models"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -17,11 +17,11 @@ func InitDB() (*gorm.DB, error) {
 	// 環境変数から接続情報を取得
 	dbUser := os.Getenv("DB_USER")
 	if dbUser == "" {
-		dbUser = "root"
+		dbUser = "postgres"
 	}
 	dbPass := os.Getenv("DB_PASSWORD")
 	if dbPass == "" {
-		dbPass = "rootpassword"
+		dbPass = "postgres"
 	}
 	dbHost := os.Getenv("DB_HOST")
 	if dbHost == "" {
@@ -29,7 +29,7 @@ func InitDB() (*gorm.DB, error) {
 	}
 	dbPort := os.Getenv("DB_PORT")
 	if dbPort == "" {
-		dbPort = "3306"
+		dbPort = "5432"
 	}
 	dbName := os.Getenv("DB_NAME")
 	if dbName == "" {
@@ -37,12 +37,12 @@ func InitDB() (*gorm.DB, error) {
 	}
 
 	// DSN（Data Source Name）の構築
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		dbUser, dbPass, dbHost, dbPort, dbName)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo",
+		dbHost, dbUser, dbPass, dbName, dbPort)
 
 	// データベース接続
 	var err error
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Printf("データベース接続エラー: %v", err)
 		return nil, err

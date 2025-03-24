@@ -60,6 +60,7 @@ func main() {
 	// ハンドラーのインスタンス化
 	userHandler := handlers.NewUserHandler()
 	projectHandler := handlers.NewProjectHandler()
+	supportHandler := handlers.NewSupportHandler()
 	h := handlers.NewHandler(dbInstance)
 
 	// パブリックルート
@@ -94,6 +95,10 @@ func main() {
 		// IDパラメータを使用するルート
 		protected.PUT("/projects/:id", projectHandler.UpdateProject)
 		protected.DELETE("/projects/:id", projectHandler.DeleteProject)
+
+		// サポート関連
+		protected.POST("/projects/:id/supports", supportHandler.CreateSupport)
+		protected.GET("/projects/:id/supports", supportHandler.GetProjectSupports)
 	}
 
 	port := os.Getenv("SERVER_PORT")
