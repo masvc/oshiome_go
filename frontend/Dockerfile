@@ -8,9 +8,15 @@ COPY package*.json ./
 # 依存関係のインストール
 RUN npm install
 
+# TypeScriptのビルドディレクトリを作成し、パーミッションを設定
+RUN mkdir -p dist && chown -R node:node /app
+
 # ホットリロード用の設定
 ENV CHOKIDAR_USEPOLLING=true
 ENV WATCHPACK_POLLING=true
+
+# 非rootユーザーに切り替え
+USER node
 
 # 開発サーバーの起動
 # ソースコードは docker-compose.yml でボリュームマウントするため、ここではコピーしない
