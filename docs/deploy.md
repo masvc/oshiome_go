@@ -60,20 +60,32 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 3. 以下の設定を行う：
    - Name: `oshiome-db`（任意の名前）
    - Database: `oshiome`
-   - User: 任意のユーザー名（例：`oshiome_user`）
-   - Password: 安全なパスワードを設定
-   - Region: 東京リージョンを選択（`Tokyo (Northeast Asia)`）
-   - Instance Type: Free
+   - User: `oshiome_user`
+   - Region: `Singapore (Southeast Asia)`（既存のサービスと同じリージョン）
+   - PostgreSQL Version: `16`
+   - Instance Type: `Free`
+   - Storage: `1 GB`
+   - High Availability: `Disabled`（無料プランでは利用不可）
 
 4. 「Create Database」をクリック
 5. データベースが作成されたら、接続情報をメモ：
-   - Internal Database URL
-   - External Database URL
-   - Host
-   - Port
-   - Database
-   - User
-   - Password
+   - Hostname: `dpg-cvgimhaqgecs739fi530-a`
+   - Port: `5432`
+   - Database: `oshiome`
+   - Username: `oshiome_user`
+   - Password: （設定したパスワード）
+   - Internal Database URL: （データベース準備完了後に表示）
+   - External Database URL: （データベース準備完了後に表示）
+
+6. データベースの接続情報は後でバックエンドの環境変数設定で使用します
+
+7. データベースの作成完了を待つ
+   - ステータスが「creating」から「ready」になるまで待機
+   - 完了後、接続情報が表示される
+
+8. アクセス制御の設定
+   - デフォルトで`0.0.0.0/0`（すべてのIPからのアクセスを許可）が設定されている
+   - 本番環境では必要に応じて制限を検討
 
 ### 2. バックエンドのデプロイ
 1. Renderダッシュボードで「New +」をクリックし、「Web Service」を選択
@@ -84,17 +96,18 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    - Branch: `main`
    - Root Directory: `backend`
    - Instance Type: Free
-   - Region: 東京リージョンを選択
+   - Region: `Singapore (Southeast Asia)`（データベースと同じリージョン）
+   - Dockerfile Path: `Dockerfile.prod`（本番環境用）
 
 4. 環境変数を設定（「Environment」タブ）：
    ```
-   DB_HOST=（PostgreSQLのホスト名）
+   DB_HOST=dpg-cvgimhaqgecs739fi530-a
    DB_PORT=5432
-   DB_USER=（設定したユーザー名）
-   DB_PASSWORD=（設定したパスワード）
+   DB_USER=oshiome_user
+   DB_PASSWORD=oshiome1234
    DB_NAME=oshiome
    SERVER_PORT=8000
-   JWT_SECRET=（任意の文字列、例：`your-secret-key-123`）
+   JWT_SECRET=jwt-secret-key-2024-03-24
    ```
 
 5. 「Create Web Service」をクリック
@@ -108,7 +121,7 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    - Branch: `main`
    - Root Directory: `frontend`
    - Instance Type: Free
-   - Region: 東京リージョンを選択
+   - Region: `Singapore (Southeast Asia)`（他のサービスと同じリージョン）
 
 4. 環境変数を設定：
    ```
@@ -121,7 +134,9 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 
 ### 1. 各サービスの状態確認
 1. Renderダッシュボードで各サービスの状態を確認
-   - 緑色の「Deploy successful」が表示されるまで待つ
+   - データベース: 「ready」状態であることを確認
+   - バックエンド: 緑色の「Deploy successful」が表示されるまで待つ
+   - フロントエンド: 緑色の「Deploy successful」が表示されるまで待つ
    - エラーが発生した場合は、ログを確認
 
 2. 各サービスのURLをメモ：
@@ -148,9 +163,11 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    - ビルドエラー
      - Dockerfileの内容を確認
      - 依存関係が正しく設定されているか確認
+     - 本番環境では`Dockerfile.prod`を使用することを確認
    - アプリケーション起動エラー
      - ポート番号の設定を確認
      - 環境変数が正しく設定されているか確認
+     - アプリケーションが正しいポートでリッスンしているか確認
 
 ## 本番環境での注意点
 
@@ -158,16 +175,26 @@ Renderでも同様にDockerを使用してデプロイすることができま�
 - 本番環境のパスワードは強力なものを使用
 - 環境変数は必ずRenderの管理画面で設定
 - `.env`ファイルはGitHubにコミットしない
+- データベースのパスワードは定期的に変更することを推奨
+- 本番環境では`JWT_SECRET`は十分に長いランダムな文字列を使用
+- データベースのアクセス制御を適切に設定（必要に応じてIP制限を検討）
+- `JWT_SECRET`と`DB_PASSWORD`は異なる値を使用することを推奨
+- パスワードやシークレットキーは定期的に更新することを推奨
 
 ### 2. パフォーマンス
 - 無料プランではスリープ状態になる可能性がある
 - 初回アクセス時に起動に時間がかかる
 - データベースの接続数に制限がある
+- 無料プランのデータベースは1GBのストレージ制限がある
+- 無料プランでは256MBのRAMと0.1 CPUの制限がある
+- データベースは2025年4月23日に期限切れになる（無料プランの場合）
 
 ### 3. メンテナンス
 - 定期的にログを確認
 - バックアップの設定を検討
 - モニタリングの設定を検討
+- データベースのストレージ使用量を定期的に確認
+- 本番環境では有料プランへのアップグレードを検討
 
 ## 参考リンク
 - [Render公式ドキュメント](https://render.com/docs)
