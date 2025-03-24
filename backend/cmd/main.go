@@ -84,6 +84,7 @@ func main() {
 		// プロジェクト一覧と詳細は認証不要
 		public.GET("/projects", projectHandler.ListProjects)
 		public.GET("/projects/:id", projectHandler.GetProject)
+		public.GET("/projects/:id/supports", supportHandler.GetProjectSupports)
 
 		// Webhook（Stripe-Signatureヘッダーを許可）
 		public.POST("/webhook", h.HandleStripeWebhook)
@@ -109,7 +110,6 @@ func main() {
 
 		// サポート関連
 		protected.POST("/projects/:id/supports", supportHandler.CreateSupport)
-		protected.GET("/projects/:id/supports", supportHandler.GetProjectSupports)
 	}
 
 	port := os.Getenv("SERVER_PORT")
