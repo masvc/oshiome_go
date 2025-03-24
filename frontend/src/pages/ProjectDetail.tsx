@@ -7,6 +7,7 @@ import { Support } from '../types/support';
 import { projectService } from '../api/services/projectService';
 import { supportService } from '../api/services/supportService';
 import { useAuthStore } from '../stores/authStore';
+import { PaginatedResponse } from '../types';
 
 // 支援プラン
 interface SupportPlan {
@@ -136,10 +137,8 @@ export const ProjectDetail = () => {
         ]);
 
         if (projectResponse.data) {
-          setProject({
-            ...projectResponse.data,
-            supports: supportsResponse.data
-          });
+          setProject(projectResponse.data);
+          setSupports(supportsResponse.data || []);
         }
         setError(null);
       } catch (err) {
