@@ -1,18 +1,15 @@
-# 推しおめ
-
-## プロジェクト概要
-
+# 推しおめプロジェクト
 推し（Vtuber、アイドル等）の誕生日を祝うためのクラウドファンディングプラットフォーム。
 ファンが連携して駅広告やデジタルサイネージなどにお誕生日広告を出すことのできるサービス。
 
 ## プロジェクト構成
-
 ```
 oshiome_go/
-├── backend/          # バックエンド（Go + Gin）
-├── frontend/         # フロントエンド（React + TypeScript）
-├── docs/            # ドキュメント
-└── docker-compose.yml
+├── backend/          # Goによるバックエンド実装
+├── frontend/         # フロントエンド関連ファイル
+├── docs/            # プロジェクトドキュメント
+├── docker-compose.yml
+└── README.md
 ```
 
 ## 技術スタック
@@ -23,43 +20,49 @@ oshiome_go/
 - **フレームワーク**: Gin
 - **データベース**: PostgreSQL 16
 - **認証**: JWT
+- **開発ツール**: Air（ホットリロード）
 
 ### フロントエンド
 詳細は[frontend-checklist.md](./docs/frontend-checklist.md)を参照
+- **フレームワーク**: Vite + React
 - **言語**: TypeScript
-- **フレームワーク**: React
-- **ビルドツール**: Vite
-- **スタイリング**: TailwindCSS
+- **UIライブラリ**: Tailwind CSS
+- **状態管理**: Zustand
+- **パッケージマネージャー**: pnpm
 
-## 実装済み機能
+## ✅ 実装済み機能
 
-### 認証機能
-- ユーザー登録
-- ログイン/ログアウト
-- パスワードリセット
+### 認証・認可
+- ユーザー登録・ログイン機能
+- JWTベースの認証システム
+- 保護されたルートの実装
 
-### プロジェクト機能
-- プロジェクト一覧表示
-- プロジェクト詳細表示
-- プロジェクト検索
-- プロジェクトフィルター
-- プロジェクトページネーション
+### プロジェクト管理
+- プロジェクトの作成・編集・削除
+- プロジェクト一覧表示（ページネーション対応）
+- プロジェクトの検索・フィルタリング
+- お気に入りプロジェクト機能
 
 ### 支援機能
-- 支援フォーム
-- Stripe決済処理
-- 支援完了通知
+- 支援情報の登録
+- 支援履歴の表示
+- 支援統計の集計
 
-### マイページ機能
-- 支援履歴
-- お気に入りプロジェクト
-- プロフィール編集
+詳細な機能一覧は[backend-checklist.md](./docs/backend-checklist.md)と[frontend-checklist.md](./docs/frontend-checklist.md)を参照してください。
+
+## 🔄 開発中の機能
+
+### 優先度：高
+- Stripe決済システムの統合
+- セキュリティ強化
+- テスト実装
+
+詳細な開発状況は各チェックリストを参照してください。
 
 ## 開発環境のセットアップ
 
 ### 前提条件
-- Docker
-- Docker Compose
+- Docker と Docker Compose
 - Git
 
 ### 1. リポジトリのクローン
@@ -82,27 +85,43 @@ VITE_API_URL=http://localhost:8000
 # Dockerコンテナの起動
 docker compose up -d
 
-# フロントエンドのログを確認
-docker compose logs -f frontend
+# ログの確認
+docker compose logs -f
 ```
 
 ### 4. 開発の開始
-- フロントエンドは http://localhost:5173 でアクセス可能
 - バックエンドは http://localhost:8000 でアクセス可能
+- フロントエンドは http://localhost:5173 でアクセス可能
 - ホットリロードが有効なため、コードの変更は自動的に反映されます
 
-### 5. 開発環境の停止
+### 5. 開発コマンド
 ```bash
-# コンテナの停止
-docker compose down
+# バックエンド
+docker compose exec backend go run cmd/main.go -migrate  # マイグレーション実行
+docker compose exec backend go test ./...               # テスト実行
+
+# フロントエンド
+docker compose exec frontend pnpm install               # パッケージインストール
+docker compose exec frontend pnpm type-check           # 型チェック
+docker compose exec frontend pnpm lint                 # リントチェック
+docker compose exec frontend pnpm test                 # テスト実行
+docker compose exec frontend pnpm build                # ビルド
 ```
 
+詳細な開発手順は以下を参照してください：
+- バックエンド開発: [backend-checklist.md](./docs/backend-checklist.md#開発環境のセットアップ)
+- フロントエンド開発: [frontend-checklist.md](./docs/frontend-checklist.md#開発環境のセットアップ)
+
+## 本番環境へのデプロイ
+デプロイ手順の詳細は[deploy.md](./docs/deploy.md)を参照してください。
+
 ## 環境変数
+必要な環境変数の一覧：
 
 ### バックエンド
 ```
 SERVER_PORT=8000
-DB_HOST=localhost
+DB_HOST=postgres
 DB_PORT=5432
 DB_NAME=oshiome
 DB_USER=oshiome_user
@@ -116,10 +135,9 @@ CORS_ALLOWED_ORIGINS=http://localhost:5173,https://oshiome.onrender.com
 VITE_API_URL=http://localhost:8000
 ```
 
-## デプロイ
-デプロイ手順の詳細は[deploy.md](./docs/deploy.md)を参照してください。
-
-## ライセンス
-MIT
+## 詳細なドキュメント
+- [バックエンドの詳細](./docs/backend-checklist.md)
+- [フロントエンドの詳細](./docs/frontend-checklist.md)
+- [デプロイ手順](./docs/deploy.md)
 
 
