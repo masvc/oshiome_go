@@ -28,7 +28,6 @@ oshiome_go/
 - **言語**: TypeScript
 - **UIライブラリ**: Tailwind CSS
 - **状態管理**: Zustand
-- **パッケージマネージャー**: pnpm
 
 ## ✅ 実装済み機能
 
@@ -101,11 +100,11 @@ docker compose exec backend go run cmd/main.go -migrate  # マイグレーショ
 docker compose exec backend go test ./...               # テスト実行
 
 # フロントエンド
-docker compose exec frontend pnpm install               # パッケージインストール
-docker compose exec frontend pnpm type-check           # 型チェック
-docker compose exec frontend pnpm lint                 # リントチェック
-docker compose exec frontend pnpm test                 # テスト実行
-docker compose exec frontend pnpm build                # ビルド
+docker compose exec frontend npm install               # パッケージインストール
+docker compose exec frontend npm run type-check       # 型チェック
+docker compose exec frontend npm run lint            # リントチェック
+docker compose exec frontend npm run test            # テスト実行
+docker compose exec frontend npm run build           # ビルド
 ```
 
 詳細な開発手順は以下を参照してください：
