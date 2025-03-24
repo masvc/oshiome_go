@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { SupportForm } from '../components/features/SupportForm';
 import { GlitterEffect } from '../components/common/GlitterEffect';
 import { Project } from '../types/project';
@@ -17,98 +17,104 @@ interface SupportPlan {
 
 // Stripe対応待ちモーダル
 const StripeComingSoonModal = ({ onClose }: { onClose: () => void }) => {
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    const currentPath = window.location.pathname;
+    navigate(`/login?redirect=${encodeURIComponent(currentPath)}`);
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl max-w-md w-full p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">支払い機能について</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          {isAuthenticated ? "支援機能は現在準備中です" : "ログインが必要です"}
+        </h2>
+
         <div className="space-y-4">
-          <p className="text-gray-600">
-            現在、Stripeによる支払い機能を実装中です。
-            しばらくお待ちください。
-          </p>
-          <div className="bg-oshi-purple-50 p-4 rounded-lg">
-            <h3 className="font-medium text-oshi-purple-800 mb-2">
-              実装予定の機能
-            </h3>
-            <ul className="space-y-2 text-sm text-oshi-purple-700">
-              <li className="flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-oshi-purple-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+          {isAuthenticated ? (
+            <>
+              <p className="text-gray-600">
+                現在、Stripeによる支払い機能を実装中です。
+                しばらくお待ちください。
+              </p>
+              <div className="bg-oshi-purple-50 p-4 rounded-lg">
+                <h3 className="font-medium text-oshi-purple-800 mb-2">
+                  実装予定の機能
+                </h3>
+                <ul className="space-y-2 text-sm text-oshi-purple-700">
+                  <li className="flex items-center gap-2">
+                    <svg
+                      className="w-4 h-4 text-oshi-purple-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    クレジットカード決済
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <svg
+                      className="w-4 h-4 text-oshi-purple-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    セキュアな支払い処理
+                  </li>
+                </ul>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-gray-600">
+                プロジェクトを支援するにはログインが必要です。
+                アカウントをお持ちでない場合は、新規登録も可能です。
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={handleLoginClick}
+                  className="w-full bg-oshi-purple-500 text-white py-2 px-4 rounded-lg hover:bg-oshi-purple-600 transition-colors"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                クレジットカード決済
-              </li>
-              <li className="flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-oshi-purple-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                  ログイン
+                </button>
+                <Link
+                  to={`/register?redirect=${encodeURIComponent(window.location.pathname)}`}
+                  className="w-full bg-white border border-oshi-purple-500 text-oshi-purple-500 py-2 px-4 rounded-lg hover:bg-oshi-purple-50 transition-colors text-center"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                セキュアな支払い処理
-              </li>
-              <li className="flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-oshi-purple-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                支払い履歴の管理
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-6">
-          <button
-            onClick={onClose}
-            className="w-full bg-oshi-purple-500 text-white py-3 rounded-full font-bold hover:bg-oshi-purple-600 transition-colors"
-          >
-            閉じる
-          </button>
+                  新規登録
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -153,11 +159,6 @@ export const ProjectDetail = () => {
   }, [id]);
 
   const handleSupportClick = () => {
-    if (!isAuthenticated) {
-      // ログインページにリダイレクト
-      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
-      return;
-    }
     setShowStripeModal(true);
   };
 
