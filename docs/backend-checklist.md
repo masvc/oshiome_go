@@ -10,7 +10,6 @@
 - **データベース**: PostgreSQL 15
 - **ORM**: GORM v2
 - **認証**: JWT
-- **決済システム**: Stripe
 - **開発ツール**: Air（ホットリロード）
 - **コンテナ化**: Docker & Docker Compose
 - **ログ管理**: Zap
@@ -67,7 +66,6 @@ backend/
 - [x] 保護されたルートの実装
 - [x] パスワードのハッシュ化と検証（bcrypt）
 - [x] ユーザー登録・ログイン機能
-- [x] OAuth2認証（Google）の実装
 
 ### 🎯 コアビジネスロジック
 - [x] プロジェクト管理（CRUD操作）
@@ -202,11 +200,6 @@ DELETE /api/projects/:id  # 削除（要認証）
 GET /api/users/:id  # プロフィール取得（要認証）
 ```
 
-### 決済関連
-```
-POST /api/webhook  # Stripe Webhook
-```
-
 ## 🔧 環境変数
 必要な環境変数：
 - `SERVER_PORT`: サーバーポート
@@ -216,13 +209,11 @@ POST /api/webhook  # Stripe Webhook
 - `DB_USER`: データベースユーザー
 - `DB_PASSWORD`: データベースパスワード
 - `JWT_SECRET`: JWT署名キー
-- `STRIPE_SECRET_KEY`: Stripeシークレットキー
-- `STRIPE_WEBHOOK_SECRET`: Stripe Webhookシークレット
 
 ## 🚀 開発環境のセットアップ
 
 ### 前提条件
-- Go 1.16以上
+- Go 1.21以上
 - Docker と Docker Compose
 - Air（ホットリロード用）
 
@@ -266,25 +257,8 @@ curl -X POST http://localhost:8000/api/register \
 
 ## 🚀 本番環境へのデプロイ
 
-### さくらサーバーへのデプロイ手順
-
-1. ビルド
-```bash
-GOOS=linux GOARCH=amd64 go build -o app cmd/main.go
-```
-
-2. ファイル転送
-```bash
-scp app アカウント名@アカウント名.sakura.ne.jp:~/app/
-scp .env アカウント名@アカウント名.sakura.ne.jp:~/app/
-```
-
-3. サービスの起動
-```bash
-ssh アカウント名@アカウント名.sakura.ne.jp
-cd ~/app
-./app
-```
+### Renderでのデプロイ手順
+詳細なデプロイ手順は[deploy.md](./deploy.md)を参照してください。
 
 ### サーバーメンテナンス
 
@@ -323,7 +297,7 @@ pg_dump -U [ユーザー名] [データベース名] > backup_$(date +%Y%m%d).sq
 4. 🚀 パフォーマンス最適化
    - キャッシュの導入
    - クエリの最適化
-   - N+1問題の解決 
+   - N+1問題の解決
 
 ## 🔍 トラブルシューティング
 

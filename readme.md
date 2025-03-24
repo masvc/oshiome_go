@@ -20,7 +20,6 @@ oshiome_go/
 - **データベース**: PostgreSQL 15
 - **ORM**: GORM v2
 - **認証**: JWT
-- **決済システム**: Stripe
 - **開発ツール**: Air（ホットリロード）
 - **コンテナ化**: Docker & Docker Compose
 - **ログ管理**: Zap
@@ -37,14 +36,12 @@ oshiome_go/
 - **状態管理**: Zustand
 - **ルーティング**: React Router v6
 - **アバター生成**: DiceBear Avatars
-- **画像最適化**: Sharp
 
 ## ✅ 実装済み機能
 
 ### 認証・認可
 - ユーザー登録・ログイン機能
 - JWTベースの認証システム
-- OAuth2認証（Google）
 - 保護されたルートの実装
 - カスタマイズ可能なユーザーアバター
 
@@ -66,7 +63,6 @@ oshiome_go/
 - エラーハンドリング
 - ローディング表示
 - アバターカスタマイズインターフェース
-- アバター生成の最適化
 
 ## 🔄 開発中の機能
 
@@ -147,27 +143,8 @@ docker-compose logs -f
 
 ## 本番環境へのデプロイ
 
-### バックエンドのデプロイ
-```bash
-# バイナリのビルド
-GOOS=linux GOARCH=amd64 go build -o app cmd/main.go
-
-# ファイルの転送
-scp app アカウント名@アカウント名.sakura.ne.jp:~/app/
-scp .env アカウント名@アカウント名.sakura.ne.jp:~/app/
-```
-
-### フロントエンドのデプロイ
-```bash
-# 本番用ビルド
-docker build -f Dockerfile.prod -t oshiome-frontend-prod .
-docker create --name temp-container oshiome-frontend-prod
-docker cp temp-container:/usr/share/nginx/html ./dist
-docker rm temp-container
-
-# ビルドファイルの転送
-scp -r dist/* アカウント名@アカウント名.sakura.ne.jp:~/public_html/
-```
+### Renderでのデプロイ
+詳細なデプロイ手順は[deploy.md](./docs/deploy.md)を参照してください。
 
 ## 環境変数
 必要な環境変数の一覧は以下の通りです：
@@ -180,12 +157,9 @@ scp -r dist/* アカウント名@アカウント名.sakura.ne.jp:~/public_html/
 - `DB_USER`: データベースユーザー
 - `DB_PASSWORD`: データベースパスワード
 - `JWT_SECRET`: JWT署名キー
-- `STRIPE_SECRET_KEY`: Stripeシークレットキー
-- `STRIPE_WEBHOOK_SECRET`: Stripe Webhookシークレット
 
 ### フロントエンド
 - `VITE_API_URL`: バックエンドAPIのURL
-- `VITE_STRIPE_PUBLIC_KEY`: Stripe公開キー
 
 ## 詳細なドキュメント
 - バックエンドの詳細: [backend-checklist.md](./docs/backend-checklist.md)

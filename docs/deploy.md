@@ -37,7 +37,7 @@ Renderでも同様にDockerを使用してデプロイすることができま�
    docker compose exec backend sh
    
    # マイグレーションを実行
-   go run cmd/api/main.go migrate
+   go run cmd/main.go -migrate
    ```
 
 ### 3. GitHubへのプッシュ
