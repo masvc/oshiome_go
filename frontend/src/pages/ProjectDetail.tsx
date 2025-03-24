@@ -186,7 +186,7 @@ export const ProjectDetail = () => {
                 <img
                   src={
                     project.image_url ||
-                    'https://picsum.photos/seed/default/800/450'
+                    'https://placehold.co/800x450'
                   }
                   alt={project.title}
                   className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
@@ -248,7 +248,7 @@ export const ProjectDetail = () => {
                         <p className="text-sm font-bold text-gray-900">{project.user?.name}</p>
                       </div>
                       <img
-                        src={project.user?.profile_image_url || 'https://picsum.photos/seed/default/100/100'}
+                        src={project.user?.profile_image_url || 'https://placehold.co/100x100'}
                         alt={project.user?.name || '企画者'}
                         className="w-10 h-10 rounded-full border-2 border-oshi-purple-100"
                       />
