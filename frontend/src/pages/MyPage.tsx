@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { userService } from '../api/services/userService';
 import { User } from '../types';
+import { APIErrorResponse } from '../types/error';
 
 // モックデータ用の型定義
 type AvatarStyle = 'ADVENTURER' | 'THUMBS' | 'MINIAVS' | 'LORELEI' | 'MICAH' | 'INITIALS' | 'RINGS' | 'PIXEL_ART';
@@ -64,10 +65,16 @@ export const MyPage = () => {
         setLoading(true);
         setError(null);
         const response = await userService.getUser(currentUser.id);
-        setProfile(response.data);
-        setEditedProfile(response.data);
-      } catch (error: any) {
-        setError('プロフィール情報の取得に失敗しました');
+        if (response.data) {
+          setProfile(response.data);
+          setEditedProfile(response.data);
+        }
+      } catch (error) {
+        if (error instanceof APIErrorResponse) {
+          setError('プロフィール情報の取得に失敗しました: ' + error.message);
+        } else {
+          setError('プロフィール情報の取得に失敗しました');
+        }
         console.error('プロフィール取得エラー:', error);
       } finally {
         setLoading(false);
@@ -78,22 +85,38 @@ export const MyPage = () => {
   }, [currentUser?.id]);
 
   const handleProfileUpdate = async () => {
-    if (!currentUser?.id || !editedProfile) return;
+    if (!currentUser?.id || !editedProfile) {
+      setError('ユーザー情報が見つかりません。再度ログインしてください。');
+      return;
+    }
 
     try {
       setLoading(true);
       setError(null);
       
+      if (!editedProfile.name?.trim()) {
+        setError('ニックネームを入力してください。');
+        return;
+      }
+
       const response = await userService.updateUser(currentUser.id, {
-        name: editedProfile.name,
-        bio: editedProfile.bio,
+        name: editedProfile.name.trim(),
+        bio: editedProfile.bio?.trim() || '',
         profile_image_url: editedProfile.profile_image_url,
       });
 
-      setProfile(response.data);
-      setIsEditing(false);
-    } catch (error: any) {
-      setError('プロフィールの更新に失敗しました');
+      if (response.data) {
+        setProfile(response.data);
+        setIsEditing(false);
+      } else {
+        setError('プロフィールの更新に失敗しました。データが正しく返されませんでした。');
+      }
+    } catch (error) {
+      if (error instanceof APIErrorResponse) {
+        setError(`プロフィールの更新に失敗しました: ${error.message}`);
+      } else {
+        setError('予期せぬエラーが発生しました。時間をおいて再度お試しください。');
+      }
       console.error('プロフィール更新エラー:', error);
     } finally {
       setLoading(false);
@@ -101,18 +124,39 @@ export const MyPage = () => {
   };
 
   const handlePasswordChange = async () => {
-    if (!currentUser?.id) return;
+    if (!currentUser?.id) {
+      setError('ユーザー情報が見つかりません。再度ログインしてください。');
+      return;
+    }
 
     try {
       setLoading(true);
       setError(null);
 
+      if (!currentPassword || !newPassword) {
+        setError('現在のパスワードと新しいパスワードを入力してください。');
+        return;
+      }
+
+      if (newPassword.length < 8) {
+        setError('新しいパスワードは8文字以上で入力してください。');
+        return;
+      }
+
       await userService.updatePassword(currentUser.id, currentPassword, newPassword);
       setNewPassword('');
       setCurrentPassword('');
       setShowPasswordChange(false);
-    } catch (error: any) {
-      setError('パスワードの更新に失敗しました');
+    } catch (error) {
+      if (error instanceof APIErrorResponse) {
+        if (error.message.includes('current password')) {
+          setError('現在のパスワードが正しくありません。');
+        } else {
+          setError(`パスワードの更新に失敗しました: ${error.message}`);
+        }
+      } else {
+        setError('予期せぬエラーが発生しました。時間をおいて再度お試しください。');
+      }
       console.error('パスワード更新エラー:', error);
     } finally {
       setLoading(false);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ProjectCard } from '../components/features/ProjectCard';
 import { useFavorites } from '../hooks/useFavorites';
+import { APIErrorResponse } from '../types/error';
 
 export const Favorites = () => {
   const [loading, setLoading] = useState(false);
@@ -8,12 +9,29 @@ export const Favorites = () => {
   const { favorites, toggleFavorite } = useFavorites();
 
   const handleRemoveFavorite = async (projectId: string) => {
+    if (!projectId) {
+      setError('プロジェクトIDが見つかりません。');
+      return;
+    }
+
     try {
       setLoading(true);
+      setError(null);
       await new Promise(resolve => setTimeout(resolve, 500));
-      toggleFavorite({ id: projectId } as any);
-    } catch (error: any) {
-      setError('お気に入りの解除に失敗しました');
+      await toggleFavorite({ id: projectId } as any);
+    } catch (error) {
+      if (error instanceof APIErrorResponse) {
+        if (error.message.includes('not found')) {
+          setError('プロジェクトが見つかりませんでした。');
+        } else if (error.message.includes('unauthorized')) {
+          setError('お気に入りの解除には再度ログインが必要です。');
+        } else {
+          setError(`お気に入りの解除に失敗しました: ${error.message}`);
+        }
+      } else {
+        setError('予期せぬエラーが発生しました。時間をおいて再度お試しください。');
+      }
+      console.error('お気に入り解除エラー:', error);
     } finally {
       setLoading(false);
     }
