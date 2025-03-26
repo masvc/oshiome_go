@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { ProjectCard } from '../components/features/ProjectCard';
 import { useFavorites } from '../hooks/useFavorites';
 import { APIErrorResponse } from '../types/error';
+import { formatProjectForCard } from '../utils/projectUtils';
+import { Project } from '../types/project';
 
 export const Favorites = () => {
   const [loading, setLoading] = useState(false);
@@ -80,23 +82,40 @@ export const Favorites = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {favorites.map((project) => (
-            <ProjectCard
-              key={project.id}
-              id={project.id}
-              title={project.title}
-              description={project.description}
-              thumbnail_url={project.thumbnail_url}
-              targetAmount={project.targetAmount}
-              currentAmount={project.currentAmount}
-              supporters_count={project.supporters_count}
-              deadline={project.deadline}
-              is_favorite={true}
-              onFavoriteToggle={() => handleRemoveFavorite(project.id)}
-              creator={project.creator}
-              office_approved={false}
-            />
-          ))}
+          {favorites.map((favorite) => {
+            const project: Project = {
+              id: parseInt(favorite.id),
+              title: favorite.title,
+              description: favorite.description,
+              target_amount: favorite.targetAmount,
+              current_amount: favorite.currentAmount,
+              deadline: favorite.deadline,
+              status: 'active',
+              thumbnail_url: favorite.thumbnail_url,
+              image_url: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              user_id: 0,
+              user: favorite.creator ? {
+                id: 0,
+                name: favorite.creator.name,
+                email: '',
+                profile_image_url: favorite.creator.avatarUrl,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              } : undefined,
+              supporters_count: favorite.supporters_count,
+              office_approved: favorite.office_approved
+            };
+            return (
+              <ProjectCard
+                key={project.id}
+                {...formatProjectForCard(project)}
+                is_favorite={true}
+                onFavoriteToggle={() => handleRemoveFavorite(favorite.id)}
+              />
+            );
+          })}
         </div>
       )}
     </div>

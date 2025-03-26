@@ -15,6 +15,7 @@ interface FavoriteProject {
     name: string;
     avatarUrl: string;
   };
+  office_approved: boolean;
 }
 
 // AppProjectからFavoriteProjectへの変換関数
@@ -32,7 +33,8 @@ const convertToFavoriteProject = (project: AppProject): FavoriteProject => {
     creator: project.user ? {
       name: project.user.name,
       avatarUrl: project.user.profile_image_url || ''
-    } : undefined
+    } : undefined,
+    office_approved: project.office_approved
   };
 };
 
@@ -66,7 +68,8 @@ export const useFavorites = () => {
           supporters_count: fav.supporters_count || fav.supporterCount,
           deadline: fav.deadline,
           is_favorite: true,
-          creator: fav.creator
+          creator: fav.creator,
+          office_approved: fav.office_approved ?? true
         }));
         setFavorites(converted);
       } catch (error) {
@@ -98,7 +101,8 @@ export const useFavorites = () => {
               supporters_count: project.supporters_count,
               deadline: project.deadline,
               is_favorite: true,
-              creator: project.creator
+              creator: project.creator,
+              office_approved: project.office_approved
             };
         const newFavorites = [...prevFavorites, favoriteProject];
         localStorage.setItem('favorites', JSON.stringify(newFavorites));
