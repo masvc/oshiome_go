@@ -54,11 +54,11 @@ export const Projects = () => {
       <GlitterEffect enabled={true} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         {/* ヘッダー */}
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <h1 className="text-3xl sm:text-4xl font-display font-bold text-gray-900 mb-4">
             プロジェクト一覧
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl">
             推しの誕生日を祝うためのプロジェクトを探してみましょう。
             あなたの想いを届けるプロジェクトが見つかるかもしれません。
           </p>

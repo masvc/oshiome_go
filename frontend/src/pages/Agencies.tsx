@@ -45,17 +45,12 @@ export const Agencies = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
       {/* ヒーローセクション */}
-      <section className="text-center relative py-16 bg-gradient-to-br from-oshi-purple-50 to-oshi-pink-50 rounded-3xl border border-oshi-pink-100/30">
-        <div className="absolute inset-0 overflow-hidden rounded-3xl">
-          <div className="absolute inset-0 bg-grid-oshi-purple/[0.03] bg-[size:20px_20px]" />
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-oshi-purple-600 to-oshi-pink-600 bg-clip-text text-transparent">
+      <section className="mb-12">
+        <h1 className="text-3xl sm:text-4xl font-display font-bold text-gray-900 mb-4">
           対応事務所一覧
         </h1>
-        <p className="text-gray-600 text-lg sm:text-xl max-w-2xl mx-auto">
-          応援広告・生誕広告を容認している事務所の
-          <br className="hidden sm:block" />
-          ガイドラインをまとめています
+        <p className="text-gray-600 max-w-2xl">
+          応援広告・生誕広告を容認している事務所のガイドラインをまとめています
         </p>
       </section>
 
