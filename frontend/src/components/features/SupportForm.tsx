@@ -14,17 +14,12 @@ export const SupportForm = ({ projectId, onClose }: SupportFormProps) => {
     setIsSubmitting(true);
 
     try {
+      // TODO: バックエンドAPIとの連携を実装
       // 支援データを送信
-      // TODO: 実際のAPI呼び出しを実装
-      console.log('支援を送信:', {
-        projectId,
-        amount: 3000, // 固定金額
-        message
-      });
-
+      await new Promise(resolve => setTimeout(resolve, 1000)); // モック用の遅延
       onClose();
-    } catch (error) {
-      console.error('支援の送信に失敗しました:', error);
+    } catch (error: unknown) {
+      // エラー通知の表示などのエラーハンドリングを実装予定
     } finally {
       setIsSubmitting(false);
     }

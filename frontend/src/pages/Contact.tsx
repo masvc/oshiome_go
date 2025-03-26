@@ -17,8 +17,7 @@ export const Contact = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: フォームの送信処理を実装
-    console.log('Form submitted:', formData);
+    // TODO: バックエンドAPIとの連携を実装
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
