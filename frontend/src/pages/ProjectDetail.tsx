@@ -200,10 +200,7 @@ export const ProjectDetail = () => {
             <div className="relative bg-white rounded-lg sm:rounded-xl shadow-sm overflow-hidden group">
               <div className="aspect-w-16 aspect-h-9 lg:aspect-h-10">
                 <img
-                  src={
-                    project.thumbnail_url ||
-                    'https://picsum.photos/800/450'
-                  }
+                  src={project.thumbnail_url || 'https://picsum.photos/800/450'}
                   alt={project.title}
                   className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
@@ -226,7 +223,7 @@ export const ProjectDetail = () => {
                       />
                     </svg>
                     <span className="text-sm sm:text-base">
-                      支援者数: 0人
+                      支援者数: {project.supporters_count || 0}人
                     </span>
                   </div>
                 </div>
