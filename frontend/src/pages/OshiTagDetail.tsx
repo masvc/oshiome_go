@@ -82,20 +82,20 @@ export const OshiTagDetail = () => {
             <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF66B2] to-[#B266FF]">
               {tagDetail.followerCount.toLocaleString()}
             </span>
-            <span className="text-base text-gray-500">
+            <span className="text-[10px] sm:text-base text-gray-500 whitespace-nowrap">
               人が推しタグ中！
             </span>
           </div>
           <button
             onClick={handleFollowToggle}
-            className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`inline-flex items-center px-2 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-sm font-medium transition-all whitespace-nowrap ${
               isFollowing
                 ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 : 'bg-gradient-to-r from-[#FF66B2] to-[#B266FF] text-white hover:from-[#FF4D99] hover:to-[#9933FF]'
             }`}
           >
             <svg
-              className={`w-5 h-5 mr-1.5 ${isFollowing ? 'text-gray-600' : 'text-white'}`}
+              className={`w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-1.5 ${isFollowing ? 'text-gray-600' : 'text-white'}`}
               fill={isFollowing ? 'currentColor' : 'none'}
               stroke="currentColor"
               viewBox="0 0 24 24"

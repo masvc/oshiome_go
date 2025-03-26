@@ -236,7 +236,7 @@ export const ProjectDetail = () => {
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 rounded-md text-sm font-medium ${
+                      <span className={`px-2 py-1 rounded-md text-[10px] sm:text-sm font-medium whitespace-nowrap ${
                         project.status === 'draft' ? 'bg-gray-100 text-gray-600' :
                         project.status === 'active' ? 'bg-green-100 text-green-600' :
                         project.status === 'complete' ? 'bg-blue-100 text-blue-600' :
@@ -247,7 +247,7 @@ export const ProjectDetail = () => {
                          project.status === 'complete' ? '完了' :
                          'キャンセル'}
                       </span>
-                      <span className={`text-sm font-medium ${
+                      <span className={`text-[10px] sm:text-sm font-medium whitespace-nowrap ${
                         project.office_approved === false ? 'text-green-600' :
                         'text-yellow-600'
                       }`}>
@@ -257,13 +257,13 @@ export const ProjectDetail = () => {
                     {/* 企画者情報 */}
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-start">
-                        <p className="text-[10px] text-gray-500 tracking-wider">企画者</p>
-                        <p className="text-sm font-bold text-gray-900">{project.user?.name}</p>
+                        <p className="text-[8px] sm:text-[10px] text-gray-500 tracking-wider whitespace-nowrap">企画者</p>
+                        <p className="text-[10px] sm:text-sm font-bold text-gray-900 whitespace-nowrap">{project.user?.name}</p>
                       </div>
                       <img
                         src={project.user?.profile_image_url || 'https://picsum.photos/100/100'}
                         alt={project.user?.name || '企画者'}
-                        className="w-10 h-10 rounded-full border-2 border-oshi-purple-100"
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-oshi-purple-100"
                       />
                     </div>
                   </div>
@@ -343,22 +343,37 @@ export const ProjectDetail = () => {
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               {/* プロジェクトのハッシュタグ */}
               <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 lg:p-6">
-                <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-oshi-purple-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div className="flex items-center justify-between mb-3 sm:mb-4">
+                  <h2 className="text-[12px] sm:text-lg font-bold flex items-center gap-2 whitespace-nowrap">
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5 text-oshi-purple-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                      />
+                    </svg>
+                    プロジェクトのハッシュタグ
+                  </h2>
+                  <button
+                    onClick={() => {
+                      const text = encodeURIComponent(`【${project?.title}】\n\n推しおめで支援したよ！\n\n気になる人はぜひチェックしてみて！\n\n#推し誕生日 #誕生日応援`);
+                      const url = encodeURIComponent(window.location.href);
+                      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+                    }}
+                    className="inline-flex items-center px-2 sm:px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-medium bg-black text-white hover:bg-gray-800 transition-colors whitespace-nowrap"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-                    />
-                  </svg>
-                  プロジェクトのハッシュタグ
-                </h2>
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    Xでシェア
+                  </button>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-oshi-purple-100 text-oshi-purple-800">
                     #推し誕生日
@@ -507,9 +522,9 @@ export const ProjectDetail = () => {
                       </li>
                     </ul>
                     <div className="absolute bottom-4 right-4">
-                      <span className="inline-flex items-center gap-1 px-4 py-1.5 rounded-full text-sm font-bold bg-oshi-purple-500 text-white group-hover:bg-oshi-purple-600 transition-colors">
+                      <span className="inline-flex items-center gap-2 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-bold bg-oshi-purple-500 text-white group-hover:bg-oshi-purple-600 transition-colors">
                         <svg
-                          className="w-4 h-4"
+                          className="w-4 h-4 sm:w-5 sm:h-5"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
