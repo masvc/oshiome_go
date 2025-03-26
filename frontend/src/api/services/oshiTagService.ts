@@ -48,7 +48,7 @@ const mockTags: OshiTag[] = [
     name: 'ホロライブ',
     category: 'VTuber',
     followerCount: 15600,
-    isFollowing: false
+    isFollowing: true
   },
   {
     id: '2',
@@ -76,17 +76,63 @@ const mockTags: OshiTag[] = [
     name: 'Ado',
     category: 'アーティスト',
     followerCount: 8900,
-    isFollowing: true
+    isFollowing: false
   }
 ];
 
 const mockTagDetails: Record<string, OshiTagDetailData> = {
   '1': {
     id: '1',
+    name: 'ホロライブ',
+    category: 'VTuber',
+    description: 'カバー株式会社が運営するVTuberグループ。個性豊かなタレントたちが、ゲーム配信や音楽活動、バラエティ番組など、多様なコンテンツを展開しています。',
+    followerCount: 15600,
+    isFollowing: true,
+    projects: [
+      {
+        id: 'p6',
+        title: 'ホロライブ 5th Anniversary',
+        description: '結成5周年を記念した大型ライブイベントの開催支援',
+        targetAmount: 10000000,
+        daysLeft: 90,
+        thumbnail_url: 'https://picsum.photos/seed/hololive-anniv/400/300',
+        supporters_count: 3500
+      },
+      {
+        id: 'p7',
+        title: 'オリジナル曲制作',
+        description: '新世代メンバーによるオリジナル曲制作プロジェクト',
+        targetAmount: 3000000,
+        daysLeft: 40,
+        thumbnail_url: 'https://picsum.photos/seed/hololive-music/400/300',
+        supporters_count: 1200
+      }
+    ],
+    news: [
+      {
+        id: 'n6',
+        title: '新メンバー加入発表',
+        content: 'ホロライブ6期生の加入が決定しました！',
+        date: '2024-03-16',
+        url: '#',
+        thumbnail_url: 'https://picsum.photos/seed/hololive-news1/200/200'
+      },
+      {
+        id: 'n7',
+        title: '海外展開加速',
+        content: '北米市場での展開を強化、新規タレントの募集を開始',
+        date: '2024-03-12',
+        url: '#',
+        thumbnail_url: 'https://picsum.photos/seed/hololive-news2/200/200'
+      }
+    ]
+  },
+  '2': {
+    id: '2',
     name: '乃木坂46',
     category: 'アイドル',
     description: '2011年に結成された日本の女性アイドルグループ。「会いに行けるアイドル」をコンセプトに、音楽活動だけでなく、バラエティ番組やファッション誌など幅広い分野で活躍しています。',
-    followerCount: 125789,
+    followerCount: 12500,
     isFollowing: true,
     projects: [
       {
@@ -106,15 +152,6 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         daysLeft: 45,
         thumbnail_url: 'https://picsum.photos/seed/nogizaka-photo/400/300',
         supporters_count: 890
-      },
-      {
-        id: 'p3',
-        title: 'ファンクラブイベント',
-        description: '会員限定の特別イベント開催プロジェクト',
-        targetAmount: 3000000,
-        daysLeft: 15,
-        thumbnail_url: 'https://picsum.photos/seed/nogizaka-event/400/300',
-        supporters_count: 670
       }
     ],
     news: [
@@ -133,23 +170,15 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         date: '2024-03-10',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/nogizaka-news2/200/200'
-      },
-      {
-        id: 'n3',
-        title: '新番組スタート',
-        content: 'レギュラー番組「乃木坂スタイル」が4月からスタート！',
-        date: '2024-03-05',
-        url: '#',
-        thumbnail_url: 'https://picsum.photos/seed/nogizaka-news3/200/200'
       }
     ]
   },
-  '2': {
-    id: '2',
+  '3': {
+    id: '3',
     name: 'YOASOBI',
     category: 'アーティスト',
     description: 'Ayase と ikura からなる音楽ユニット。小説を音楽化するというコンセプトで、数々のヒット曲を生み出しています。',
-    followerCount: 98456,
+    followerCount: 11200,
     isFollowing: false,
     projects: [
       {
@@ -187,6 +216,98 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         date: '2024-03-08',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/yoasobi-news2/200/200'
+      }
+    ]
+  },
+  '4': {
+    id: '4',
+    name: '櫻坂46',
+    category: 'アイドル',
+    description: '乃木坂46の姉妹グループとして2015年に結成。独自の世界観とパフォーマンスで、新しいアイドルの形を追求しています。',
+    followerCount: 9800,
+    isFollowing: false,
+    projects: [
+      {
+        id: 'p8',
+        title: '全国ツアー2024',
+        description: '2024年夏の全国ツアー開催支援プロジェクト',
+        targetAmount: 6000000,
+        daysLeft: 75,
+        thumbnail_url: 'https://picsum.photos/seed/sakurazaka-tour/400/300',
+        supporters_count: 1800
+      },
+      {
+        id: 'p9',
+        title: '新曲MV制作',
+        description: '新シングルのMV制作支援プロジェクト',
+        targetAmount: 2500000,
+        daysLeft: 30,
+        thumbnail_url: 'https://picsum.photos/seed/sakurazaka-mv/400/300',
+        supporters_count: 950
+      }
+    ],
+    news: [
+      {
+        id: 'n8',
+        title: '新シングル発売決定',
+        content: '15枚目のシングルの発売が決定しました。',
+        date: '2024-03-17',
+        url: '#',
+        thumbnail_url: 'https://picsum.photos/seed/sakurazaka-news1/200/200'
+      },
+      {
+        id: 'n9',
+        title: 'メンバー卒業発表',
+        content: '1期生メンバーの卒業が発表されました。',
+        date: '2024-03-13',
+        url: '#',
+        thumbnail_url: 'https://picsum.photos/seed/sakurazaka-news2/200/200'
+      }
+    ]
+  },
+  '5': {
+    id: '5',
+    name: 'Ado',
+    category: 'アーティスト',
+    description: '独特の声質と表現力で注目を集めるシンガー。ボカロ曲のカバーから始まり、現在はオリジナル曲も多数リリースしています。',
+    followerCount: 8900,
+    isFollowing: false,
+    projects: [
+      {
+        id: 'p10',
+        title: '初の武道館公演',
+        description: '武道館での初単独公演開催支援プロジェクト',
+        targetAmount: 7000000,
+        daysLeft: 45,
+        thumbnail_url: 'https://picsum.photos/seed/ado-budokan/400/300',
+        supporters_count: 2400
+      },
+      {
+        id: 'p11',
+        title: '新アルバム制作',
+        description: '2ndアルバムの制作支援プロジェクト',
+        targetAmount: 4000000,
+        daysLeft: 60,
+        thumbnail_url: 'https://picsum.photos/seed/ado-album/400/300',
+        supporters_count: 1500
+      }
+    ],
+    news: [
+      {
+        id: 'n10',
+        title: '新曲配信開始',
+        content: '新曲「ウタカタララバイ」の配信が開始されました。',
+        date: '2024-03-18',
+        url: '#',
+        thumbnail_url: 'https://picsum.photos/seed/ado-news1/200/200'
+      },
+      {
+        id: 'n11',
+        title: 'アニメ主題歌担当',
+        content: '人気アニメの新シリーズの主題歌を担当することが決定',
+        date: '2024-03-14',
+        url: '#',
+        thumbnail_url: 'https://picsum.photos/seed/ado-news2/200/200'
       }
     ]
   }
