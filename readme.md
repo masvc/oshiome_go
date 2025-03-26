@@ -3,8 +3,8 @@
 ファンが連携して駅広告やデジタルサイネージなどにお誕生日広告を出すことのできるサービス。
 
 ## 🌐 デプロイURL
-https://oshiome.onrender.com
-（バックエンド: https://oshiome-backend.onrender.com）
+- https://oshiome.onrender.com
+- ( バックエンド: https://oshiome-backend.onrender.com )
 
 ## プロジェクト構成
 ```
