@@ -95,20 +95,20 @@ const StripeComingSoonModal = ({ onClose }: { onClose: () => void }) => {
             </>
           ) : (
             <>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-[15px] leading-relaxed">
                 プロジェクトを支援するにはログインが必要です。
-                アカウントをお持ちでない場合は、新規登録も可能です。
+                アカウントをお持ちでない場合、無料登録をお願いします。
               </p>
               <div className="flex flex-col gap-2">
                 <button
                   onClick={handleLoginClick}
-                  className="w-full bg-oshi-purple-500 text-white py-2 px-4 rounded-lg hover:bg-oshi-purple-600 transition-colors"
+                  className="w-full bg-oshi-purple-500 text-white py-2.5 px-4 rounded-lg hover:bg-oshi-purple-600 transition-colors text-[15px]"
                 >
                   ログイン
                 </button>
                 <Link
                   to={`/register?redirect=${encodeURIComponent(window.location.pathname)}`}
-                  className="w-full bg-white border border-oshi-purple-500 text-oshi-purple-500 py-2 px-4 rounded-lg hover:bg-oshi-purple-50 transition-colors text-center"
+                  className="w-full bg-white border border-oshi-purple-500 text-oshi-purple-500 py-2.5 px-4 rounded-lg hover:bg-oshi-purple-50 transition-colors text-center text-[15px]"
                 >
                   新規登録
                 </Link>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ProjectCard } from '../components/features/ProjectCard';
 import { Project } from '../types/project';
 import mainVisual from '../assets/mainvisual.png';
 import { GlitterEffect } from '../components/common/GlitterEffect';
 import { projectService } from '../api/services/projectService';
 import { formatProjectForCard } from '../utils/projectUtils';
+import { oshiTagService, OshiTag } from '../api/services/oshiTagService';
+import { useAuthStore } from '../stores/authStore';
 
 // サービスの特徴データ
 const features = [
@@ -74,9 +76,69 @@ const features = [
   },
 ];
 
+// ログインモーダルコンポーネント
+const LoginRequiredModal = ({ onClose }: { onClose: () => void }) => {
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    const currentPath = window.location.pathname;
+    navigate(`/login?redirect=${encodeURIComponent(currentPath)}`);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg max-w-md w-full p-6 relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          ログインが必要です
+        </h2>
+
+        <div className="space-y-4">
+          <p className="text-gray-600 text-[15px] leading-relaxed">
+            推しタグ機能を利用するにはログインが必要です。
+            アカウントをお持ちでない場合、無料登録をお願いします。
+          </p>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={handleLoginClick}
+              className="w-full bg-oshi-purple-500 text-white py-2.5 px-4 rounded-lg hover:bg-oshi-purple-600 transition-colors text-[15px]"
+            >
+              ログイン
+            </button>
+            <Link
+              to={`/register?redirect=${encodeURIComponent(window.location.pathname)}`}
+              className="w-full bg-white border border-oshi-purple-500 text-oshi-purple-500 py-2.5 px-4 rounded-lg hover:bg-oshi-purple-50 transition-colors text-center text-[15px]"
+            >
+              新規登録
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const Home = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
   const [popularProjects, setPopularProjects] = useState<Project[]>([]);
+  const [popularTags, setPopularTags] = useState<OshiTag[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tagsLoading, setTagsLoading] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const fetchPopularProjects = async () => {
@@ -86,11 +148,9 @@ export const Home = () => {
         if (!response?.data) {
           throw new Error('プロジェクトデータが取得できませんでした');
         }
-        // アクティブなプロジェクトのみをフィルタリング
         const activeProjects = response.data.filter(
           (project: Project) => project.status === 'active'
         );
-        // サポーター数で降順ソートして上位3件を取得
         const sortedProjects = activeProjects
           .sort((a, b) => (b.supporters_count || 0) - (a.supporters_count || 0))
           .slice(0, 3);
@@ -102,8 +162,29 @@ export const Home = () => {
       }
     };
 
+    const fetchPopularTags = async () => {
+      try {
+        setTagsLoading(true);
+        const tags = await oshiTagService.getPopularTags();
+        setPopularTags(tags.slice(0, 6)); // 上位6件を表示
+      } catch (error) {
+        console.error('推しタグ取得エラー:', error);
+      } finally {
+        setTagsLoading(false);
+      }
+    };
+
     fetchPopularProjects();
+    fetchPopularTags();
   }, []);
+
+  const handleOshiTagClick = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+    } else {
+      navigate('/oshi-tags');
+    }
+  };
 
   return (
     <>
@@ -248,6 +329,91 @@ export const Home = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {popularProjects.map((project) => (
                 <ProjectCard key={project.id} {...formatProjectForCard(project)} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* 推しタグ情報セクション */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 sm:gap-0 mb-5 sm:mb-8">
+            <div>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold">
+                推しタグ情報
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                推しタグ機能であなたの気になる推しのプロジェクト通知をゲット！
+              </p>
+            </div>
+            <button
+              onClick={handleOshiTagClick}
+              className="text-oshi-purple-500 hover:text-oshi-pink-500 transition-colors font-body flex items-center gap-1.5 text-sm"
+            >
+              推しタグを使ってみる
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* ローディング状態 */}
+          {tagsLoading && (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-oshi-purple-500"></div>
+            </div>
+          )}
+
+          {/* 推しタグ一覧 */}
+          {!tagsLoading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {popularTags.map((tag) => (
+                <Link
+                  key={tag.id}
+                  to={`/oshi-tags/${tag.id}`}
+                  className="group bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden p-4 hover:border-oshi-pink-200"
+                >
+                  <div className="flex flex-col">
+                    <div className="mb-2">
+                      <h3 className="font-bold text-gray-900 group-hover:text-oshi-pink-500 transition-colors">{tag.name}</h3>
+                      <p className="text-xs text-gray-500">{tag.category || 'アイドル'}</p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-gradient-to-r from-oshi-pink-500 to-oshi-purple-500"></div>
+                        <span className="text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-oshi-pink-500 to-oshi-purple-500">
+                          {tag.followerCount.toLocaleString()}
+                        </span>
+                        <span className="text-sm text-gray-500">人が推しタグ中</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-oshi-purple-500 group-hover:text-oshi-pink-500 transition-colors">
+                        <span className="text-sm font-medium">詳細を見る</span>
+                        <svg
+                          className="w-4 h-4 group-hover:translate-x-0.5 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
           )}
@@ -412,6 +578,9 @@ export const Home = () => {
           </div>
         </section>
       </div>
+
+      {/* ログインモーダル */}
+      {showLoginModal && <LoginRequiredModal onClose={() => setShowLoginModal(false)} />}
     </>
   );
 };
