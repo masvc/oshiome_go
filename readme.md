@@ -4,6 +4,7 @@
 
 ## 🌐 デプロイURL
 https://oshiome.onrender.com
+（バックエンド: https://oshiome-backend.onrender.com）
 
 ## プロジェクト構成
 ```
