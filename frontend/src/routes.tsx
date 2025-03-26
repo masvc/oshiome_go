@@ -16,6 +16,7 @@ import { MyPage } from './pages/MyPage';
 import { Favorites } from './pages/Favorites';
 import { MyProjects } from './pages/MyProjects';
 import { OshiTags } from './pages/OshiTags';
+import { OshiTagDetail } from './pages/OshiTagDetail';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
 import { PrivateRoute } from './components/auth/PrivateRoute';
@@ -39,6 +40,7 @@ export const AppRoutes = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/oshi-tags/:tagId" element={<OshiTagDetail />} />
 
           {/* 保護されたルート */}
           <Route
