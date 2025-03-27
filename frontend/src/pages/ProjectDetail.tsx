@@ -487,7 +487,7 @@ export const ProjectDetail = () => {
                         ¥3,000
                       </span>
                     </div>
-                    <ul className="space-y-2 text-sm text-gray-600 mb-10">
+                    <ul className="space-y-2 text-sm text-gray-600">
                       <li className="flex items-center gap-2">
                         <svg
                           className="w-4 h-4 text-oshi-purple-500"
@@ -521,10 +521,10 @@ export const ProjectDetail = () => {
                         プロジェクトの進捗報告を受け取る
                       </li>
                     </ul>
-                    <div className="absolute bottom-4 right-4">
-                      <span className="inline-flex items-center gap-2 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-bold bg-oshi-purple-500 text-white group-hover:bg-oshi-purple-600 transition-colors">
+                    <div className="mt-6 flex justify-end">
+                      <span className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-base font-bold bg-oshi-purple-500 text-white group-hover:bg-oshi-purple-600 transition-colors">
                         <svg
-                          className="w-4 h-4 sm:w-5 sm:h-5"
+                          className="w-5 h-5"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
