@@ -3,6 +3,7 @@ import { AppRoutes } from './routes';
 import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { getStoredToken } from './api/client';
+import ScrollToTop from './components/common/ScrollToTop';
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -20,6 +21,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppRoutes />
     </BrowserRouter>
   );
