@@ -113,7 +113,7 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n6',
         title: '新メンバー加入発表',
         content: 'ホロライブ6期生の加入が決定しました！',
-        date: '2024-03-16',
+        date: '2025-03-16',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/hololive-news1/200/200'
       },
@@ -121,7 +121,7 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n7',
         title: '海外展開加速',
         content: '北米市場での展開を強化、新規タレントの募集を開始',
-        date: '2024-03-12',
+        date: '2025-03-12',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/hololive-news2/200/200'
       }
@@ -159,15 +159,15 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n1',
         title: '新シングル発売決定',
         content: '33枚目のシングルの発売が決定しました。センターは...',
-        date: '2024-03-15',
+        date: '2025-03-15',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/nogizaka-news1/200/200'
       },
       {
         id: 'n2',
         title: '全国ツアー開催決定',
-        content: '2024年夏の全国ツアーの開催が決定しました。',
-        date: '2024-03-10',
+        content: '2025年夏の全国ツアーの開催が決定しました。',
+        date: '2025-03-10',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/nogizaka-news2/200/200'
       }
@@ -205,7 +205,7 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n4',
         title: '新曲MVが1000万回再生突破',
         content: '最新曲のMVが公開1週間で1000万回再生を突破...',
-        date: '2024-03-14',
+        date: '2025-03-14',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/yoasobi-news1/200/200'
       },
@@ -213,7 +213,7 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n5',
         title: '海外公演決定',
         content: 'アジアツアーの開催が決定しました！',
-        date: '2024-03-08',
+        date: '2025-03-08',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/yoasobi-news2/200/200'
       }
@@ -229,8 +229,8 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
     projects: [
       {
         id: 'p8',
-        title: '全国ツアー2024',
-        description: '2024年夏の全国ツアー開催支援プロジェクト',
+        title: '全国ツアー2025',
+        description: '2025年夏の全国ツアー開催支援プロジェクト',
         targetAmount: 6000000,
         daysLeft: 75,
         thumbnail_url: 'https://picsum.photos/seed/sakurazaka-tour/400/300',
@@ -251,7 +251,7 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n8',
         title: '新シングル発売決定',
         content: '15枚目のシングルの発売が決定しました。',
-        date: '2024-03-17',
+        date: '2025-03-17',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/sakurazaka-news1/200/200'
       },
@@ -259,7 +259,7 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n9',
         title: 'メンバー卒業発表',
         content: '1期生メンバーの卒業が発表されました。',
-        date: '2024-03-13',
+        date: '2025-03-13',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/sakurazaka-news2/200/200'
       }
@@ -297,7 +297,7 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n10',
         title: '新曲配信開始',
         content: '新曲「ウタカタララバイ」の配信が開始されました。',
-        date: '2024-03-18',
+        date: '2025-03-18',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/ado-news1/200/200'
       },
@@ -305,7 +305,7 @@ const mockTagDetails: Record<string, OshiTagDetailData> = {
         id: 'n11',
         title: 'アニメ主題歌担当',
         content: '人気アニメの新シリーズの主題歌を担当することが決定',
-        date: '2024-03-14',
+        date: '2025-03-14',
         url: '#',
         thumbnail_url: 'https://picsum.photos/seed/ado-news2/200/200'
       }

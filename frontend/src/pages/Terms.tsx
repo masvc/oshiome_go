@@ -127,7 +127,7 @@ export const Terms = () => {
           </section>
         </div>
 
-        <p className="mt-8 sm:mt-12 text-sm text-gray-600">2024年4月1日 制定</p>
+        <p className="mt-8 sm:mt-12 text-sm text-gray-600">2025年4月1日 制定</p>
       </div>
     </div>
   );

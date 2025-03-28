@@ -115,7 +115,7 @@ export const Legal = () => {
         </div>
 
         <p className="mt-8 sm:mt-12 text-sm text-gray-600 px-4 sm:px-0">
-          2024年4月1日 制定
+          2025年4月1日 制定
         </p>
       </div>
     </div>
