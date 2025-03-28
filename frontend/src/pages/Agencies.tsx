@@ -5,7 +5,6 @@ export interface Agency {
   name: string;
   description: string;
   website: string;
-  logo_url: string;
   categories: string[];
   guidelineUrl?: string;
 }
@@ -13,31 +12,68 @@ export interface Agency {
 // モックデータ
 const agencies: Agency[] = [
   {
-    id: '1',
-    name: 'ホリプロ',
-    description: '1960年設立。タレント・ミュージシャン・俳優など、多岐にわたる芸能プロダクション。',
-    website: 'https://www.horipro.co.jp/',
-    logo_url: '/images/agencies/horipro.png',
-    categories: ['芸能事務所', '音楽事務所'],
-    guidelineUrl: 'https://www.horipro.co.jp/guidelines/'
-  },
-  {
-    id: '2',
-    name: 'アミューズ',
-    description: '1978年設立。アーティストマネジメント、音楽制作、映像制作など幅広く展開。',
-    website: 'https://www.amuse.co.jp/',
-    logo_url: '/images/agencies/amuse.png',
-    categories: ['芸能事務所', '音楽事務所'],
-    guidelineUrl: 'https://www.amuse.co.jp/guidelines/'
+    id: '4',
+    name: 'ANYCOLOR株式会社（にじさんじ）',
+    description: 'VTuberグループ「にじさんじ」を運営する企業。',
+    website: 'https://www.anycolor.co.jp/',
+    categories: ['VTuber事務所'],
+    guidelineUrl: 'https://www.anycolor.co.jp/terms-of-cheering-ad'
   },
   {
     id: '3',
-    name: 'ジャニーズ事務所',
-    description: '1962年設立。男性アイドルグループの育成・マネジメントを中心に展開。',
-    website: 'https://www.johnnys.co.jp/',
-    logo_url: '/images/agencies/johnnys.png',
-    categories: ['芸能事務所'],
-    guidelineUrl: 'https://www.johnnys.co.jp/guidelines/'
+    name: '株式会社BMSG',
+    description: 'BE:FIRST、MAZZEL、SKY-HIなどのアーティストを擁する事務所。',
+    website: 'https://bmsg.jp/',
+    categories: ['音楽事務所'],
+    guidelineUrl: 'https://befirst.tokyo/news/20230714-announcement/'
+  },
+  {
+    id: '8',
+    name: '株式会社Brave group（ぶいすぽっ！）',
+    description: 'VTuberグループ「ぶいすぽっ！」を運営する企業。',
+    website: 'https://vspo.jp/',
+    categories: ['VTuber事務所'],
+    guidelineUrl: 'https://vspo.jp/guide'
+  },
+  {
+    id: '7',
+    name: '株式会社VOISING',
+    description: 'いれいす、すたぽら、シクフォニなどのタレントを擁する事務所。',
+    website: 'https://voising-official.com/',
+    categories: ['タレント事務所'],
+    guidelineUrl: 'https://voising-official.com/cheering'
+  },
+  {
+    id: '5',
+    name: 'カバー株式会社（ホロライブ）',
+    description: 'VTuberグループ「ホロライブ」を運営する企業。',
+    website: 'https://cover-corp.com/',
+    categories: ['VTuber事務所'],
+    guidelineUrl: 'https://hololivepro.com/terms/'
+  },
+  {
+    id: '2',
+    name: 'LAPONE ENTERTAINMENT',
+    description: 'JO1、INI、DXTEENなどの人気アイドルグループを擁する事務所。',
+    website: 'https://lapone.jp/',
+    categories: ['アイドル事務所'],
+    guidelineUrl: 'https://jo1.jp/news/detail/2217'
+  },
+  {
+    id: '1',
+    name: 'PRODUCE 101 JAPAN',
+    description: '韓国の人気オーディション番組の日本版。アイドルグループのメンバーを選出。',
+    website: 'https://produce101.jp/',
+    categories: ['アイドル事務所'],
+    guidelineUrl: 'https://produce101.jp/news/detail/46'
+  },
+  {
+    id: '6',
+    name: 'UUUM株式会社',
+    description: 'HIKAKIN、はじめしゃちょーなどの人気YouTuberを擁する事務所。',
+    website: 'https://www.uuum.jp/',
+    categories: ['YouTuber事務所'],
+    guidelineUrl: 'https://www.uuum.jp/secondary_creation'
   }
 ];
 
@@ -54,25 +90,9 @@ export const Agencies = () => {
         </p>
       </section>
 
-      {/* フィルターセクション */}
+      {/* 事務所一覧 */}
       <section>
         <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-          <div className="flex flex-wrap gap-2 mb-8">
-            <button className="bg-gradient-to-r from-oshi-purple-500 to-oshi-pink-500 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-sm hover:from-oshi-purple-600 hover:to-oshi-pink-600 transition-all shadow-md hover:shadow-lg">
-              全て
-            </button>
-            <button className="bg-white text-gray-600 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-all border border-gray-200 shadow-sm hover:shadow-md">
-              芸能事務所
-            </button>
-            <button className="bg-white text-gray-600 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-all border border-gray-200 shadow-sm hover:shadow-md">
-              VTuber事務所
-            </button>
-            <button className="bg-white text-gray-600 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-all border border-gray-200 shadow-sm hover:shadow-md">
-              音楽事務所
-            </button>
-          </div>
-
-          {/* 事務所一覧 */}
           <div className="grid gap-6">
             {agencies.map((agency: Agency) => (
               <div
