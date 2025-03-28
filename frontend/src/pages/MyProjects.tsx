@@ -43,7 +43,7 @@ export const MyProjects = () => {
     <div key={project.id} className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
       <div className="relative">
         <img
-          src={project.thumbnail_url || 'https://via.placeholder.com/400x200'}
+          src={project.thumbnail_url || `https://picsum.photos/seed/${project.id}/400/200`}
           alt={project.title}
           className="w-full h-48 object-cover rounded-t-lg"
         />
@@ -91,7 +91,7 @@ export const MyProjects = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-lg sm:text-2xl font-bold text-gray-900">
           マイプロジェクト
         </h1>
         <Link
