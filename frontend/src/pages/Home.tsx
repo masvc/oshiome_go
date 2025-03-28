@@ -77,7 +77,7 @@ const features = [
 ];
 
 // ログインモーダルコンポーネント
-const LoginRequiredModal = ({ onClose }: { onClose: () => void }) => {
+const LoginRequiredModal = ({ onClose, message }: { onClose: () => void, message: string }) => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
@@ -108,8 +108,7 @@ const LoginRequiredModal = ({ onClose }: { onClose: () => void }) => {
 
         <div className="space-y-4">
           <p className="text-gray-600 text-[15px] leading-relaxed">
-            推しタグ機能を利用するにはログインが必要です。
-            アカウントをお持ちでない場合、無料登録をお願いします。
+            {message}
           </p>
           <div className="flex flex-col gap-2">
             <button
@@ -278,12 +277,21 @@ export const Home = () => {
                 >
                   企画一覧を見る
                 </Link>
-                <Link
-                  to="/contact"
-                  className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-3 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-white/20 transition-all font-body text-center text-xs sm:text-base flex-1"
-                >
-                  企画を始める
-                </Link>
+                {isAuthenticated ? (
+                  <Link
+                    to="/projects/create"
+                    className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-3 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-white/20 transition-all font-body text-center text-xs sm:text-base flex-1"
+                  >
+                    企画を作成する
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => setShowLoginModal(true)}
+                    className="bg-white/10 backdrop-blur-sm text-white border border-white/20 px-3 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-white/20 transition-all font-body text-center text-xs sm:text-base flex-1"
+                  >
+                    企画を作成する
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -567,20 +575,42 @@ export const Home = () => {
               <br className="hidden sm:block" />
               まずは無料相談から始めましょう。
             </p>
-            <div className="pt-2 sm:pt-3">
-              <Link
-                to="/contact"
-                className="inline-block bg-white text-oshi-purple-500 px-5 sm:px-6 lg:px-8 py-2.5 sm:py-3 rounded-xl hover:bg-gray-50 transition-all text-sm sm:text-base font-body shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-              >
-                無料相談をする
-              </Link>
+            <div className="pt-2 sm:pt-3 flex flex-col sm:flex-row gap-3 justify-center">
+              {isAuthenticated ? (
+                <Link
+                  to="/projects/create"
+                  className="inline-block bg-white text-oshi-purple-500 px-5 sm:px-6 lg:px-8 py-2.5 sm:py-3 rounded-full hover:bg-gray-50 transition-all text-sm sm:text-base font-body text-center"
+                >
+                  企画を作成する
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="inline-block bg-white/10 backdrop-blur-sm text-white border border-white/20 px-5 sm:px-6 lg:px-8 py-2.5 sm:py-3 rounded-full hover:bg-white/20 transition-all font-body text-center text-sm sm:text-base"
+                  >
+                    ログイン
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="inline-block bg-white text-oshi-purple-500 px-5 sm:px-6 lg:px-8 py-2.5 sm:py-3 rounded-full hover:bg-gray-50 transition-all text-sm sm:text-base font-body text-center"
+                  >
+                    新規登録
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </section>
       </div>
 
       {/* ログインモーダル */}
-      {showLoginModal && <LoginRequiredModal onClose={() => setShowLoginModal(false)} />}
+      {showLoginModal && (
+        <LoginRequiredModal
+          onClose={() => setShowLoginModal(false)}
+          message="企画の作成をするにはログインが必要です。 アカウントをお持ちでない場合、無料登録をお願いします。"
+        />
+      )}
     </>
   );
 };
