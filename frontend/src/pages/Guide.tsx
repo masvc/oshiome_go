@@ -297,7 +297,7 @@ export const Guide = () => {
           <div className="flex flex-wrap gap-4">
             <Link
               to="/agencies"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-oshi-purple-600 rounded-xl border border-oshi-purple-200 hover:bg-oshi-purple-50 transition-colors group shadow-sm hover:shadow-md"
+              className="inline-flex items-center justify-center gap-2 bg-white text-oshi-purple-500 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
             >
               <svg
                 className="w-5 h-5"
@@ -312,24 +312,11 @@ export const Guide = () => {
                   d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                 />
               </svg>
-              <span>対応事務所一覧を見る</span>
-              <svg
-                className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+              対応事務所一覧を見る
             </Link>
             <Link
               to="/visions"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-oshi-purple-600 rounded-xl border border-oshi-purple-200 hover:bg-oshi-purple-50 transition-colors group shadow-sm hover:shadow-md"
+              className="inline-flex items-center justify-center gap-2 bg-oshi-purple-600 text-white px-8 py-4 rounded-xl hover:bg-oshi-purple-700 transition-all border border-white/20 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
             >
               <svg
                 className="w-5 h-5"
@@ -341,23 +328,16 @@ export const Guide = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                 />
-              </svg>
-              <span>ビジョン一覧を見る</span>
-              <svg
-                className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M9 5l7 7-7 7"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                 />
               </svg>
+              連携ビジョンを見る
             </Link>
           </div>
         </div>
@@ -406,24 +386,75 @@ export const Guide = () => {
           <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
         </div>
         <div className="relative">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-white">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-white px-4 sm:px-0">
             応援広告を始めてみませんか？
           </h2>
-          <p className="text-lg mb-8 text-white/90">
+          <p className="text-lg mb-8 text-white/90 px-6 sm:px-0 leading-relaxed">
             推しへの想いを形にする。その一歩を、私たちがサポートします。
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap gap-4 justify-center px-4 sm:px-0">
             <Link
               to="/projects"
-              className="bg-white text-oshi-purple-600 px-8 py-4 rounded-xl hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 bg-white text-oshi-purple-500 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
             >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
               企画一覧を見る
             </Link>
             <Link
-              to="/contact"
-              className="bg-oshi-purple-700 text-white px-8 py-4 rounded-xl hover:bg-oshi-purple-800 transition-colors border border-white/20 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              to="/agencies"
+              className="inline-flex items-center justify-center gap-2 bg-white text-oshi-purple-500 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
             >
-              無料相談をする
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                />
+              </svg>
+              対応事務所一覧を見る
+            </Link>
+            <Link
+              to="/visions"
+              className="inline-flex items-center justify-center gap-2 bg-oshi-purple-600 text-white px-8 py-4 rounded-xl hover:bg-oshi-purple-700 transition-all border border-white/20 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+              連携ビジョンを見る
             </Link>
           </div>
         </div>
