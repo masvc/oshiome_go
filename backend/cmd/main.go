@@ -110,6 +110,7 @@ func main() {
 
 		// サポート関連
 		protected.POST("/projects/:id/supports", supportHandler.CreateSupport)
+		protected.GET("/supports/:id", supportHandler.GetSupportStatus)
 	}
 
 	port := os.Getenv("SERVER_PORT")

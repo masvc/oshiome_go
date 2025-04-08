@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/masvc/oshiome_go/backend/internal/db"
 	"github.com/masvc/oshiome_go/backend/internal/models"
+	"github.com/masvc/oshiome_go/backend/internal/utils"
 )
 
 type SupportHandler struct{}
@@ -20,7 +22,7 @@ type CreateSupportInput struct {
 	Message string `json:"message"`
 }
 
-// CreateSupport 支援作成
+// CreateSupport 支援作成とStripe Checkout Sessionの生成
 func (h *SupportHandler) CreateSupport(c *gin.Context) {
 	var input CreateSupportInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -52,7 +54,7 @@ func (h *SupportHandler) CreateSupport(c *gin.Context) {
 	}
 
 	// プロジェクトのステータスチェック
-	if project.Status != "active" {
+	if project.Status != models.ProjectStatusActive {
 		c.JSON(http.StatusBadRequest, Response{
 			Status: "error",
 			Error:  "アクティブなプロジェクトのみ支援可能です",
@@ -60,12 +62,13 @@ func (h *SupportHandler) CreateSupport(c *gin.Context) {
 		return
 	}
 
+	// 仮の支援情報を作成
 	support := models.Support{
 		UserID:    userID.(uint),
 		ProjectID: project.ID,
 		Amount:    input.Amount,
 		Message:   input.Message,
-		Status:    "pending",
+		Status:    models.SupportStatusPending,
 	}
 
 	// トランザクション開始
@@ -95,20 +98,8 @@ func (h *SupportHandler) CreateSupport(c *gin.Context) {
 		return
 	}
 
-	// プロジェクトの現在の支援額を更新
-	project.CurrentAmount += input.Amount
-	if err := tx.Model(&project).Update("current_amount", project.CurrentAmount).Error; err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusInternalServerError, Response{
-			Status: "error",
-			Error:  "プロジェクトの更新に失敗しました",
-		})
-		return
-	}
-
 	// トランザクションのコミット
 	if err := tx.Commit().Error; err != nil {
-		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, Response{
 			Status: "error",
 			Error:  "トランザクションのコミットに失敗しました",
@@ -116,23 +107,51 @@ func (h *SupportHandler) CreateSupport(c *gin.Context) {
 		return
 	}
 
-	// 作成したサポート情報を関連データと共に取得
-	if err := db.GetDB().
-		Preload("User").
-		Preload("Project").
-		Preload("Project.User").
-		First(&support, support.ID).Error; err != nil {
+	// フロントエンドのURLを構築
+	baseURL := "http://localhost:5173" // 開発環境用
+	if c.GetHeader("Origin") != "" {
+		baseURL = c.GetHeader("Origin") // 本番環境用
+	}
+	successURL := fmt.Sprintf("%s/projects/%d/support/success?session_id={CHECKOUT_SESSION_ID}", baseURL, project.ID)
+	cancelURL := fmt.Sprintf("%s/projects/%d", baseURL, project.ID)
+
+	// Stripe Checkout Sessionの作成
+	session, err := utils.CreateCheckoutSession(
+		project.ID,
+		project.Title,
+		input.Amount,
+		support.ID,
+		userID.(uint),
+		successURL,
+		cancelURL,
+	)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response{
 			Status: "error",
-			Error:  "支援情報の取得に失敗しました",
+			Error:  "決済セッションの作成に失敗しました: " + err.Error(),
+		})
+		return
+	}
+
+	// 支援情報にCheckoutSessionIDを更新
+	if err := db.GetDB().
+		Model(&support).
+		Update("checkout_session_id", session.ID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, Response{
+			Status: "error",
+			Error:  "支援情報の更新に失敗しました",
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, Response{
 		Status:  "success",
-		Message: "支援が完了しました",
-		Data:    support,
+		Message: "決済セッションが作成されました",
+		Data: gin.H{
+			"checkout_session_id": session.ID,
+			"checkout_url":        session.URL,
+			"support_id":          support.ID,
+		},
 	})
 }
 
@@ -157,5 +176,37 @@ func (h *SupportHandler) GetProjectSupports(c *gin.Context) {
 	c.JSON(http.StatusOK, Response{
 		Status: "success",
 		Data:   supports,
+	})
+}
+
+// GetSupportStatus 支援状態確認
+func (h *SupportHandler) GetSupportStatus(c *gin.Context) {
+	supportID := c.Param("id")
+	var support models.Support
+
+	if err := db.GetDB().
+		Preload("User").
+		Preload("Project").
+		First(&support, supportID).Error; err != nil {
+		c.JSON(http.StatusNotFound, Response{
+			Status: "error",
+			Error:  "支援情報が見つかりません",
+		})
+		return
+	}
+
+	// リクエスト元ユーザーが支援者本人またはプロジェクトオーナーであることを確認
+	userID, exists := c.Get("user_id")
+	if !exists || (userID.(uint) != support.UserID && userID.(uint) != support.Project.UserID) {
+		c.JSON(http.StatusForbidden, Response{
+			Status: "error",
+			Error:  "この情報にアクセスする権限がありません",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, Response{
+		Status: "success",
+		Data:   support,
 	})
 }
