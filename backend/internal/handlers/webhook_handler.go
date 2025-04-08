@@ -143,20 +143,7 @@ func handleCheckoutSessionCompleted(checkoutSession stripe.CheckoutSession) {
 		return
 	}
 
-	// プロジェクトの現在の支援額を更新
-	var project models.Project
-	if err := tx.First(&project, support.ProjectID).Error; err != nil {
-		tx.Rollback()
-		log.Printf("Error fetching project: %v", err)
-		return
-	}
-
-	project.CurrentAmount += support.Amount
-	if err := tx.Model(&project).Update("current_amount", project.CurrentAmount).Error; err != nil {
-		tx.Rollback()
-		log.Printf("Error updating project: %v", err)
-		return
-	}
+	// プロジェクトの現在の支援額更新は不要（AfterFindで動的に計算するため）
 
 	// トランザクションのコミット
 	if err := tx.Commit().Error; err != nil {
@@ -223,20 +210,7 @@ func handlePaymentIntentSucceeded(paymentIntent stripe.PaymentIntent) {
 			continue
 		}
 
-		// プロジェクトの現在の支援額を更新
-		var project models.Project
-		if err := tx.First(&project, support.ProjectID).Error; err != nil {
-			tx.Rollback()
-			log.Printf("Error fetching project: %v", err)
-			continue
-		}
-
-		project.CurrentAmount += support.Amount
-		if err := tx.Model(&project).Update("current_amount", project.CurrentAmount).Error; err != nil {
-			tx.Rollback()
-			log.Printf("Error updating project: %v", err)
-			continue
-		}
+		// プロジェクトの現在の支援額更新は不要（AfterFindで動的に計算するため）
 
 		// トランザクションのコミット
 		if err := tx.Commit().Error; err != nil {

@@ -54,10 +54,19 @@ func (p *Project) BeforeUpdate(tx *gorm.DB) error {
 }
 
 func (p *Project) AfterFind(tx *gorm.DB) error {
+	// 支援者数のカウント
 	var count int64
-	if err := tx.Model(&Support{}).Where("project_id = ?", p.ID).Count(&count).Error; err != nil {
+	if err := tx.Model(&Support{}).Where("project_id = ? AND status = ?", p.ID, SupportStatusCompleted).Count(&count).Error; err != nil {
 		return err
 	}
 	p.SupportersCount = int(count)
+
+	// 現在の支援金額を集計 (すでにcompletedになっている支援のみ)
+	var totalAmount int64
+	if err := tx.Model(&Support{}).Select("COALESCE(SUM(amount), 0)").Where("project_id = ? AND status = ?", p.ID, SupportStatusCompleted).Scan(&totalAmount).Error; err != nil {
+		return err
+	}
+	p.CurrentAmount = totalAmount
+
 	return nil
 }
