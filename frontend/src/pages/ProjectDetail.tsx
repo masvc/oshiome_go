@@ -164,7 +164,13 @@ export const ProjectDetail = () => {
   }, [id]);
 
   const handleSupportClick = () => {
-    setShowStripeModal(true);
+    if (!isAuthenticated) {
+      // 未ログインユーザーの場合はログインモーダルを表示
+      setShowStripeModal(true);
+    } else {
+      // ログイン済みユーザーの場合はSupportFormを表示
+      setShowSupportForm(true);
+    }
   };
 
   if (loading) {
@@ -551,6 +557,7 @@ export const ProjectDetail = () => {
       {showSupportForm && (
         <SupportForm
           projectId={id || '0'}
+          projectName={project.title}
           onClose={() => setShowSupportForm(false)}
         />
       )}

@@ -40,6 +40,15 @@ export interface ProjectContent {
   date: string;
 }
 
+// Stripe関連の型定義
+export interface StripeCheckoutSessionResponse {
+  id: string;
+  url?: string;
+  checkout_url?: string;
+  checkout_session_id?: string;
+  support_id?: number;
+}
+
 // 広告関連の型定義
 export interface Vision {
   id: number;
