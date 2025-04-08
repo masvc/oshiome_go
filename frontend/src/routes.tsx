@@ -20,6 +20,8 @@ import { OshiTagDetail } from './pages/OshiTagDetail';
 import { LoginForm } from './components/auth/LoginForm';
 import { RegisterForm } from './components/auth/RegisterForm';
 import { PrivateRoute } from './components/auth/PrivateRoute';
+import { PaymentSuccess } from './pages/PaymentSuccess';
+import { PaymentCancel } from './pages/PaymentCancel';
 
 export const AppRoutes = () => {
   return (
@@ -41,6 +43,10 @@ export const AppRoutes = () => {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/oshi-tags/:tagId" element={<OshiTagDetail />} />
+          
+          {/* 決済関連ルート */}
+          <Route path="/payments/success" element={<PaymentSuccess />} />
+          <Route path="/payments/cancel" element={<PaymentCancel />} />
 
           {/* 保護されたルート */}
           <Route
