@@ -112,8 +112,8 @@ func (h *SupportHandler) CreateSupport(c *gin.Context) {
 	if c.GetHeader("Origin") != "" {
 		baseURL = c.GetHeader("Origin") // 本番環境用
 	}
-	successURL := fmt.Sprintf("%s/projects/%d/support/success?session_id={CHECKOUT_SESSION_ID}", baseURL, project.ID)
-	cancelURL := fmt.Sprintf("%s/projects/%d", baseURL, project.ID)
+	successURL := fmt.Sprintf("%s/payments/success?session_id={CHECKOUT_SESSION_ID}", baseURL)
+	cancelURL := fmt.Sprintf("%s/payments/cancel?project_id=%d", baseURL, project.ID)
 
 	// Stripe Checkout Sessionの作成
 	session, err := utils.CreateCheckoutSession(
@@ -201,6 +201,37 @@ func (h *SupportHandler) GetSupportStatus(c *gin.Context) {
 		c.JSON(http.StatusForbidden, Response{
 			Status: "error",
 			Error:  "この情報にアクセスする権限がありません",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, Response{
+		Status: "success",
+		Data:   support,
+	})
+}
+
+// VerifyPaymentBySession セッションIDから支援情報を取得
+func (h *SupportHandler) VerifyPaymentBySession(c *gin.Context) {
+	sessionID := c.Query("session_id")
+	if sessionID == "" {
+		c.JSON(http.StatusBadRequest, Response{
+			Status: "error",
+			Error:  "セッションIDが必要です",
+		})
+		return
+	}
+
+	var support models.Support
+	// セッションIDに一致する支援を検索
+	if err := db.GetDB().
+		Where("checkout_session_id = ?", sessionID).
+		Preload("User").
+		Preload("Project").
+		First(&support).Error; err != nil {
+		c.JSON(http.StatusNotFound, Response{
+			Status: "error",
+			Error:  "セッションIDに対応する支援情報が見つかりません",
 		})
 		return
 	}
