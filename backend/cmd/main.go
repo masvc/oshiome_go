@@ -88,6 +88,9 @@ func main() {
 
 		// Webhook（Stripe-Signatureヘッダーを許可）
 		public.POST("/webhook", h.HandleStripeWebhook)
+
+		// 支払い検証（セッションIDから支援情報を取得）
+		public.GET("/payments/verify", supportHandler.VerifyPaymentBySession)
 	}
 
 	// 認証が必要なルート
