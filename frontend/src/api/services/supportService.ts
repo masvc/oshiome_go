@@ -1,6 +1,6 @@
 import { client } from '../client';
 import { API_ENDPOINTS } from '../config';
-import { Support, CreateSupportInput, UpdateSupportInput, ApiResponse } from '../../types';
+import { Support, CreateSupportInput, UpdateSupportInput, ApiResponse, StripeCheckoutSessionResponse } from '../../types';
 
 export const supportService = {
   // プロジェクトの支援一覧を取得（認証不要）
@@ -34,4 +34,19 @@ export const supportService = {
       `${API_ENDPOINTS.userSupports(userId)}?page=${page}&perPage=${perPage}`
     );
   },
+  
+  // Stripe Checkoutセッションを作成
+  createCheckoutSession: (projectId: number, amount: number, message: string = '') => {
+    return client.post<ApiResponse<StripeCheckoutSessionResponse>>(
+      `${API_ENDPOINTS.projectSupports(projectId)}`, 
+      { amount, message }
+    );
+  },
+  
+  // 支援状態を確認
+  verifyPayment: (sessionId: string) => {
+    return client.get<ApiResponse<Support>>(
+      `${API_ENDPOINTS.stripeVerify}?session_id=${sessionId}`
+    );
+  }
 }; 
