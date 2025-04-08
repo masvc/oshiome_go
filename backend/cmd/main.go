@@ -72,11 +72,15 @@ func main() {
 	userHandler := handlers.NewUserHandler()
 	projectHandler := handlers.NewProjectHandler()
 	supportHandler := handlers.NewSupportHandler()
+	healthHandler := handlers.NewHealthHandler()
 	h := handlers.NewHandler(dbInstance)
 
 	// パブリックルート
 	public := r.Group("/api")
 	{
+		// ヘルスチェック
+		public.GET("/health", healthHandler.HealthCheck)
+
 		// ユーザー関連
 		public.POST("/register", userHandler.CreateUser)
 		public.POST("/login", userHandler.Login)
