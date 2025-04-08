@@ -31,6 +31,11 @@ export const API_ENDPOINTS = {
   userSupports: (userId: number) => `/api/users/${userId}/supports`,
   // ユーザー関連
   user: (id: number) => `/api/users/${id}`,
+  // Stripe関連
+  stripeCheckout: '/api/payments/checkout',
+  stripeVerify: '/api/payments/verify',
+  stripeSuccess: '/payments/success',
+  stripeCancel: '/payments/cancel',
 };
 
 // 共通のfetchラッパー
