@@ -37,8 +37,14 @@ func InitDB() (*gorm.DB, error) {
 	}
 
 	// DSN（Data Source Name）の構築
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo",
-		dbHost, dbUser, dbPass, dbName, dbPort)
+	// 本番環境（Render）ではSSL/TLS接続を有効に
+	sslMode := "require"
+	if os.Getenv("ENV") == "development" {
+		sslMode = "disable"
+	}
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Tokyo",
+		dbHost, dbUser, dbPass, dbName, dbPort, sslMode)
 
 	// データベース接続
 	var err error
@@ -50,7 +56,7 @@ func InitDB() (*gorm.DB, error) {
 
 	// マイグレーションの実行
 	if err := runMigrations(db); err != nil {
-		log.Printf("マイグレーションエラー: %v", err)
+		log.Printf("マイグレーションに失敗しました:%v", err)
 		return nil, err
 	}
 

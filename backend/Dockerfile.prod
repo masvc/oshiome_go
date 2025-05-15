@@ -26,9 +26,9 @@ EXPOSE 8000
 
 # 起動スクリプトの作成
 RUN printf '#!/bin/sh\n\
-./main -migrate\n\
-./main\n' > /app/start.sh && \
-chmod +x /app/start.sh
+    ./main -migrate\n\
+    ./main\n' > /app/start.sh && \
+    chmod +x /app/start.sh
 
 # アプリケーションの実行
 CMD ["/bin/sh", "/app/start.sh"] 
