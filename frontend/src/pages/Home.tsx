@@ -209,7 +209,7 @@ export const Home = () => {
                   みんなで祝おう。
                 </span>
               </h1>
-              <p className="text-base sm:text-lg text-white leading-relaxed max-w-lg drop-shadow-md">
+              <p className="text-base sm:text-xl text-white leading-relaxed max-w-lg drop-shadow-md">
                 大切な推しの誕生日を、ファンのみんなで一緒にお祝いしませんか？
                 <br className="hidden sm:block" />
                 駅広告やビジョンなど、様々な形で想いを届けられます。
