@@ -193,7 +193,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
         <div className="space-y-6">
           {/* サムネイル画像 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-medium text-gray-700">
               企画のサムネイル画像
               <span className="text-red-500 ml-1">*</span>
             </label>
@@ -207,7 +207,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 />
                 <button
                   type="button"
-                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-oshi-purple-500"
+                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-oshi-purple-500"
                 >
                   画像を選択
                 </button>
@@ -223,13 +223,13 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               )}
             </div>
             {errors.thumbnail_url && (
-              <p className="mt-2 text-sm text-red-600">{errors.thumbnail_url}</p>
+              <p className="mt-2 text-base text-red-600">{errors.thumbnail_url}</p>
             )}
           </div>
 
           {/* 推しの名前 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-medium text-gray-700">
               推しの名前
               <span className="text-red-500 ml-1">*</span>
             </label>
@@ -237,17 +237,17 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               type="text"
               value={formData.idol_name}
               onChange={(e) => handleChange('idol_name', e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
               placeholder="例：田中花子"
             />
             {errors.idol_name && (
-              <p className="mt-2 text-sm text-red-600">{errors.idol_name}</p>
+              <p className="mt-2 text-base text-red-600">{errors.idol_name}</p>
             )}
           </div>
 
           {/* 企画名 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-medium text-gray-700">
               企画名
               <span className="text-red-500 ml-1">*</span>
             </label>
@@ -255,63 +255,63 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               type="text"
               value={formData.title}
               onChange={(e) => handleChange('title', e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
               placeholder="例：田中花子誕生日記念広告企画"
             />
             {errors.title && (
-              <p className="mt-2 text-sm text-red-600">{errors.title}</p>
+              <p className="mt-2 text-base text-red-600">{errors.title}</p>
             )}
           </div>
 
           {/* 企画の説明 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-medium text-gray-700">
               企画の説明
               <span className="text-red-500 ml-1">*</span>
             </label>
             <textarea
+              rows={5}
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
-              rows={5}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
               placeholder="企画の詳細な説明を入力してください"
             />
             {errors.description && (
-              <p className="mt-2 text-sm text-red-600">{errors.description}</p>
+              <p className="mt-2 text-base text-red-600">{errors.description}</p>
             )}
           </div>
 
           {/* 目標金額 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-medium text-gray-700">
               目標金額
               <span className="text-red-500 ml-1">*</span>
             </label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500 sm:text-sm">¥</span>
+                <span className="text-gray-500 sm:text-base">¥</span>
               </div>
               <input
                 type="number"
                 value={formData.target_amount}
-                onChange={(e) => handleChange('target_amount', Number(e.target.value))}
-                className="block w-full pl-7 pr-12 border-gray-300 rounded-md focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+                onChange={(e) => handleChange('target_amount', e.target.value)}
+                className="block w-full pl-7 pr-12 border-gray-300 rounded-md focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
                 placeholder="100000"
                 min="10000"
                 step="10000"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <span className="text-gray-500 sm:text-sm">円</span>
+                <span className="text-gray-500 sm:text-base">円</span>
               </div>
             </div>
             {errors.target_amount && (
-              <p className="mt-2 text-sm text-red-600">{errors.target_amount}</p>
+              <p className="mt-2 text-base text-red-600">{errors.target_amount}</p>
             )}
           </div>
 
           {/* 誕生日 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-base font-medium text-gray-700">
               誕生日
               <span className="text-red-500 ml-1">*</span>
             </label>
@@ -319,17 +319,17 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               type="date"
               value={formData.birthday_date}
               onChange={(e) => handleChange('birthday_date', e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
             />
             {errors.birthday_date && (
-              <p className="mt-2 text-sm text-red-600">{errors.birthday_date}</p>
+              <p className="mt-2 text-base text-red-600">{errors.birthday_date}</p>
             )}
           </div>
 
           {/* 掲載期間 */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-base font-medium text-gray-700">
                 掲載開始日
                 <span className="text-red-500 ml-1">*</span>
               </label>
@@ -337,14 +337,14 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 type="date"
                 value={formData.start_date}
                 onChange={(e) => handleChange('start_date', e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
               />
               {errors.start_date && (
-                <p className="mt-2 text-sm text-red-600">{errors.start_date}</p>
+                <p className="mt-2 text-base text-red-600">{errors.start_date}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-base font-medium text-gray-700">
                 掲載終了日
                 <span className="text-red-500 ml-1">*</span>
               </label>
@@ -352,10 +352,10 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 type="date"
                 value={formData.end_date}
                 onChange={(e) => handleChange('end_date', e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
               />
               {errors.end_date && (
-                <p className="mt-2 text-sm text-red-600">{errors.end_date}</p>
+                <p className="mt-2 text-base text-red-600">{errors.end_date}</p>
               )}
             </div>
           </div>
@@ -363,26 +363,26 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
           {/* ハッシュタグ */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-base font-medium text-gray-700">
                 プロジェクト用ハッシュタグ
               </label>
               <input
                 type="text"
                 value={formData.project_hashtag}
                 onChange={(e) => handleChange('project_hashtag', e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
                 placeholder="#推し誕生日"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-base font-medium text-gray-700">
                 支援報告用ハッシュタグ
               </label>
               <input
                 type="text"
                 value={formData.support_hashtag}
                 onChange={(e) => handleChange('support_hashtag', e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-sm"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-oshi-purple-500 focus:border-oshi-purple-500 sm:text-base"
                 placeholder="#推しを応援"
               />
             </div>
@@ -411,7 +411,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             <svg className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
             </svg>
-            <div className="text-sm text-amber-800">
+            <div className="text-base text-amber-800">
               <p className="font-medium mb-1">申請後の流れ</p>
               <p>企画は下書き状態で保存され、運営チームによる審査（約5営業日）を経て掲載されます。結果はメールにてご連絡いたします。</p>
             </div>
