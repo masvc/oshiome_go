@@ -15,6 +15,7 @@ services:
       - DB_NAME=oshiome
       - SERVER_PORT=8000
       - JWT_SECRET=your-secret-key
+      - ENV=development
     depends_on:
       postgres:
         condition: service_healthy
