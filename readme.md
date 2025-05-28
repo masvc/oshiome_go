@@ -7,6 +7,7 @@
 
 - https://oshiome.onrender.com
 - ( バックエンド: https://oshiome-backend.onrender.com )
+  ※render の無料プランを活用しているため 2025/6 以降は DB 接続が切れている可能性があります。
 
 ## プロジェクト構成
 
