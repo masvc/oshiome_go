@@ -94,7 +94,7 @@ Render でも同様に Docker を使用してデプロイすることができ�
 
    - `oshiome-db`の「Connect」タブをクリック
    - 以下の情報をメモ：
-     - Hostname: `dpg-cvgimhaqgecs739fi530-a`
+     - Hostname: `dpg-~~~`
      - Port: `5432`
      - Database: `oshiome`
      - Username: `oshiome_user`
@@ -142,7 +142,7 @@ Render でも同様に Docker を使用してデプロイすることができ�
 4. 環境変数を設定（「Environment」タブ）：
 
    ```
-   DB_HOST=dpg-cvgimhaqgecs739fi530-a
+   DB_HOST=dpg~~~
    DB_PORT=5432
    DB_USER=oshiome_user
    DB_PASSWORD=（データベースのパスワード）
